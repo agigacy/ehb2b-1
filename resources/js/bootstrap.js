@@ -1,3 +1,5 @@
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
 window._ = require('lodash');
 
 try {
@@ -32,3 +34,35 @@ axios.defaults.withCredentials = true;
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+// window.Echo = new Echo({
+//     broadcaster: 'pusher',
+//     key: process.env.MIX_PUSHER_APP_KEY,
+//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+//     wsHost: 'localhost',
+//     wsPort: 6001,
+//     forceTLS: false
+// });
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.MIX_PUSHER_APP_KEY,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    wsHost: 'localhost',
+    wsPort: 6001,
+    wssPort: 6001,
+    disableStats: true,
+    forceTLS: false,
+});
+// window.Echo = new Echo({
+//     broadcaster: 'pusher',
+//     key: 'local', // 与 .env 中的 PUSHER_APP_KEY 相匹配
+//     wsHost: window.location.hostname,
+//     wsPort: 6001,
+//     forceTLS: false, // 本地环境通常不使用 TLS
+//     disableStats: true,
+//     // auth: {
+//     //   headers: {
+//     //     Authorization: 'Bearer ' + localStorage.getItem('token'),
+//     //   },
+//     // },
+//   });
+

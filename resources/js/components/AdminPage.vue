@@ -16,6 +16,12 @@
               </v-list-item-action>
               <v-list-item-content>Users</v-list-item-content>
             </v-list-item>
+            <!-- <v-list-item @click="currentPage = 'agentsUsers'">
+              <v-list-item-action>
+                <v-icon>mdi-account-multiple</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>Agents</v-list-item-content>
+            </v-list-item> -->
             <v-list-item @click="currentPage = 'groups'">
               <v-list-item-action>
                 <v-icon>mdi-account-group</v-icon>
@@ -50,6 +56,7 @@
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 2 content here -->
+                <!-- <apexchart v-if="chartSeries && chartSeries.length > 0" type="bar" :options="chartOptions" :series="chartSeries"></apexchart> -->
                 
               </v-col>
               <v-col cols="12" sm="6" md="4">
@@ -156,6 +163,93 @@
             </v-form>
           </v-card-text>
         </v-card>
+        <!-- <v-card v-if="currentPage === 'agentsUsers'">
+          <v-card-title>AgentsUsers</v-card-title>
+          <v-card-text>
+              <v-text-field v-model="searchUser" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+              <v-data-table
+                :headers="userHeaders"
+                :items="users"
+                :search="searchUser"
+                :custom-filter="customAgentFilter"
+                :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }"
+              >
+              <template v-slot:item.index="{ index }">
+                {{ index + 1 }}
+              </template>
+              <template v-slot:item.group="{ item }">
+                {{ item.groups?.map(group => group.name).join(', ') }}
+              </template>
+              <template v-slot:item.actions="{ item }">
+                <v-btn small color="blue darken-1" text @click="showEditUserPage(item)">
+                  <v-icon small>mdi-pencil</v-icon>
+                  Edit
+                </v-btn>
+                <v-btn small color="red darken-1" text @click="startDeletingUser(item)">
+                  <v-icon small>mdi-delete</v-icon>
+                  Delete
+                </v-btn>
+              </template>
+            </v-data-table>
+            <v-btn @click="currentPage = 'addUser'">Add User</v-btn>
+          </v-card-text>
+        </v-card> -->
+        <!-- <v-card v-if="currentPage === 'addUser'">
+          <v-card-title>Add User</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="addUser">
+              <v-text-field label="Name" type="text" v-model="name" required></v-text-field>
+              <v-text-field label="Email" type="email" v-model="email" required></v-text-field>
+              <v-text-field label="Password" type="password" v-model="password" required></v-text-field>
+              <v-select
+                label="Groups"
+                v-model="newUserGroups"
+                :items="groups"
+                item-value="id"
+                item-text="name"
+                >
+              </v-select>
+              <v-select
+                label="Roles"
+                v-model="newUserRoles"
+                :items="roles"
+                item-value="id"
+                item-text="name"
+              >
+              </v-select>
+              <v-btn @click="currentPage = 'users'">Back</v-btn>
+              <v-btn type="submit">Add User</v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'editUser'">
+          <v-card-title>Edit User</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="editUser">
+              <v-text-field label="Name" type="text" v-model="editingUser.name" required></v-text-field>
+              <v-text-field label="Email" type="email" v-model="editingUser.email" required></v-text-field>
+              <v-text-field label="Password" type="password" v-model="editingUser.password" required></v-text-field>
+              <v-select
+              label="Groups"
+              v-model="editingUserGroups"
+              :items="groups"
+              item-value="id"
+              item-text="name"
+              >
+              </v-select>
+              <v-select
+                label="Roles"
+                v-model="editingUserRoles"
+                :items="roles"
+                item-value="id"
+                item-text="name"
+              >
+              </v-select>
+              <v-btn @click="currentPage = 'users'">Cancel</v-btn>
+              <v-btn type="submit">Save</v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card> -->
         <v-card v-if="currentPage === 'groups'">
           <v-card-title>Groups</v-card-title>
           <v-card-text>
@@ -254,7 +348,7 @@
 
 <script>
 import axios from 'axios';
-
+// import VueApexCharts from 'vue-apexcharts'
 export default {
   data() {
     return {
@@ -298,17 +392,35 @@ export default {
       },
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       value: [10, 15, 7, 20, 10],
+      chartOptions: {
+      chart: {
+        id: 'basic-bar'
+      },
+      xaxis: {
+        categories: ['Users', 'Groups', 'Roles']
+      }
+    },
+    chartSeries: [] // 初始为空，等待数据加载
     }
   },
   mounted() {
     this.getUsers();
     this.getGroups();
     this.getRoles();
+    this.loadData();
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   },
   methods: {
+    loadData() {
+    // 加载数据的逻辑...
+    // 假设数据加载完成后，更新chartSeries
+    this.chartSeries = [{
+      name: '数量',
+      data: [10, 20, 30] // 示例数据
+    }];
+  },
     showUsersPage() {
       this.currentPage = 'users';
     },
@@ -325,6 +437,7 @@ export default {
       axios.get('/api/users')
       .then(response => {
         this.users = response.data;
+        this.userCount = response.data.length;
       })
       .catch(error => {
         console.log(error);
@@ -378,12 +491,38 @@ export default {
     this.confirmDelete = true;
     },
     customFilter(value, searchUser, item) {
-      return (
-        String(item.name).includes(searchUser) ||
-        String(item.email).includes(searchUser) ||
-        item.groups.map(group => group.name).join(', ').includes(searchUser)
-      );
+      // return (
+      //   String(item.name).includes(searchUser) ||
+      //   String(item.email).includes(searchUser) ||
+      //   item.groups.map(group => group.name).join(', ').includes(searchUser)
+      // );
+    //   return (
+    // item.is_agent === 1 &&
+    // (
+    //   String(item.name).includes(searchUser) ||
+    //   String(item.email).includes(searchUser) ||
+    //   item.groups.map(group => group.name).join(', ').includes(searchUser)
+    // )
+    
+  // );
+  console.log(item.is_agent); // 确认这个函数被调用，并输出 is_agent 的值
+  return item.is_agent === 1;
     },
+  //   customAgentsFilter(value, searchUser, item) {
+  //     // return (
+  //     //   String(item.name).includes(searchUser) ||
+  //     //   String(item.email).includes(searchUser) ||
+  //     //   item.groups.map(group => group.name).join(', ').includes(searchUser)
+  //     // );
+  //     return (
+  //   item.is_agent === 1 &&
+  //   (
+  //     String(item.name).includes(searchUser) ||
+  //     String(item.email).includes(searchUser) ||
+  //     item.groups.map(group => group.name).join(', ').includes(searchUser)
+  //   )
+  // );
+  //   },
     
 
     showGroupsPage() {
@@ -401,6 +540,7 @@ export default {
       axios.get('/api/groups')
       .then(response => {
         this.groups = response.data;
+        this.groupCount = response.data.length;
       })
       .catch(error => {
         console.log(error);
@@ -494,6 +634,7 @@ export default {
       axios.get('/api/roles')
       .then(response => {
         this.roles = response.data;
+        this.roleCount = response.data.length;
       })
       .catch(error => {
         console.log(error);

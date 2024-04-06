@@ -29,3 +29,5 @@ Route::middleware('auth:sanctum')->apiResource('/tours', 'App\Http\Controllers\A
 Route::middleware('auth:sanctum')->post('/tours/{id}/duplicate', 'App\Http\Controllers\Api\TourController@duplicate');
 Route::middleware('auth:sanctum')->apiResource('/bookings', 'App\Http\Controllers\Api\BookingController');
 Route::middleware('auth:sanctum')->apiResource('/passengers', 'App\Http\Controllers\Api\PassengerController');
+Route::post('/send-message', 'App\Http\Controllers\Api\MessageController@sendMessage');
+

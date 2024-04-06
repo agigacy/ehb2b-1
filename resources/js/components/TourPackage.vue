@@ -50,8 +50,17 @@
       },
       selectCountry(countryId) {
         this.selectedCountry = countryId;
+        // Find the selected country from the countries array
+        const selectedCountry = this.countries.find(country => country.id === countryId);
+        if (selectedCountry) {
+          // Assign the tours of the selected country to the tours data property
+          this.tours = selectedCountry.tours;
+        } else {
+          // If no country is found (which should theoretically never happen), clear the tours
+          this.tours = [];
+        }
+        // Change the currentPage to 'tours' to display the tours of the selected country
         this.currentPage = 'tours';
-        this.getTours();
       },
       getTours() {
         if (this.selectedCountry) {
@@ -63,6 +72,17 @@
               console.log(error);
             });
         }
+      },
+      getToursByCountry(countryId) {
+        // 假设你有一个API端点可以根据国家ID获取旅游套餐
+        axios.get(`/api/tours?country_id=${countryId}`)
+          .then(response => {
+            this.tours = response.data; // 将获取到的旅游套餐数据赋值给tours
+            this.currentPage = 'tours'; // 切换页面显示到旅游套餐
+          })
+          .catch(error => {
+            console.error('Error fetching tours:', error);
+          });
       },
     },
     mounted() {

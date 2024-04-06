@@ -25,6 +25,10 @@
           <v-card-title>Content</v-card-title>
           <v-card-text>
             <!-- Add your content here -->
+            <v-btn @click="sendMessage">Send Message</v-btn>
+            <ul>
+              <li v-for="message in receivedMessages" :key="message">{{ message }}</li>
+            </ul>
           </v-card-text>
         </v-card>
       </v-col>
@@ -34,6 +38,32 @@
 
 <script>
 export default {
+  name: 'Home',
   // Vue component options...
-};
+  data() {
+    return {
+      receivedMessages: [], // 用于存储接收到的消息
+    };
+  },
+  mounted() {
+    window.Echo.channel('test-channel')
+      .listen('.MessageSent', (e) => {
+        console.log('Event received:', e);
+        this.receivedMessages.push(e.message);
+      });
+  },
+  methods: {
+    sendMessage() {
+      // 发送请求到 Laravel 后端以触发广播事件
+      // 这里假设你有一个路由和对应的控制器方法来处理这个请求
+      axios.post('/api/send-message', { message: 'Hello, world!' })
+        .then(response => {
+          console.log('Message sent:', response.data);
+        })
+        .catch(error => {
+          console.error('Error sending message:', error);
+        });
+    }
+  }
+}
 </script>
