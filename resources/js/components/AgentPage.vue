@@ -50,10 +50,38 @@
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 2 content here -->
+                <v-sheet
+                  class="v-sheet--offset mx-auto"
+                  color="cyan"
+                  elevation="12"
+                  max-width="calc(100% - 32px)"
+                >
+                  <v-sparkline
+                    :labels="labels"
+                    :value="value"
+                    color="white"
+                    line-width="2"
+                    padding="16"
+                  ></v-sparkline>
+                </v-sheet>
                 
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 3 content here -->
+                <v-sheet
+                  class="v-sheet--offset mx-auto"
+                  color="cyan"
+                  elevation="12"
+                  max-width="calc(100% - 32px)"
+                >
+                  <v-sparkline
+                    :labels="labels"
+                    :value="value"
+                    color="white"
+                    line-width="2"
+                    padding="16"
+                  ></v-sparkline>
+                </v-sheet>
               </v-col>
             </v-row>
             <v-row>

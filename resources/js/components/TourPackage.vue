@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="ma-4">
       <v-card v-if="currentPage === 'countries'">
-        <h1>Select a Country</h1>
+        <h3>Select a Country</h3>
         <v-row>
           <v-col cols="12" sm="4" md="4" v-for="country in countries" :key="country.id">
             <v-card @click="selectCountry(country.id)">
@@ -13,7 +13,7 @@
       </v-card>
   
       <v-card v-if="currentPage === 'tours'">
-        <h1>Tour Packages</h1>
+        <h3>Tour Packages</h3>
         <v-row>
           <v-col cols="12" sm="4" md="4" v-for="tour in tours" :key="tour.id">
             <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })">

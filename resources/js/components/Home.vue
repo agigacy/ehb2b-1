@@ -3,10 +3,15 @@
     <v-row>
       <v-col cols="12">
         <v-img
+          src="/images/image_banner2.jpg"
+          gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+          height="600"
+        >
+        <!-- <v-img
           src="https://via.placeholder.com/800x200"
           gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
           height="200"
-        >
+        > -->
           <v-layout
             fill-height
             align-center
@@ -14,7 +19,7 @@
             ma-0
             class="white--text"
           >
-            <h1 class="display-2 font-weight-thin mb-4">Welcome to Our Website</h1>
+            <h4 class="display-1 font-weight-thin mb-0 bottom">Welcome to Esplanad Holiday</h4>
           </v-layout>
         </v-img>
       </v-col>
@@ -63,7 +68,11 @@ export default {
         .catch(error => {
           console.error('Error sending message:', error);
         });
-    }
+    },
+
+    // getImagePath(imageName) {
+    //   return process.env.BASE_URL + 'images/' + imageName;
+    // }
   }
 }
 </script>
