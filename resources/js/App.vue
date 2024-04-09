@@ -7,6 +7,7 @@
       <v-toolbar-items>
         <v-btn text to="/">Home Page</v-btn>
         <v-btn text to="/admin" v-if="isLoggedIn">Admin Page</v-btn>
+        <v-btn text to="/report" v-if="isLoggedIn">Report Page</v-btn>
         <v-btn text to="/tour" v-if="isLoggedIn">Tour Page</v-btn>
         <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Package</v-btn>
         <v-btn text to="/agent" v-if="isLoggedIn">Agent Page</v-btn>
