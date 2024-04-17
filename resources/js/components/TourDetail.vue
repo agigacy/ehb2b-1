@@ -5,8 +5,10 @@
           <v-card>
             <v-card-title>{{ tour.package_name }}</v-card-title>
             <!-- Slider with tour dates and prices -->
-            <v-slider v-model="selectedDate" :items="tour.dates" item-text="date" item-value="price"></v-slider>
+            <!-- <v-slider v-model="selectedDate" :items="tour.dates" item-text="date" item-value="price"></v-slider> -->
             <!-- Things to know -->
+            
+            <v-img src="https://a.cdn-hotels.com/gdcs/production172/d1381/8efd3f69-63bb-4398-a595-095cea25fc37.jpg" height="200px"></v-img>
             <v-card-title>Things to Know</v-card-title>
             <!-- <v-row>
               <v-col cols="4" v-for="item in tour.thingsToKnow" :key="item.id">
@@ -41,7 +43,7 @@
               <v-file-input label="Passport Upload" v-model="details.passportUpload" accept="image/*"></v-file-input>
             </div>
           </v-card>
-        <v-btn @click="selectedQuantity && passengerDetails.every(detail => detail.name && detail.passport && detail.designation && detail.dateOfBirth && detail.hp && detail.remark) ? bookTour : null">Book Now</v-btn>
+        <v-btn @click="bookTour">Book Now</v-btn>
         </v-col>
         <v-col cols="4">
           <!-- Summary -->
@@ -62,7 +64,7 @@
   
   <script>
   import axios from 'axios';
-  
+  import moment from 'moment';
   export default {
     data() {
       return {
@@ -116,6 +118,40 @@
         } else {
           this.passengerDetails = this.passengerDetails.slice(0, this.selectedQuantity);
         }
+      },
+      bookTour() {
+        // 构建请求体
+        const bookingData = {
+          tour_id: this.tour.id,
+          date: this.selectedDate, // 确保你有一个选择日期的输入
+          total: this.total, // 这应该是计算出的总价
+          user_id: 1,
+          status: 1,
+          date: moment(this.date).format('YYYY-MM-DD HH:mm:ss'),
+          passengers: this.passengerDetails.map(detail => ({
+            name: detail.name,
+            passport: detail.passport,
+            date_of_birth: detail.dateOfBirth,
+            designation: detail.designation,
+            hp: detail.hp,
+            remark: detail.remark,
+            passport_upload: detail.passportUpload, // 这里假设你已经处理了文件上传，并有一个URL或标识符
+          }))
+        };
+
+        // 发送 POST 请求到后端 API
+        axios.post('/api/bookings', bookingData)
+          .then(response => {
+            // 处理成功的响应
+            console.log('Booking successful', response);
+            alert('Booking successful!');
+            this.$router.push('/agent');
+          })
+          .catch(error => {
+            // 处理错误
+            console.error('Booking failed', error);
+            alert('Booking failed. Please try again.');
+          });
       },
     },
     mounted() {

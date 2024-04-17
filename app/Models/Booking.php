@@ -11,6 +11,10 @@ class Booking extends Model
 
     protected $fillable = ['tour_id','user_id','date','total','status'];
 
+    protected $casts = [
+        'passengers' => 'array',
+    ];
+
     public function tour()
     {
         return $this->belongsTo(Tour::class, 'tour_id');

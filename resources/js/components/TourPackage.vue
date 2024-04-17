@@ -1,11 +1,12 @@
 <template>
     <div class="ma-4">
       <v-card v-if="currentPage === 'countries'">
-        <h3>Select a Country</h3>
+        <h3>Country</h3>
         <v-row>
           <v-col cols="12" sm="4" md="4" v-for="country in countries" :key="country.id">
             <v-card @click="selectCountry(country.id)">
-              <v-img :src="country.image" height="200px"></v-img>
+              <!-- <v-img :src="country.image" height="200px"></v-img> -->
+              <v-img src="https://cfirguide.org/wp-content/uploads/2021/04/Japanese-Flag.jpg" height="200px"></v-img>
               <v-card-title>{{ country.name }}</v-card-title>
             </v-card>
           </v-col>
@@ -17,7 +18,7 @@
         <v-row>
           <v-col cols="12" sm="4" md="4" v-for="tour in tours" :key="tour.id">
             <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })">
-              <v-img :src="tour.image" height="200px"></v-img>
+              <v-img src="https://a.cdn-hotels.com/gdcs/production172/d1381/8efd3f69-63bb-4398-a595-095cea25fc37.jpg" height="200px"></v-img>
               <v-card-title>{{ tour.package_name }}</v-card-title>
             </v-card>
           </v-col>

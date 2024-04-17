@@ -59,7 +59,17 @@ export default {
         console.log(error);
       });
     }
-  }
+  },
+  mounted() {
+    if (this.isLoggedIn) {
+      axios.get('/api/users').then(response => {
+        // 假设后端返回的用户信息在 response.data 中
+        this.currentUser = response.data;
+      }).catch(error => {
+        console.error("获取用户信息失败:", error);
+      });
+    }
+  },
 }
 </script>
 <style>
