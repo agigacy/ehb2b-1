@@ -273,10 +273,10 @@ export default {
       passengerHeaders: [
         { text: 'No', value: 'index' },
         // { text: 'Booking ID', value: 'booking_id' },
-        { text: 'Designation', value: 'designation' },
         { text: 'Name', value: 'name' },
         { text: 'Passport', value: 'passport' },
         { text: 'Phone Number', value: 'hp' },
+        { text: 'Designation', value: 'designation' },
         { text: 'Actions', value: 'actions' },
       ],
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],

@@ -7,6 +7,7 @@
       <v-toolbar-items>
         <v-btn text to="/">Home Page</v-btn>
         <v-btn text to="/admin" v-if="isLoggedIn">Admin Page</v-btn>
+        <v-btn text to="/report" v-if="isLoggedIn">Report Page</v-btn>
         <v-btn text to="/tour" v-if="isLoggedIn">Tour Page</v-btn>
         <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Package</v-btn>
         <v-btn text to="/agent" v-if="isLoggedIn">Agent Page</v-btn>
@@ -58,7 +59,17 @@ export default {
         console.log(error);
       });
     }
-  }
+  },
+  mounted() {
+    if (this.isLoggedIn) {
+      axios.get('/api/users').then(response => {
+        // 假设后端返回的用户信息在 response.data 中
+        this.currentUser = response.data;
+      }).catch(error => {
+        console.error("获取用户信息失败:", error);
+      });
+    }
+  },
 }
 </script>
 <style>

@@ -6,6 +6,7 @@ import TourPage from './components/TourPage.vue'
 import TourDetail from './components/TourDetail.vue'
 import TourPackage from './components/TourPackage.vue'
 import LoginPage from './components/LoginPage.vue'
+import ReportPage from './components/ReportPage.vue'
 // import RegisterPage from './components/RegisterPage.vue'
 import Home from './components/Home.vue'
 
@@ -17,6 +18,7 @@ const routes = [
   // { path: '/tour/:id', component: TourDetail, name:TourDetail meta: { requiresAuth: true }},
   { path: '/tourpackage', component: TourPackage, meta: { requiresAuth: true }},
   { path: '/agent', component: AgentPage, meta: { requiresAuth: true }},
+  { path: '/report', component: ReportPage, meta: { requiresAuth: true }},
   { path: '/login', component: LoginPage },
   // { path: '/register', component: RegisterPage },
   { path: '/', component: Home },

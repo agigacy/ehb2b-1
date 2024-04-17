@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Tour;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TourController extends Controller
 {
@@ -94,5 +95,15 @@ class TourController extends Controller
         $newTour->save();
 
         return response()->json($newTour, 201);
+    }
+    
+    public function report($tourId)
+    {
+        // 通过ID查找特定的Tour，并预加载它的Bookings以及Bookings的Passengers
+        // $tour = Tour::findOrFail($id);
+        $tour = Tour::with(['bookings.passengers','country','flight_tickets'])->findOrFail($tourId);
+    
+        // 直接返回这个特定的Tour及其Bookings和Bookings的Passengers
+        return response()->json($tour);
     }
 }

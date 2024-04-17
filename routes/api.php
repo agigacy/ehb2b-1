@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->apiResource('/roles', 'App\Http\Controllers\A
 Route::middleware('auth:sanctum')->apiResource('/countries', 'App\Http\Controllers\Api\CountryController');
 Route::middleware('auth:sanctum')->apiResource('/flight_tickets', 'App\Http\Controllers\Api\FlightTicketController');
 Route::middleware('auth:sanctum')->apiResource('/tours', 'App\Http\Controllers\Api\TourController');
+Route::middleware('auth:sanctum')->get('/tours/{tour}/report', 'App\Http\Controllers\Api\TourController@report');
 Route::middleware('auth:sanctum')->post('/tours/{id}/duplicate', 'App\Http\Controllers\Api\TourController@duplicate');
 Route::middleware('auth:sanctum')->apiResource('/bookings', 'App\Http\Controllers\Api\BookingController');
 Route::middleware('auth:sanctum')->apiResource('/passengers', 'App\Http\Controllers\Api\PassengerController');

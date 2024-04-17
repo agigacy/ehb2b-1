@@ -28,8 +28,10 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        // 直接创建 Booking 对象，包括 passengers 数据
         $booking = Booking::create($request->all());
-        return response()->json($booking, 201);
+
+        return response()->json($booking->load('passengers'), 201);
     }
 
     /**
