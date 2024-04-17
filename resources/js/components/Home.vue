@@ -26,8 +26,15 @@
     </v-row>
     <v-row>
       <v-col cols="12">
+        <v-card style="text-align: center" class="text-md-center">
+          <v-card-title class="text-md-center">TRAVELER RECOMMENDED</v-card-title>
+          <v-card-text>
+            <!-- Add your content here -->
+            <img src="images/main_page_contact_Screenshot_1.png" width="100%" />
+          </v-card-text>
+        </v-card>
         <v-card>
-          <v-card-title>Content</v-card-title>
+          <v-card-title>Enquiry</v-card-title>
           <v-card-text>
             <!-- Add your content here -->
             <v-btn @click="sendMessage">Send Message</v-btn>

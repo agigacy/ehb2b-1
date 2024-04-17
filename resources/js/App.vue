@@ -2,7 +2,7 @@
   <v-app>
     <v-toolbar color="indigo" dark class="custom-toolbar">
       <!-- <v-toolbar-title>Tour App</v-toolbar-title> -->
-      <v-toolbar-title><img src="/images/esplanad-logo-small.png" class="mt-4" style="height: 50px;" /></v-toolbar-title>
+      <v-toolbar-title><img src="/images/esplanad-logo-small.png" class="mt-4" style="height: 50px;" /> <small>B2B 1.0</small></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn text to="/">Home Page</v-btn>

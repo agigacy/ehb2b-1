@@ -120,6 +120,9 @@
               <template v-slot:item.group="{ item }">
                 {{ item.groups?.map(group => group.name).join(', ') }}
               </template>
+              <template v-slot:item.role="{ item }">
+                {{ item.roles?.map(role => role.name).join(', ') }}
+              </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn small color="blue darken-1" text @click="showEditUserPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
@@ -398,6 +401,7 @@ export default {
         { text: 'No', value: 'index' },
         { text: 'Name', value: 'name' },
         { text: 'Groups', value: 'group' },
+        { text: 'Roles', value: 'role' },
         { text: 'Email', value: 'email' },
         { text: 'Actions', value: 'actions' },
       ],

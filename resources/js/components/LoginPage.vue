@@ -1,5 +1,6 @@
 <template>
-  <v-app style="background-color: gray; no-repeat center center; background-size: cover;">
+  <!-- <v-app style="background-color: gray; no-repeat center center; background-size: cover;"> -->
+  <v-app style="background: url('images/esp_backgrond.jpg') no-repeat center center / cover;">
     <v-main>
       <v-container fill-height fluid>
         <v-layout align-center justify-center>

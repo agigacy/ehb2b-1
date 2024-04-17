@@ -14,11 +14,12 @@
   
       <v-card v-if="currentPage === 'tours'">
         <h3>Tour Packages</h3>
+        <br />
         <v-row>
           <v-col cols="12" sm="4" md="4" v-for="tour in tours" :key="tour.id">
             <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })">
               <v-img :src="tour.image" height="200px"></v-img>
-              <v-card-title>{{ tour.package_name }}</v-card-title>
+              <v-card-title>{{ tour.package_name }} | {{ tour.airline }}</v-card-title>
             </v-card>
           </v-col>
         </v-row>
