@@ -22,7 +22,8 @@ class CreatePassengersTable extends Migration
             $table->string('passport_upload')->nullable();
             $table->string('designation');
             $table->date('date_of_birth');
-            $table->integer('hp');
+            // $table->integer('hp');
+            $table->string('hp');
             $table->string('remark')->nullable();
             $table->timestamps();
         });

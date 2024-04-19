@@ -32,15 +32,15 @@
           </v-card>
           <v-card>
             <v-select :items="[1,2,3,4,5,6,7,8,9]" label="Select Pax" v-model="selectedQuantity" @change="onQuantityChange"></v-select>
-            <div v-for="(details, index) in passengerDetails" :key="index">
+            <div v-for="(detail, index) in passengerDetails" :key="index">
               <label>Passenger {{ index + 1 }}</label>
-              <v-text-field label="Name" v-model="details.name"></v-text-field>
-              <v-text-field label="Passport Number" v-model="details.passport"></v-text-field>
-              <v-text-field label="Designation" v-model="details.designation"></v-text-field>
-              <v-text-field label="Date of Birth" v-model="details.dateOfBirth" type="date"></v-text-field>
-              <v-text-field label="HP Number" v-model="details.hp"></v-text-field>
-              <v-textarea label="Remark" v-model="details.remark"></v-textarea>
-              <v-file-input label="Passport Upload" v-model="details.passportUpload" accept="image/*"></v-file-input>
+              <v-text-field label="Name" v-model="detail.name"></v-text-field>
+              <v-text-field label="Passport Number" v-model="detail.passport"></v-text-field>
+              <v-text-field label="Designation" v-model="detail.designation"></v-text-field>
+              <v-text-field label="Date of Birth" v-model="detail.dateOfBirth" type="date"></v-text-field>
+              <v-text-field label="HP Number" v-model="detail.hp"></v-text-field>
+              <v-textarea label="Remark" v-model="detail.remark"></v-textarea>
+              <v-file-input label="Passport Upload" v-model="detail.passportUpload" @change="onFileChange" accept="image/*"></v-file-input>
             </div>
           </v-card>
         <v-btn @click="bookTour">Book Now</v-btn>
@@ -75,6 +75,17 @@
         discountedTotal: null,
         total: null,
         passengerDetails: [],
+        passengers: [],
+        passenger: {
+          dateOfBirth: '',
+          name: '',
+          designation: '',
+          hp: '',
+          passport: '',
+          remark: '',
+          passportUpload: ''
+        }
+
       };
     },
     methods: {
@@ -119,6 +130,44 @@
           this.passengerDetails = this.passengerDetails.slice(0, this.selectedQuantity);
         }
       },
+      bookTour_working(){
+        const formData = new FormData();
+        formData.append('passportUpload', this.detail.passportUpload);
+
+        // Append other booking data to the FormData object
+        formData.append('tour_id', this.tour.id);
+        formData.append('date', this.selectedDate);
+        formData.append('total', this.total);
+        formData.append('user_id', 1);
+        formData.append('status', 1);
+
+        this.passengerDetails.forEach((detail, index) => {
+            formData.append(`passengers[${index}][name]`, detail.name);
+            formData.append(`passengers[${index}][passport]`, detail.passport);
+            // Add other passenger details as needed
+            formData.append(`passengers[${index}][dateOfBirth]`, detail.dateOfBirth);
+            formData.append(`passengers[${index}][designation]`, detail.designation);
+            formData.append(`passengers[${index}][hp]`, detail.hp);
+            formData.append(`passengers[${index}][remark]`, detail.remark);
+            formData.append(`passengers[${index}][passportUpload]`, detail.passportUpload);
+        });
+
+        axios.post('/api/bookings', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            console.log('Booking successful', response);
+            alert('Booking successful!');
+            this.$router.push('/agent');
+        })
+        .catch(error => {
+            console.error('Booking failed', error);
+            alert('Booking failed. Please try again.');
+        });
+      },
+
       bookTour() {
         // 构建请求体
         const bookingData = {
@@ -153,6 +202,10 @@
             alert('Booking failed. Please try again.');
           });
       },
+      onFileChange(event) {
+       const file = event.target.files[0];
+       this.detail.passportUpload = file;
+     },
     },
     mounted() {
       this.getTour();

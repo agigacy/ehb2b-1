@@ -3,10 +3,15 @@
       <v-card v-if="currentPage === 'countries'">
         <h3>Country</h3>
         <v-row>
-          <v-col cols="12" sm="4" md="4" v-for="country in countries" :key="country.id">
+          <v-col cols="12" sm="3" md="3" v-for="country in countries" :key="country.id">
             <v-card @click="selectCountry(country.id)">
               <!-- <v-img :src="country.image" height="200px"></v-img> -->
-              <v-img src="https://cfirguide.org/wp-content/uploads/2021/04/Japanese-Flag.jpg" height="200px"></v-img>
+              <!-- <v-img src="https://cfirguide.org/wp-content/uploads/2021/04/Japanese-Flag.jpg" height="200px"></v-img> -->
+              <v-img v-if="country.id === 1" src="https://www.worldometers.info/img/flags/ja-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+              <v-img v-if="country.id === 2" src="https://www.worldometers.info/img/flags/tw-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+              <v-img v-if="country.id === 3" src="https://www.worldometers.info/img/flags/nz-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+              <v-img v-if="country.id === 4" src="https://www.worldometers.info/img/flags/hk-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+              <!-- <v-img v-if="country.id === 4" src="https://www.worldometers.info/img/flags/sn-flag.gif" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img> -->
               <v-card-title>{{ country.name }}</v-card-title>
             </v-card>
           </v-col>

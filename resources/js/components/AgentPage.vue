@@ -30,69 +30,33 @@
         <v-card v-if="currentPage === 'dashboard'">
           <v-card-title>Dashboard</v-card-title>
           <v-card-text>
+
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 1 content here -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
+                <!-- Grid 4 content here -->
+                <v-img src="images/bar_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 2 content here -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
-                
+                <!-- Grid 5 content here -->
+                <v-img src="images/line_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 3 content here -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
+                <!-- Grid 6 content here -->
+                <v-img src="images/legend.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 4 content here -->
+                <v-img src="images/line_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 5 content here -->
+                <v-img src="images/bar_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 6 content here -->
+                <v-img src="images/pie_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
               </v-col>
             </v-row>
           </v-card-text>
