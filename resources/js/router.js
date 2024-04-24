@@ -9,6 +9,8 @@ import LoginPage from './components/LoginPage.vue'
 import ReportPage from './components/ReportPage.vue'
 // import RegisterPage from './components/RegisterPage.vue'
 import Home from './components/Home.vue'
+import NotificationComponent from './components/NotificationComponent.vue'
+import UserProfile from './components/UserProfile.vue'
 
 Vue.use(VueRouter)
 
@@ -22,6 +24,8 @@ const routes = [
   { path: '/login', component: LoginPage },
   // { path: '/register', component: RegisterPage },
   { path: '/', component: Home },
+  { path: '/notification', component: NotificationComponent },
+  { path: '/userprofile', component: UserProfile },
   {
     path: '/tours/:id',
     name: 'TourDetail',

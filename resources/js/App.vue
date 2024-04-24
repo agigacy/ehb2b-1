@@ -2,7 +2,13 @@
   <v-app>
     <v-toolbar color="indigo" dark class="custom-toolbar">
       <!-- <v-toolbar-title>Tour App</v-toolbar-title> -->
-      <v-toolbar-title><img src="/images/esplanad-logo-small.png" class="mt-4" style="height: 50px;" /> <small>B2B 1.0</small></v-toolbar-title>
+      <v-toolbar-title>
+        <router-link target="_self"
+          to="/"
+          >
+          <img src="/images/esplanad-logo-small.png" class="mt-4" style="height: 50px;" /> <small>B2B 1.0</small>
+        </router-link>                            
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn text to="/">Home Page</v-btn>
@@ -12,7 +18,15 @@
         <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Package</v-btn>
         <v-btn text to="/agent" v-if="isLoggedIn">Agent Page</v-btn>
         <v-btn text to="/login" v-if="!isLoggedIn">Login</v-btn>
+        <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> User Profile</v-btn>
+        <v-btn text to="/notification" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Notification</v-btn>
         <v-btn text @click.prevent="logout" v-if="isLoggedIn">Logout</v-btn>
+        <div class="container-fluid w-100 p-0 control_top">
+            <!-- <notification-component class="w-100" v-if="!($route.path == '/timer') && !($route.path == '/test5')"></notification-component> -->
+            <!-- <notification-component class="w-100 mb-0"></notification-component> -->
+            <!-- <span class="material-icons mt-4">face</span> -->
+            <!-- <span class="material-icons">&#xE87C;</span> -->
+        </div>
       </v-toolbar-items>
     </v-toolbar>
     <v-main>

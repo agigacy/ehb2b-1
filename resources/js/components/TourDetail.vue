@@ -2,7 +2,7 @@
     <div v-if="tour">
       <v-row>
         <v-col cols="8">
-          <v-card>
+          <v-card class="pl-4 pb-2">
             <v-card-title>{{ tour.package_name }}</v-card-title>
             <!-- Slider with tour dates and prices -->
             <!-- <v-slider v-model="selectedDate" :items="tour.dates" item-text="date" item-value="price"></v-slider> -->
@@ -16,47 +16,78 @@
                 <div>{{ item.text }}</div>
               </v-col>
             </v-row> -->
-            <p>
+            <p class="pl-4">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Id velit ut tortor pretium viverra suspendisse potenti.
             </p>
             
             <!-- Departure information -->
-            <v-card-title>Departure Information</v-card-title>
+            <v-card-title><b>Departure Information</b></v-card-title>
             <!-- <div>{{ tour.departure.city }} -> {{ tour.destination.city }}</div> -->
-            <div>{{ tour.departure_date }}</div>
-            <div>{{ tour.return_date }}</div>
-            <div>{{ tour.airline }}</div>
-            <div>{{ tour.flightNumber }}</div>
-            <div>{{ tour.remark }}</div>
+            <div class="pl-4">
+              Departure Date: {{ tour.departure_date }}<br />
+              Return Date: {{ tour.return_date }}<br />
+              Airline: {{ tour.airline }}<br />
+              Flight No.: {{ tour.flightNumber }}<br />
+              Remark: {{ tour.remark }}
+            </div>
             <!-- <div>{{ tour.departure.time }} -> {{ tour.arrival.time }}</div> -->
           </v-card>
-          <v-card>
-            <v-select :items="[1,2,3,4,5,6,7,8,9]" label="Select Pax" v-model="selectedQuantity" @change="onQuantityChange"></v-select>
-            <div v-for="(detail, index) in passengerDetails" :key="index">
-              <label>Passenger {{ index + 1 }}</label>
+          <v-card class="pl-6 pt-2" style="background-color: azure;">
+            <v-select class="pl-4" :items="[1,2,3,4,5,6,7,8,9]" label="Select Pax" v-model="selectedQuantity" @change="onQuantityChange"></v-select>
+            <div v-for="(detail, index) in passengerDetails" :key="index" class="pl-4">
+              <label>Passenger <span v-if="selectedQuantity > 1">{{ index + 1 }}</span></label>
               <v-text-field label="Name" v-model="detail.name"></v-text-field>
               <v-text-field label="Passport Number" v-model="detail.passport"></v-text-field>
               <v-text-field label="Designation" v-model="detail.designation"></v-text-field>
-              <v-text-field label="Date of Birth" v-model="detail.dateOfBirth" type="date"></v-text-field>
+              <v-text-field label="Date of Birth" style="max-width: 300px;" v-model="detail.dateOfBirth" type="date"></v-text-field>
               <v-text-field label="HP Number" v-model="detail.hp"></v-text-field>
               <v-textarea label="Remark" v-model="detail.remark"></v-textarea>
               <v-file-input label="Passport Upload" v-model="detail.passportUpload" @change="onFileChange" accept="image/*"></v-file-input>
             </div>
           </v-card>
-        <v-btn @click="bookTour">Book Now</v-btn>
+          <br />
+        <v-btn class="ml-2" @click="bookTour">Book Now</v-btn>
         </v-col>
         <v-col cols="4">
           <!-- Summary -->
-          <v-card>
+          <!-- <v-card class="pl-4 pb-5" style="background-color: blanchedalmond;">
             <v-card-title>Summary</v-card-title>
-            <div>Tour: {{ tour.package_name }}</div>
-            <div>Code: {{ tour.code }}</div>
+            <div>Tour: <b>{{ tour.package_name }}</b></div>
+            <div>Code: <b>{{ tour.code }}</b></div>
             <div>Departure Date: {{ tour.departure_date }}</div>
-            <div>Pax: {{ selectedQuantity }}</div>
-            <div>Price Per pax: {{ selectedPrice }}</div>
-            <div>Total Before Discount: {{ total }}</div>
-            <div>Discounted Total: {{ discountedTotal }}</div>
+            <div v-if="selectedQuantity < 0">Total Pax: {{ selectedQuantity }}</div>
+            <div v-if="selectedPrice">Price Per Pax: RM {{ selectedPrice.toFixed(2) }}</div>
+            <div v-if="total">Total Before Discount: RM {{ total.toFixed(2) }}</div>
+            <div v-if="discountedTotal">Total After Discount: <b>RM {{ discountedTotal.toFixed(2) }}</b></div>
+          </v-card> -->
+          <v-card class="pl-4 pb-5" style="background-color: blanchedalmond;">
+            <v-card-title>Summary</v-card-title>
+            <div class="mb-2">Tour: <b>{{ tour.package_name }}</b></div>
+            <div class="mb-2">Code: <b>{{ tour.code }}</b></div>
+            <div class="mb-2">Departure Date: {{ tour.departure_date }}</div>
+            <div class="summary-item" v-for="(value, key) in tourDetails" :key="key">
+              <div class="label">{{ key }}:</div>
+              <div class="value"><b>{{ value }}</b></div>
+            </div>
+            <!-- Conditional rendering for specific fields -->
+            <div v-if="selectedQuantity >= 0" class="summary-item">
+              <div class="label">Total Pax:</div>
+              <div class="value">{{ selectedQuantity }}</div>
+            </div>
+            <div v-if="selectedPrice" class="summary-item">
+              <div class="label">Price Per Pax:</div>
+              <div class="value">RM {{ selectedPrice.toFixed(2) }}</div>
+            </div>
+            <div v-if="total" class="summary-item">
+              <div class="label">Total Before Discount:</div>
+              <div class="value">RM {{ total.toFixed(2) }}</div>
+            </div>
+            <div v-if="discountedTotal" class="summary-item">
+              <div class="label">Total After Discount:</div>
+              <div class="value"><b>RM {{ discountedTotal.toFixed(2) }}</b></div>
+            </div>
           </v-card>
+
         </v-col>
       </v-row>
     </div>
@@ -212,3 +243,21 @@
     },
   };
   </script>
+  <style scoped>
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .label {
+        flex: 0 0 200px; /* Adjust based on your preference */
+        font-weight: bold;
+      }
+
+      .value {
+        flex: 1;
+        text-align: left;
+      }
+
+  </style>
