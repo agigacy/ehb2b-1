@@ -15,7 +15,10 @@ class GroupController extends Controller
      */
     public function index()
     {
-        return Group::all();
+        // return Group::all();
+        $groups = Group::withCount('users')->get(); // 假设你的 Group 模型已经定义了与 User 模型的关系
+
+        return response()->json($groups);
     }
 
     /**
@@ -65,5 +68,12 @@ class GroupController extends Controller
     {
         Group::destroy($id);
         return response()->json(null, 204);
+    }
+
+    public function groupUsersCount()
+    {
+        $groups = Group::withCount('users')->get(); // 假设你的 Group 模型已经定义了与 User 模型的关系
+
+        return response()->json($groups);
     }
 }

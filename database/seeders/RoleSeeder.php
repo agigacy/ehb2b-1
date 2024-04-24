@@ -15,18 +15,18 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::insert([[
-            'id' => '1',
-            'name' => 'superadmin'
-            ],
-            [
-            'id' => '2',
-            'name' => 'admin'
-            ],
-            [
-            'id' => '3',
-            'name' => 'agent'
-            ]
-        ]);
+        // Role::insert([[
+        //     'id' => '1',
+        //     'name' => 'superadmin'
+        //     ],
+        //     [
+        //     'id' => '2',
+        //     'name' => 'admin'
+        //     ],
+        //     [
+        //     'id' => '3',
+        //     'name' => 'agent'
+        //     ]
+        // ]);
     }
 }

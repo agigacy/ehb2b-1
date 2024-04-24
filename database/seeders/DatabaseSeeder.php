@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\FlightTicket;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,5 +26,9 @@ class DatabaseSeeder extends Seeder
         $this->call(FlightTicketSeeder::class);
         $this->call(FlightTicketTourSeeder::class);
         $this->call(BookingSeeder::class);
+        $this->call(PermissionSeeder::class);
+        // $role = Role::create(['name' => 'admin']);
+        // $permission = Permission::create(['name' => 'edit articles']);
+        // $role->givePermissionTo($permission);
     }
 }

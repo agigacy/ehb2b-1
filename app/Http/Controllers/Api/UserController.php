@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -17,8 +18,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('groups', 'roles')->get();
-        return response()->json($users, 200);
+        // $users = User::with('roles', 'permissions')->get(); // 加载角色和权限关联关系
+        $users = User::all();
+        return UserResource::collection($users); // 使用 UserResource 序列化用户数据并返回
+//         $users = User::with('groups','roles')->get();
+// return response()->json($users, 200);
     }
 
     /**
@@ -41,7 +45,14 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::findOrFail($id);
+    //     $user = User::findOrFail($id);
+    // $permissions = $user->getAllPermissions(); // 直接获取权限数据看是否有返回
+    // dd($permissions); // 调试输出
+        // $user = User::findOrFail($id);
+        // $user->load('roles', 'permissions'); // 确保加载了角色和权限关系
+        // return response()->json($user);
+        $user = User::findOrFail($id);
+    return new UserResource($user);
     }
 
     /**

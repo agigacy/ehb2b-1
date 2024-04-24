@@ -16,12 +16,12 @@ class RoleUserSeeder extends Seeder
      */
     public function run()
     {
-        $roles = Role::take(1)->get();
+        // $roles = Role::take(1)->get();
 
-        User::all()->each(function ($user) use ($roles) {
-            $user->roles()->attach(
-                $roles->random(1)->pluck('id')                
-            );
-        });
+        // User::all()->each(function ($user) use ($roles) {
+        //     $user->roles()->attach(
+        //         $roles->random(1)->pluck('id')                
+        //     );
+        // });
     }
 }
