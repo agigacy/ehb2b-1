@@ -3,16 +3,13 @@
       <v-row>
         <v-col cols="12" md="3">
           <v-card>
-            <v-list>
-              
+            <v-list>              
               <v-list-item @click="currentPage = 'users'">
                 <v-list-item-action>
                     <span class="material-icons pr-1">face</span>
                 </v-list-item-action>
                 <v-list-item-content>My Profile</v-list-item-content>
-              </v-list-item>
-
-              
+              </v-list-item>              
             </v-list>
           </v-card>
         </v-col>
@@ -29,9 +26,9 @@
                   :custom-filter="customFilter"
                   :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }"
                 >
-                <template v-slot:item.index="{ index }">
+                <!-- <template v-slot:item.index="{ index }">
                   {{ index + 1 }}
-                </template>
+                </template> -->
                 <template v-slot:item.group="{ item }">
                   {{ item.groups?.map(group => group.name).join(', ') }}
                 </template>
@@ -116,7 +113,7 @@
         groups: [],
         roles: [],
         userHeaders: [
-          { text: 'No', value: 'index' },
+        //   { text: 'No', value: 'index' },
           { text: 'Name', value: 'name' },
           { text: 'Groups', value: 'group' },
           { text: 'Roles', value: 'role' },

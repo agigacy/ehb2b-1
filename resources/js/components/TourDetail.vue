@@ -62,27 +62,27 @@
           </v-card> -->
           <v-card class="pl-4 pb-5" style="background-color: blanchedalmond;">
             <v-card-title>Summary</v-card-title>
-            <div class="mb-2">Tour: <b>{{ tour.package_name }}</b></div>
-            <div class="mb-2">Code: <b>{{ tour.code }}</b></div>
-            <div class="mb-2">Departure Date: {{ tour.departure_date }}</div>
-            <div class="summary-item" v-for="(value, key) in tourDetails" :key="key">
+            <div class="mb-2 pl-3">Tour: <b>{{ tour.package_name }}</b></div>
+            <div class="mb-2 pl-3">Code: <b>{{ tour.code }}</b></div>
+            <div class="mb-2 pl-3">Departure Date: {{ tour.departure_date }}</div>
+            <div class="summary-item pl-3" v-for="(value, key) in tourDetails" :key="key">
               <div class="label">{{ key }}:</div>
               <div class="value"><b>{{ value }}</b></div>
             </div>
             <!-- Conditional rendering for specific fields -->
-            <div v-if="selectedQuantity >= 0" class="summary-item">
+            <div v-if="selectedQuantity >= 0" class="summary-item pl-3">
               <div class="label">Total Pax:</div>
-              <div class="value">{{ selectedQuantity }}</div>
+              <div class="value"><b>{{ selectedQuantity }}</b></div>
             </div>
-            <div v-if="selectedPrice" class="summary-item">
+            <div v-if="selectedPrice" class="summary-item pl-3">
               <div class="label">Price Per Pax:</div>
               <div class="value">RM {{ selectedPrice.toFixed(2) }}</div>
             </div>
-            <div v-if="total" class="summary-item">
+            <div v-if="total" class="summary-item pl-3">
               <div class="label">Total Before Discount:</div>
               <div class="value">RM {{ total.toFixed(2) }}</div>
             </div>
-            <div v-if="discountedTotal" class="summary-item">
+            <div v-if="discountedTotal" class="summary-item pl-3">
               <div class="label">Total After Discount:</div>
               <div class="value"><b>RM {{ discountedTotal.toFixed(2) }}</b></div>
             </div>
@@ -251,8 +251,8 @@
       }
 
       .label {
-        flex: 0 0 200px; /* Adjust based on your preference */
-        font-weight: bold;
+        flex: 0 0 180px; /* Adjust based on your preference */
+        font-weight: normal;
       }
 
       .value {

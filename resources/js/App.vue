@@ -18,7 +18,7 @@
         <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Package</v-btn>
         <v-btn text to="/agent" v-if="isLoggedIn">Agent Page</v-btn>
         <v-btn text to="/login" v-if="!isLoggedIn">Login</v-btn>
-        <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> User Profile</v-btn>
+        <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> My Profile</v-btn>
         <v-btn text to="/notification" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Notification</v-btn>
         <v-btn text @click.prevent="logout" v-if="isLoggedIn">Logout</v-btn>
         <div class="container-fluid w-100 p-0 control_top">
