@@ -35,7 +35,7 @@ class PassengerSeeder extends Seeder
             'date_of_birth' => '2021-01-01',
             'hp' => '0123456789',
             'remark' => 'got visa',
-        ]
+        ],
         [
             'id' => '3',
             'booking_id' => '2',
