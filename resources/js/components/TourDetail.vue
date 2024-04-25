@@ -205,7 +205,7 @@
           tour_id: this.tour.id,
           date: this.selectedDate, // 确保你有一个选择日期的输入
           total: this.total, // 这应该是计算出的总价
-          user_id: 1,
+          user_id: Number(localStorage.getItem('user_id')),
           status: 1,
           date: moment(this.date).format('YYYY-MM-DD HH:mm:ss'),
           passengers: this.passengerDetails.map(detail => ({

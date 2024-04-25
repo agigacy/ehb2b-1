@@ -92,7 +92,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 4 content here -->
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 5 content here -->
@@ -378,8 +378,11 @@
 
 <script>
 import axios from 'axios';
-// import VueApexCharts from 'vue-apexcharts'
+import VueApexCharts from 'vue-apexcharts'
 export default {
+  components: {
+    apexchart: VueApexCharts,
+  },
   data() {
     return {
       name: '',
@@ -423,35 +426,48 @@ export default {
       },
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       value: [10, 15, 7, 20, 10],
-      chartOptions: {
+    //   chartOptions: {
+    //   chart: {
+    //     id: 'basic-bar'
+    //   },
+    //   xaxis: {
+    //     categories: ['Users', 'Groups', 'Roles']
+    //   }
+    // },
+    groupSeries: [],
+    groupChartOptions: {
       chart: {
-        id: 'basic-bar'
+        type: 'donut',
       },
-      xaxis: {
-        categories: ['Users', 'Groups', 'Roles']
-      }
+      labels: [], // 这里将用于显示组名
     },
-    chartSeries: [] // 初始为空，等待数据加载
+    groupDataLoaded: false,
     }
   },
   mounted() {
     this.getUsers();
-    this.getGroups();
+    this.getGroups().then(() => {
+      this.groupSeries = this.groups.map(group => group.users_count);
+      this.groupChartOptions.labels = this.groups.map(group => group.name);
+      this.groupDataLoaded = true;
+    });
+    // this.getGroups();
     this.getRoles();
-    this.loadData();
+    // this.loadData();
+   
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   },
   methods: {
-    loadData() {
-    // 加载数据的逻辑...
-    // 假设数据加载完成后，更新chartSeries
-    this.chartSeries = [{
-      name: '数量',
-      data: [10, 20, 30] // 示例数据
-    }];
-  },
+  //   loadData() {
+  //   // 加载数据的逻辑...
+  //   // 假设数据加载完成后，更新chartSeries
+  //   this.chartSeries = [{
+  //     name: '数量',
+  //     data: [10, 20, 30] // 示例数据
+  //   }];
+  // },
     showUsersPage() {
       this.currentPage = 'users';
     },
@@ -468,7 +484,7 @@ export default {
       axios.get('/api/users')
       .then(response => {
         this.users = response.data;
-        this.userCount = response.data.length;
+        // this.userCount = response.data.length;
       })
       .catch(error => {
         console.log(error);
@@ -568,10 +584,9 @@ export default {
     },
 
     getGroups() {
-      axios.get('/api/groups')
+      return axios.get('/api/groups')
       .then(response => {
         this.groups = response.data;
-        this.groupCount = response.data.length;
       })
       .catch(error => {
         console.log(error);

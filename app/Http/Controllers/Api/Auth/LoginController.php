@@ -28,9 +28,14 @@ class LoginController extends Controller
             ]);
         }
 
+        // 加载用户角色和权限
+        $user->load('roles', 'permissions');
+
         return response()->json([
-            'user' => $user,
-            'token' => $user->createToken('laravel_api_token')->plainTextToken
+            'user_id' => $user->id,
+            'token' => $user->createToken('laravel_api_token')->plainTextToken,
+            'roles' => $user->roles->pluck('name'), // 返回角色名称列表
+            'permissions' => $user->getAllPermissions()->pluck('name'), // 返回权限名称列表
         ]);
     }
 
