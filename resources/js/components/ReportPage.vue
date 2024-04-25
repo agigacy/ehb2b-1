@@ -70,7 +70,7 @@
         <br />
       
     </div>
-    <v-btn v-if="bookings.length > 0" color="primary" @click="generatePDF">导出PDF</v-btn>
+    <v-btn class="fixed-bottom" v-if="bookings.length > 0" color="primary" @click="generatePDF">导出PDF</v-btn>
     </v-container>
   </template>
   
@@ -96,7 +96,143 @@ import jsPDF from 'jspdf';
       this.fetchTours();
     },
     methods: {
-      async generatePDF() {
+      async generatePDF() 
+      {
+        const headerImg = new Image();
+        headerImg.src = '/images/esplanad-logo-small.png';  // Adjust the path as necessary
+        await new Promise((resolve) => {
+            headerImg.onload = resolve;
+        });
+
+        const element = document.getElementById('report-content');
+        const canvas = await html2canvas(element, { scale: 1 });
+        const contentData = canvas.toDataURL('image/png');
+
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            compress: true,
+            format : 'a4',
+            putOnlyUsedFonts:true
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const headerHeight = 16; // Height of the header image
+        pdf.addImage(headerImg.src, 'PNG', 90, 2, pageWidth * 0.15, headerHeight * 0.70);
+
+        const imgProperties = pdf.getImageProperties(contentData);
+        const leftMargin = 4;
+        const contentWidth = pageWidth - 2 * leftMargin;
+        const scaledHeight = imgProperties.height * (contentWidth / imgProperties.width);
+
+        let contentRemaining = scaledHeight;
+        let position = 0;  // Track the position on the canvas from which we start drawing
+
+        while (contentRemaining > 0) {
+            const topMargin = headerHeight + 2;
+            // const heightToDraw = Math.min(pageHeight - topMargin, contentRemaining); // either draw the full page or the remainder
+            const heightToDraw = Math.min(pageHeight, contentRemaining); // not required topmargin for remainder
+            pdf.addImage(contentData, 'PNG', leftMargin, topMargin - position, contentWidth, scaledHeight, undefined, 'FAST');
+
+            contentRemaining -= heightToDraw;  // Reduce the remaining content height by the amount just drawn
+            position += heightToDraw;  // Increase the canvas position
+
+            if (contentRemaining > 0) {
+                pdf.addPage();
+                // Re-add the header image to each new page
+                pdf.addImage(headerImg.src, 'PNG', 90, 2, pageWidth * 0.15, headerHeight * 0.70);
+            }
+        }
+
+        pdf.save('tour-report.pdf');
+      },
+
+      async generatePDF_missing_leftMargin() 
+      {
+        const headerImg = new Image();
+        headerImg.src = '/images/esplanad-logo-small.png';  // Adjust the path as necessary
+        await new Promise((resolve) => {
+            headerImg.onload = resolve;
+        });
+
+        const element = document.getElementById('report-content');
+        const canvas = await html2canvas(element, { scale: 1 });
+        const contentData = canvas.toDataURL('image/png');
+
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            compress: true,
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const headerHeight = 16; // Height of the header image
+        pdf.addImage(headerImg.src, 'PNG', 90, 2, pageWidth * 0.15, headerHeight * 0.70);
+
+        const imgProperties = pdf.getImageProperties(contentData);
+        const contentWidth = pageWidth;
+        const scaledHeight = imgProperties.height * (contentWidth / imgProperties.width);
+
+        let contentRemaining = scaledHeight;
+        let position = 0;  // Track the position on the canvas from which we start drawing
+
+        while (contentRemaining > 0) {
+            const topMargin = headerHeight + 2;
+            const heightToDraw = Math.min(pageHeight - topMargin, contentRemaining); // either draw the full page or the remainder
+            pdf.addImage(contentData, 'PNG', 0, topMargin - position, contentWidth, scaledHeight, undefined, 'FAST');
+
+            contentRemaining -= heightToDraw;  // Reduce the remaining content height by the amount just drawn
+            position += heightToDraw;  // Increase the canvas position
+
+            if (contentRemaining > 0) {
+                pdf.addPage();
+                // Re-add the header image to each new page
+                pdf.addImage(headerImg.src, 'PNG', 90, 2, pageWidth * 0.15, headerHeight * 0.70);
+            }
+        }
+
+        pdf.save('tour-report.pdf');
+      },
+
+      async generatePDF_Working_But_1Page() {
+        // Load the header image
+        const headerImg = new Image();
+        headerImg.src = '/images/esplanad-logo-small.png';  // Adjust the path as necessary
+        await new Promise((resolve) => {
+          headerImg.onload = resolve;
+        });
+
+        // Capture the content of the element as a canvas
+        const element = document.getElementById('report-content');
+        const canvas = await html2canvas(element, { scale: 1 });
+        const contentData = canvas.toDataURL('image/png');
+
+        // Create a new jsPDF instance
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          compress: true,
+        });
+
+        // Add the header image to the PDF
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const headerHeight = 16; // Set the height of your header image; adjust as needed
+        pdf.addImage(headerImg.src, 'PNG', 90, 2, pageWidth * 0.15, headerHeight * 0.70 );
+
+        // Calculate position and scaling for the content
+        const imgProperties = pdf.getImageProperties(contentData);
+        const contentWidth = pdf.internal.pageSize.getWidth();
+        const contentHeight = (imgProperties.height * contentWidth) / imgProperties.width;
+        const leftMargin = 4;
+        const topMargin = headerHeight + 2; // Adjust so content starts right below the header
+
+        // Add main content image to PDF, adjust dimensions to fit the page
+        pdf.addImage(contentData, 'PNG', leftMargin, topMargin, contentWidth - (2 * leftMargin), contentHeight);
+
+        // Save the PDF
+        pdf.save('tour-report.pdf');
+      },
+
+      async generatePDF_OLD() {
         const element = document.getElementById('report-content');
         // const canvas = await html2canvas(element);
         const canvas = await html2canvas(element, {
@@ -127,6 +263,7 @@ import jsPDF from 'jspdf';
         
         pdf.save('tour-report.pdf');
       },
+
       async fetchTours() {
         try {
           const response = await axios.get('/api/tours'); // 假设这是获取所有 Tours 的 API 路径
@@ -160,3 +297,11 @@ import jsPDF from 'jspdf';
     },
   };
   </script>
+  <style scoped>
+    .fixed-bottom {
+      position: fixed;
+      bottom: 10px; /* Distance from the bottom of the viewport */
+      left: 50%; /* Distance from the right of the viewport, adjust as necessary */
+      z-index: 1000; /* Ensure it's above other content */
+    }
+  </style>
