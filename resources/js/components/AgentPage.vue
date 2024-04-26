@@ -1,18 +1,20 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="2" class="bg-light-blue">
         <v-card>
           <v-list>
             <v-list-item @click="currentPage = 'dashboard'">
               <v-list-item-action>
-                <v-icon>mdi-view-dashboard</v-icon>
+                <!-- <v-icon>mdi-view-dashboard</v-icon> -->
+                <span class="material-symbols-outlined">dashboard </span>
               </v-list-item-action>
               <v-list-item-content>Dashboard</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'bookings'">
               <v-list-item-action>
-                <v-icon>mdi-account-multiple</v-icon>
+                <!-- <v-icon>mdi-account-multiple</v-icon> -->
+                <span class="material-symbols-outlined">airplane_ticket </span>
               </v-list-item-action>
               <v-list-item-content>Bookings</v-list-item-content>
             </v-list-item>
@@ -26,39 +28,44 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
           <v-card-title>Dashboard</v-card-title>
           <v-card-text>
 
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 4 content here -->
-                <v-img src="images/bar_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+                <v-card-title class="justify-center"><h6>Total Booking (Unpaid)</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 5 content here -->
-                <v-img src="images/line_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+                <v-card-title class="justify-center"><h6>Polar Total Booking</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 6 content here -->
-                <v-img src="images/legend.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+                <v-card-title class="justify-center"><h6>Another Booking Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="pie" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 4 content here -->
-                <v-img src="images/line_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+                <v-card-title class="justify-center"><h6>Total User Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 5 content here -->
-                <v-img src="images/bar_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+                <v-card-title class="justify-center"><h6>Polar User Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 6 content here -->
-                <v-img src="images/pie_chart.png" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
+                <v-card-title class="justify-center"><h6>User Group with SP</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
             </v-row>
+
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'bookings'">
@@ -213,8 +220,13 @@
 
 <script>
 import axios from 'axios';
+import VueApexCharts from 'vue-apexcharts';
 
 export default {
+  components: {
+    apexchart: VueApexCharts,
+  },
+
   data() {
     return {
       currentPage: 'dashboard', // 'bookings', 'addBooking', 'editBooking', 'passengers', 'addPassenger', 'editPassenger'
@@ -245,11 +257,70 @@ export default {
       ],
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       value: [10, 15, 7, 20, 10],
+      groupSeries: [],
+      groupChartOptions: {
+        chart: {
+          type: 'donut',
+        },
+        labels: [], // 这里将用于显示组名
+      },
+      groupChartOptions2: {
+        chart: {
+          type: 'polarArea',
+        },
+        labels: [], // 这里将用于显示组名
+      },
+      groupDataLoaded: false,
+      users: [],
+      userTotals: []
+      
     }
   },
   mounted() {
     this.getBookings();
     this.getPassengers();
+    this.getUsers();
+    this.getGroups().then(() => {
+      // this.groupSeries = this.bookings.map(booking => booking.total);
+      this.groupSeries = Object.values(this.bookings.reduce((acc, booking) => {
+        if (!acc[booking.user_id]) {
+          acc[booking.user_id] = 0;
+        }
+        acc[booking.user_id] += booking.total;
+        return acc;
+      }, {}));
+
+      // this.groupChartOptions.labels = this.bookings.map(booking => booking.total);
+      // this.groupChartOptions.labels = this.bookings.map(booking => booking.user_id);
+      
+      // Simple - show all unique user id
+      // this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => booking.user_id))];
+
+      // Simple - show all user name based on users array
+      // this.groupChartOptions.labels = this.bookings.map(booking => {
+      //   const user = this.users.find(user => user.id === booking.user_id);
+      //   return user? user.name : '';
+      // });
+
+      this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => {
+        const user = this.users.find(user => user.id === booking.user_id);
+        return user? user.name : '';
+      }))];
+
+
+      // this.groupChartOptions.labels = this.getUserTotals(userName, totalAmount);
+      // this.groupChartOptions.labels = this.getUserTotals().map(userTotals.userName => userTotals.totalAmount);
+      // this.groupChartOptions.labels = this.bookings.reduce((acc, booking) => ({ ...acc, [booking.user_id]: (acc[booking.user_id] || 0) + booking.total }), {});
+      // this.groupChartOptions2.labels = this.bookings.filter(booking => booking.sp === 1).map(booking => group.name);
+      this.groupDataLoaded = true;
+    });
+    // After fetching both users and bookings, update chart labels
+    // this.getGroups().then(() => {
+    //   this.groupSeries = this.groups.map(group => group.users_count);
+    //   this.groupChartOptions.labels = this.groups.map(group => group.name);
+    //   this.groupChartOptions2.labels = this.groups.filter(group => group.sp === 1).map(group => group.name);
+    //   this.groupDataLoaded = true;
+    // });
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
@@ -266,9 +337,18 @@ export default {
       this.currentPage = 'editBooking';
     },
     getBookings() {
-      return axios.get('/api/bookings')
+      axios.get('/api/bookings')
         .then(response => {
           this.bookings = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    getUsers() {
+      axios.get('/api/users')
+        .then(response => {
+          this.users = response.data;
         })
         .catch(error => {
           console.log(error);
@@ -414,6 +494,54 @@ export default {
       }
     },
 
+    getGroups() {
+      return axios.get('/api/groups')
+      .then(response => {
+        this.groups = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
+
+    getUserTotals() {
+      const userTotals = this.users.map(user => {
+        const totalAmount = this.bookings
+          .filter(booking => booking.user_id === user.id)
+          .reduce((total, booking) => total + booking.total, 0);
+
+        return {
+          userName: user.name,
+          totalAmount: totalAmount
+        };
+      });
+
+      return userTotals;
+    },
+
+    getUsername_old() {
+      return this.bookings.map(booking => {
+        const correspondingUser = this.users.find(user => user.id === booking.user_id);
+        return correspondingUser ? correspondingUser.name : ''; // Return user name if found, otherwise empty string
+      });
+
+      // const userTotals = this.users.map(user => {
+      //   const totalAmount = this.bookings
+      //     .filter(booking => booking.user_id === user.id)
+      //     .reduce((total, booking) => total + booking.total, 0);
+
+      //   return {
+      //     userName: user.name,
+      //     totalAmount: totalAmount
+      //   };
+      // });
+
+    }
+
   }
 };
 </script>
+
+<style  scoped>
+
+</style>

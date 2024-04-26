@@ -19,10 +19,10 @@ class UserController extends Controller
     public function index()
     {
         // $users = User::with('roles', 'permissions')->get(); // 加载角色和权限关联关系
-        $users = User::all();
-        return UserResource::collection($users); // 使用 UserResource 序列化用户数据并返回
-//         $users = User::with('groups','roles')->get();
-// return response()->json($users, 200);
+        // $users = User::all();
+        // return UserResource::collection($users); // 使用 UserResource 序列化用户数据并返回
+        $users = User::with('groups','roles')->get();
+        return response()->json($users, 200);
     }
 
     /**

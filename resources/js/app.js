@@ -4,6 +4,7 @@ window.Vue = require('vue').default;
 import router from './router'
 import Vue from 'vue';
 import Vuetify from 'vuetify'
+import '../sass/app.scss' 
 import 'vuetify/dist/vuetify.min.css'
 import App from './App.vue'
 import axios from 'axios'; // 导入 axios

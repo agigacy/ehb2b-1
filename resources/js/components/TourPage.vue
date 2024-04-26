@@ -1,30 +1,37 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="2" class="bg-light-blue">
         <v-card>
           <v-list>
             <v-list-item @click="currentPage = 'dashboard'">
               <v-list-item-action>
-                <v-icon>mdi-view-dashboard</v-icon>
+                <!-- <v-icon>mdi-view-dashboard</v-icon> -->
+                <span class="material-symbols-outlined">dashboard </span>
+
               </v-list-item-action>
+              <!-- <span class="material-icons pr-1">face</span> -->
               <v-list-item-content>Dashboard</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'countries'">
               <v-list-item-action>
-                <v-icon>mdi-account-country</v-icon>
+                <!-- <v-icon>mdi-account-country</v-icon> -->
+                <span class="material-symbols-outlined">language </span>
               </v-list-item-action>
               <v-list-item-content>Countries</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'flight_tickets'">
               <v-list-item-action>
-                <v-icon>mdi-account-flight_ticket</v-icon>
+                <!-- <v-icon>mdi-account-flight_ticket</v-icon> -->
+                <!-- <span class="material-symbols-outlined">language </span> -->
+                <span class="material-symbols-outlined">flightsmode</span>
               </v-list-item-action>
               <v-list-item-content>Flight Tickets</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'tours'">
               <v-list-item-action>
-                <v-icon>mdi-account-tour</v-icon>
+                <!-- <v-icon>mdi-account-tour</v-icon> -->
+                <span class="material-symbols-outlined">tour</span>
               </v-list-item-action>
               <v-list-item-content>Tours</v-list-item-content>
             </v-list-item>
@@ -32,45 +39,40 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
           <v-card-title>Dashboard</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 1 content here -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
+                <v-card-title class="justify-center"><h6>Total Booking (Unpaid)</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 2 content here -->
-                
+                <!-- Grid 5 content here -->
+                <v-card-title class="justify-center"><h6>Polar Total Booking</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 3 content here -->
+                <!-- Grid 6 content here -->
+                <v-card-title class="justify-center"><h6>Another Booking Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="pie" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 4 content here -->
+                <v-card-title class="justify-center"><h6>Total Booking By Tour</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions4" :series="groupSeries4"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 5 content here -->
+                <v-card-title class="justify-center"><h6>Polar User Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 6 content here -->
+                <v-card-title class="justify-center"><h6>User Group with SP</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
             </v-row>
           </v-card-text>
@@ -372,9 +374,11 @@ import axios from 'axios';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import moment from 'moment';
+import VueApexCharts from 'vue-apexcharts';
+
 export default {
   components: {
-    flatPickr
+    flatPickr, apexchart: VueApexCharts,
   },
   data() {
     return {
@@ -441,12 +445,74 @@ export default {
         allowInput: true,
         showClearDate: true,
       },
+      groupSeries: [],
+      groupChartOptions: {
+        chart: {
+          type: 'donut',
+        },
+        labels: [], // 这里将用于显示组名
+      },
+      groupSeries4: [],
+      groupChartOptions4: {
+        chart: {
+          type: 'donut',
+        },
+        labels: [], // 这里将用于显示组名
+      },
+      groupChartOptions2: {
+        chart: {
+          type: 'polarArea',
+        },
+        labels: [], // 这里将用于显示组名
+      },
+      groupDataLoaded: false,
+      users: [],
+      userTotals: []
     }
   },
   mounted() {
     this.getCountries();
     this.getFlightTickets();
     this.getTours();
+    this.getUsers();
+    this.getBookings();
+    this.getGroups().then(() => {
+      this.groupSeries = Object.values(this.bookings.reduce((acc, booking) => {
+        if (!acc[booking.user_id]) {
+          acc[booking.user_id] = 0;
+        }
+        acc[booking.user_id] += booking.total;
+        return acc;
+      }, {}));
+
+      this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => {
+        const user = this.users.find(user => user.id === booking.user_id);
+        return user? user.name : '';
+      }))];
+      
+      // this.groupSeries4 = [40, 50, 90];
+      
+      this.groupSeries4 = Object.values(this.bookings.reduce((acc, booking) => {
+        if (!acc[booking.tour_id]) {
+          acc[booking.tour_id] = 0;
+        }
+        acc[booking.tour_id] += booking.total;
+        return acc;
+      }, {}));
+
+      // this.groupChartOptions4.labels = ['A', 'B', 'C'];
+      
+      this.groupChartOptions4.labels = [...new Set(this.bookings.map(booking => {
+        // const user = this.users.find(user => user.id === booking.tour_id);
+        // return user? user.name : '';
+        const tour = this.tours.find(tour => tour.id === booking.tour_id);
+        // return tour? tour.package_name.slice() : '';
+        return tour ? tour.package_name.slice(0, tour.package_name.indexOf(',')) + '..' : '';
+
+      }))];
+
+      this.groupDataLoaded = true;
+    });
   },
   computed: {
   //   totalSeats() {
@@ -742,7 +808,53 @@ export default {
           });
       }
     },
+
+    getBookings() {
+      axios.get('/api/bookings')
+        .then(response => {
+          this.bookings = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    getUsers() {
+      axios.get('/api/users')
+        .then(response => {
+          this.users = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    getGroups() {
+      return axios.get('/api/groups')
+      .then(response => {
+        this.groups = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
+
+    getUserTotals() {
+      const userTotals = this.users.map(user => {
+        const totalAmount = this.bookings
+          .filter(booking => booking.user_id === user.id)
+          .reduce((total, booking) => total + booking.total, 0);
+
+        return {
+          userName: user.name,
+          totalAmount: totalAmount
+        };
+      });
+
+      return userTotals;
+    },
     
   }
 };
 </script>
+<style  scoped>
+  
+</style>

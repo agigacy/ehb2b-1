@@ -19,8 +19,8 @@ class BookingSeeder extends Seeder
             'id' => '1',
             'tour_id' => '1',
             'user_id' => '1',
-            'date' => '2023-10-31',
-            'total' => '33223',
+            'date' => '2024-10-31',
+            'total' => '3800',
             'status' => '1',
             ]
         ]);
