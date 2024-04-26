@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-toolbar color="indigo" dark class="custom-toolbar">
+    <v-toolbar color="blank" light class="custom-toolbar">
       <!-- <v-toolbar-title>Tour App</v-toolbar-title> -->
       <v-toolbar-title>
         <router-link target="_self"
@@ -11,14 +11,14 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn text to="/">Home Page</v-btn>
-        <v-btn text to="/admin" v-if="isLoggedIn && canViewAdminPage">Admin Page</v-btn>
-        <v-btn text to="/report" v-if="isLoggedIn">Report Page</v-btn>
-        <v-btn text to="/tour" v-if="isLoggedIn">Tour Page</v-btn>
-        <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Package</v-btn>
-        <v-btn text to="/agent" v-if="isLoggedIn">Agent Page</v-btn>
+        <v-btn text to="/">Home</v-btn>
+        <v-btn text to="/admin" v-if="isLoggedIn && canViewAdminPage">Admin</v-btn>
+        <v-btn text to="/report" v-if="isLoggedIn">Report</v-btn>
+        <v-btn text to="/tour" v-if="isLoggedIn">Tour Setting</v-btn>
+        <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Booking</v-btn>
+        <v-btn text to="/agent" v-if="isLoggedIn">Agent</v-btn>
         <v-btn text to="/login" v-if="!isLoggedIn">Login</v-btn>
-        <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> My Profile</v-btn>
+        <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> <h6>{{ userName }} ({{ userId }})</h6></v-btn>
         <v-btn text to="/notification" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Notification</v-btn>
         <v-btn text @click.prevent="logout" v-if="isLoggedIn">Logout</v-btn>
         <div class="container-fluid w-100 p-0 control_top">
@@ -47,7 +47,8 @@ export default {
   created() {
     if (this.isLoggedIn) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-    }
+    };
+    const user_id = localStorage.getItem('user_id');
   },
   watch: {
     '$route': function() {
@@ -57,15 +58,21 @@ export default {
   computed: {
     // 判断用户是否有 admin_page_view 权限
     canViewAdminPage() {
-    const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
-    const userid = JSON.parse(localStorage.getItem('user_id') || '[]');
-    console.log("Permissions from localStorage:", permissions); // 输出权限数据
-    const hasPermission = permissions.includes('admin_page_view');
-    console.log("Can view admin page:", hasPermission); // 输出是否有权限
-    console.log("User ID" , userid)
-    return hasPermission;
-    
-  }
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const userid = JSON.parse(localStorage.getItem('user_id') || '[]');
+      console.log("Permissions from localStorage:", permissions); // 输出权限数据
+      const hasPermission = permissions.includes('admin_page_view');
+      console.log("Can view admin page:", hasPermission); // 输出是否有权限
+      console.log("User ID" , userid)
+      return hasPermission;
+      
+    },
+    userId() {
+      return localStorage.getItem('user_id');
+    },
+    userName() {
+      return localStorage.getItem('name');
+    }
   },
   methods: {
     logout() {

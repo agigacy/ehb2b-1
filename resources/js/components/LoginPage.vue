@@ -46,6 +46,7 @@ export default {
         localStorage.setItem('token', response.data.token);
         // 保存用户 ID
         localStorage.setItem('user_id', response.data.user_id);
+        localStorage.setItem('name', response.data.name);
         // 保存角色和权限信息
         localStorage.setItem('roles', JSON.stringify(response.data.roles));
         localStorage.setItem('permissions', JSON.stringify(response.data.permissions));

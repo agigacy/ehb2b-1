@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
       <v-row>
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="2" class="bg-light-blue">
           <v-card>
             <v-list>              
               <v-list-item @click="currentPage = 'users'">
@@ -13,7 +13,7 @@
             </v-list>
           </v-card>
         </v-col>
-        <v-col cols="12" md="9">
+        <v-col cols="12" md="10">
 
           <v-card v-if="currentPage === 'users'">
             <v-card-title>My Profile Details</v-card-title>

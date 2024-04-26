@@ -1,5 +1,6 @@
 <template>
     <v-container>
+      Welcome {{ userId }}
       <v-select
         v-model="selectedTourId"
         :items="tours"
@@ -295,13 +296,19 @@ import jsPDF from 'jspdf';
         }
       },
     },
+
+    computed: {
+      userId() {
+        return localStorage.getItem('user_id');
+      }
+    }
   };
   </script>
   <style scoped>
     .fixed-bottom {
       position: fixed;
       bottom: 10px; /* Distance from the bottom of the viewport */
-      left: 50%; /* Distance from the right of the viewport, adjust as necessary */
+      left: 45%; /* Distance from the right of the viewport, adjust as necessary */
       z-index: 1000; /* Ensure it's above other content */
     }
   </style>

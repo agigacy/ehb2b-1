@@ -1,18 +1,20 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="2" class="bg-light-blue">
         <v-card>
           <v-list>
             <v-list-item @click="currentPage = 'dashboard'">
               <v-list-item-action>
-                <v-icon>mdi-view-dashboard</v-icon>
+                <!-- <v-icon>mdi-view-dashboard</v-icon> -->
+                <span class="material-symbols-outlined">dashboard </span>
               </v-list-item-action>
               <v-list-item-content>Dashboard</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'users'">
               <v-list-item-action>
-                <v-icon>mdi-account-multiple</v-icon>
+                <!-- <v-icon>mdi-account-multiple</v-icon> -->
+                <span class="material-symbols-outlined">person </span>
               </v-list-item-action>
               <v-list-item-content>Users</v-list-item-content>
             </v-list-item>
@@ -24,7 +26,8 @@
             </v-list-item> -->
             <v-list-item @click="currentPage = 'groups'">
               <v-list-item-action>
-                <v-icon>mdi-account-group</v-icon>
+                <!-- <v-icon>mdi-account-group</v-icon> -->
+                <span class="material-symbols-outlined">group </span>
               </v-list-item-action>
               <v-list-item-content>Groups</v-list-item-content>
             </v-list-item>
@@ -32,75 +35,43 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
           <v-card-title>Dashboard</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <!-- Grid 1 content here -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <!-- Grid 2 content here -->
-                <!-- <apexchart v-if="chartSeries && chartSeries.length > 0" type="bar" :options="chartOptions" :series="chartSeries"></apexchart> -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <!-- Grid 3 content here -->
-                <v-sheet
-                  class="v-sheet--offset mx-auto"
-                  color="cyan"
-                  elevation="12"
-                  max-width="calc(100% - 32px)"
-                >
-                  <v-sparkline
-                    :labels="labels"
-                    :value="value"
-                    color="white"
-                    line-width="2"
-                    padding="16"
-                  ></v-sparkline>
-                </v-sheet>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
+                <v-card-title class="justify-center"><h6>Total User Group</h6></v-card-title>
                 <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 5 content here -->
+                <v-card-title class="justify-center"><h6>Polar User Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions" :series="groupSeries"></apexchart>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 6 content here -->
+                <v-card-title class="justify-center"><h6>User Group with SP</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions2" :series="groupSeries"></apexchart>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-card-title class="justify-center"><h6>Total User Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions" :series="groupSeries"></apexchart>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <!-- Grid 5 content here -->
+                <v-card-title class="justify-center"><h6>Polar User Group</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="polarArea" :options="groupChartOptions" :series="groupSeries"></apexchart>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <!-- Grid 6 content here -->
+                <v-card-title class="justify-center"><h6>User Group with SP</h6></v-card-title>
+                <apexchart v-if="groupDataLoaded" type="donut" :options="groupChartOptions2" :series="groupSeries"></apexchart>
+              </v-col>
+            </v-row>
+            
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'users'">
@@ -426,22 +397,28 @@ export default {
       },
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       value: [10, 15, 7, 20, 10],
-    //   chartOptions: {
-    //   chart: {
-    //     id: 'basic-bar'
-    //   },
-    //   xaxis: {
-    //     categories: ['Users', 'Groups', 'Roles']
-    //   }
-    // },
-    groupSeries: [],
-    groupChartOptions: {
-      chart: {
-        type: 'donut',
+      //   chartOptions: {
+      //   chart: {
+      //     id: 'basic-bar'
+      //   },
+      //   xaxis: {
+      //     categories: ['Users', 'Groups', 'Roles']
+      //   }
+      // },
+      groupSeries: [],
+      groupChartOptions: {
+        chart: {
+          type: 'donut',
+        },
+        labels: [], // 这里将用于显示组名
       },
-      labels: [], // 这里将用于显示组名
-    },
-    groupDataLoaded: false,
+      groupChartOptions2: {
+        chart: {
+          type: 'polarArea',
+        },
+        labels: [], // 这里将用于显示组名
+      },
+      groupDataLoaded: false,
     }
   },
   mounted() {
@@ -449,6 +426,7 @@ export default {
     this.getGroups().then(() => {
       this.groupSeries = this.groups.map(group => group.users_count);
       this.groupChartOptions.labels = this.groups.map(group => group.name);
+      this.groupChartOptions2.labels = this.groups.filter(group => group.sp === 1).map(group => group.name);
       this.groupDataLoaded = true;
     });
     // this.getGroups();
@@ -715,3 +693,5 @@ export default {
   }
 };
 </script>
+<style  scoped>
+</style>
