@@ -4,6 +4,7 @@
 namespace Database\Seeders;
 
 use Spatie\Permission\Models\Role;
+use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Seeder;
 
@@ -67,6 +68,16 @@ class PermissionSeeder extends Seeder
         //      ->givePermissionTo(['publish articles', 'unpublish articles']);
  
          $role = Role::create(['name' => 'super-admin']);
+         $adminrole = Role::create(['name' => 'admin']);
+         $staffrole = Role::create(['name' => 'staff']);
+         $agentrole = Role::create(['name' => 'agent']);
          $role->givePermissionTo(Permission::all());
+        //  $role->givePermissionTo(User::find(1));
+         
+         $user1 = User::find(1);
+         $user2 = User::find(2);
+         $user1->assignRole('super-admin');
+         $user2->assignRole('super-admin');
+        //  $user->givePermissionTo($role);
     }
 }

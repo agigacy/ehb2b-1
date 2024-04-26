@@ -19,7 +19,9 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'is_agent' => $this->is_agent,
-            'roles' => $this->roles->pluck('name'), // 获取角色名称数组
+            // 'roles' => $this->roles->pluck('name'), // 获取角色名称数组
+            'roles' => $this->roles, // 获取角色名称数组
+            'groups' => $this->groups,
             'permissions' => $this->getAllPermissions()->pluck('name'), // 获取所有权限名称数组
         ];
     }

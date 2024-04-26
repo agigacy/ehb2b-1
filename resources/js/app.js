@@ -19,6 +19,10 @@ Vue.use(Vuetify)
 //     return config;
 // });
 
+Vue.prototype.$userId = () => localStorage.getItem('user_id');
+Vue.prototype.$username = () => localStorage.getItem('username');
+
+
 const app = new Vue({
     el: '#app',
     router,

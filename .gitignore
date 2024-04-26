@@ -13,4 +13,5 @@ npm-debug.log
 yarn-error.log
 public/0.js
 public/1.js
+public/js/*
 public/js/app.js

@@ -10,7 +10,7 @@
               </v-list-item-action>
               <v-list-item-content>Dashboard</v-list-item-content>
             </v-list-item>
-            <v-list-item @click="currentPage = 'users'">
+            <v-list-item v-if="canViewUser" @click="currentPage = 'users'">
               <v-list-item-action>
                 <v-icon>mdi-account-multiple</v-icon>
               </v-list-item-action>
@@ -22,11 +22,23 @@
               </v-list-item-action>
               <v-list-item-content>Agents</v-list-item-content>
             </v-list-item> -->
-            <v-list-item @click="currentPage = 'groups'">
+            <v-list-item v-if="canViewGroup" @click="currentPage = 'groups'">
               <v-list-item-action>
                 <v-icon>mdi-account-group</v-icon>
               </v-list-item-action>
               <v-list-item-content>Groups</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="currentPage = 'roles'">
+              <v-list-item-action>
+                <v-icon>mdi-account-key</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>Roles</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="currentPage = 'permissions'">
+              <v-list-item-action>
+                <v-icon>mdi-key</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>Permissions</v-list-item-content>
             </v-list-item>
             <!-- Add more items here -->
           </v-list>
@@ -36,6 +48,16 @@
         <v-card v-if="currentPage === 'dashboard'">
           <v-card-title>Dashboard</v-card-title>
           <v-card-text>
+            <v-row>
+              <v-col>
+                User ID: {{ $userId() }}
+              </v-col>
+              <v-col>
+                Username: {{ $username() }}
+              </v-col>
+            </v-row>
+         
+
             <v-row>
               <v-col cols="12" sm="6" md="4">
                 <!-- Grid 1 content here -->
@@ -124,17 +146,17 @@
                 {{ item.roles?.map(role => role.name).join(', ') }}
               </template>
               <template v-slot:item.actions="{ item }">
-                <v-btn small color="blue darken-1" text @click="showEditUserPage(item)">
+                <v-btn v-if="canEditAdminPage || canEditUser" small color="blue darken-1" text @click="showEditUserPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
-                <v-btn small color="red darken-1" text @click="startDeletingUser(item)">
+                <v-btn v-if="canDeleteAdminPage || canDeleteUser" small color="red darken-1" text @click="startDeletingUser(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
               </template>
             </v-data-table>
-            <v-btn @click="currentPage = 'addUser'">Add User</v-btn>
+            <v-btn v-if="canCreateAdminPage || canCreateUser" @click="currentPage = 'addUser'">Add User</v-btn>
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'addUser'">
@@ -300,17 +322,17 @@
                 <v-switch disabled :input-value="item.tier3"></v-switch>
               </template>
               <template v-slot:item.actions="{ item }">
-                <v-btn small color="blue darken-1" text @click="showEditGroupPage(item)">
+                <v-btn v-if="canEditAdminPage || canEditGroup" small color="blue darken-1" text @click="showEditGroupPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
-                <v-btn small color="red darken-1" text @click="startDeletingGroup(item)">
+                <v-btn v-if="canDeleteAdminPage || canDeleteGroup" small color="red darken-1" text @click="startDeletingGroup(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
               </template>
             </v-data-table>
-            <v-btn @click="currentPage = 'addGroup'">Add Group</v-btn>
+            <v-btn v-if="canCreateAdminPage || canCreateGroup" @click="currentPage = 'addGroup'">Add Group</v-btn>
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'addGroup'">
@@ -359,6 +381,67 @@
               <v-btn @click="currentPage = 'groups'">Cancel</v-btn>
               <v-btn type="submit">Save</v-btn>
             </v-form>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'roles'">
+          <v-card-title>Roles</v-card-title>
+          <v-card-text>
+            <v-data-table :headers="roleHeaders" :items="roles" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
+              <template v-slot:item.index="{ index }">
+                {{ index + 1 }}
+              </template>
+              <template v-slot:item.actions="{ item }">
+                <v-btn small color="blue darken-1" text @click="showEditRolePage(item)">
+                  <v-icon small>mdi-pencil</v-icon>
+                  Edit
+                </v-btn>
+                <v-btn small color="red darken-1" text @click="startDeletingRole(item)">
+                  <v-icon small>mdi-delete</v-icon>
+                  Delete
+                </v-btn>
+              </template>
+            </v-data-table>
+            <v-btn @click="currentPage = 'addRole'">Add Role</v-btn>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'addRole'">
+          <v-card-title>Add Role</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="addRole">
+              <v-text-field label="Name" type="text" v-model="newRole.name" required></v-text-field>
+              <v-btn @click="currentPage = 'roles'">Back</v-btn>
+              <v-btn type="submit">Add Role</v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'editRole'">
+          <v-card-title>Edit Role</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="editRole">
+              <v-text-field label="Name" type="text" v-model="editingRole.name" required></v-text-field>
+              <v-btn @click="currentPage = 'roles'">Cancel</v-btn>
+              <v-btn type="submit">Save</v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'permissions'">
+          <v-card-title>Permissions</v-card-title>
+          <v-card-text>
+            <v-data-table
+              :headers="permissionHeaders"
+              :items="permissions"
+              :items-per-page="5"
+              class="elevation-1"
+            >
+              <template v-slot:item.actions="{ item }">
+                <v-btn small color="blue darken-1" text @click="assignPermissionToUser(item.id)" :disabled="!selectedUser">
+                  Assign to User
+                </v-btn>
+                <v-btn small color="green darken-1" text @click="assignPermissionToRole(item.id)" :disabled="!selectedRole">
+                  Assign to Role
+                </v-btn>
+              </template>
+            </v-data-table>
           </v-card-text>
         </v-card>
         <v-dialog v-model="confirmDelete" max-width="500px">
@@ -417,6 +500,22 @@ export default {
         { text: 'Tier 3', value: 'tier3' },
         { text: 'Actions', value: 'actions' },
       ],
+      roleHeaders: [
+        { text: 'No', value: 'index' },
+        { text: 'Name', value: 'name' },
+        { text: 'Actions', value: 'actions' },
+      ],
+      newRole: {
+        name: '',
+      },
+      editingRole: null,
+      selectedUser: null,
+      selectedRole: null,
+      permissions: [], // 确保这里填充了你的权限数据
+      permissionHeaders: [
+        { text: 'Permission Name', value: 'name' },
+        { text: 'Actions', value: 'actions', sortable: false },
+      ],
       newGroup: {
         name: '',
         sp: false,
@@ -454,10 +553,83 @@ export default {
     // this.getGroups();
     this.getRoles();
     // this.loadData();
+    this.getPermissions();
    
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+  },
+  computed: {
+    // 判断用户是否有 admin_page_view 权限
+    canCreateAdminPage() {
+    const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+    const hasCreatePermission = permissions.includes('admin_page_create');
+    console.log("Can create admin page:", hasCreatePermission); // 输出是否有权限
+    return hasCreatePermission;
+    },
+    canEditAdminPage() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasEditPermission = permissions.includes('admin_page_edit');
+      console.log("Can edit admin page:", hasEditPermission); // 输出是否有权限
+      return hasEditPermission;
+    },
+    canDeleteAdminPage() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasDeletePermission = permissions.includes('admin_page_delete');
+      console.log("Can delete admin page:", hasDeletePermission); // 输出是否有权限
+      return hasDeletePermission;
+    },
+    canViewUser() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasViewUserPermission = permissions.includes('user_view');
+      console.log("Can view user:", hasViewUserPermission); // 输出是否有权限
+      return hasViewUserPermission;
+    },
+    canCreateUser() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasCreateUserPermission = permissions.includes('user_create');
+      console.log("Can create user:", hasCreateUserPermission); // 输出是否有权限
+      return hasCreateUserPermission;
+    },
+    canEditUser() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasEditUserPermission = permissions.includes('user_edit');
+      console.log("Can edit user:", hasEditUserPermission); // 输出是否有权限
+      return hasEditUserPermission;
+    },
+    canDeleteUser() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasDeleteUserPermission = permissions.includes('user_delete');
+      console.log("Can delete user:", hasDeleteUserPermission); // 输出是否有权限
+      return hasDeleteUserPermission;
+    },
+    canViewGroup() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasViewGroupPermission = permissions.includes('group_view');
+      console.log("Can view group:", hasViewGroupPermission); // 输出是否有权限
+      return hasViewGroupPermission;
+    },
+    canCreateGroup() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasCreateGroupPermission = permissions.includes('group_create');
+      console.log("Can create group:", hasCreateGroupPermission); // 输出是否有权限
+      return hasCreateGroupPermission;
+    },
+    canEditGroup() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasEditGroupPermission = permissions.includes('group_edit');
+      console.log("Can edit group:", hasEditGroupPermission); // 输出是否有权限
+      return hasEditGroupPermission;
+    },
+    canDeleteGroup() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasDeleteGroupPermission = permissions.includes('group_delete');
+      console.log("Can delete group:", hasDeleteGroupPermission); // 输出是否有权限
+      return hasDeleteGroupPermission;
+    },
+    // userId() {
+    //   return localStorage.getItem('user_id');
+    // }
   },
   methods: {
   //   loadData() {
@@ -483,7 +655,7 @@ export default {
     getUsers() {
       axios.get('/api/users')
       .then(response => {
-        this.users = response.data;
+        this.users = response.data.data;
         // this.userCount = response.data.length;
       })
       .catch(error => {
@@ -686,7 +858,84 @@ export default {
         console.log(error);
       });
     },
-
+    showRolesPage() {
+      this.currentPage = 'roles';
+    },
+    showAddRolePage() {
+      this.currentPage = 'addRole';
+    },
+    showEditRolePage(role) {
+      this.editingRole = Object.assign({}, role);
+      this.currentPage = 'editRole';
+    },
+    editRole() {
+      const roleData = {
+        ...this.editingRole,
+        guard_name: 'web'
+      };
+      axios.put(`/api/roles/${this.editingRole.id}`, roleData)
+      .then(response => {
+        console.log(response.data);
+        this.currentPage = 'roles';
+        this.getRoles();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
+    addRole() {
+      const roleData = {
+          ...this.newRole,
+          guard_name: 'web'  // 添加 guard_name 属性
+        };
+      axios.post('/api/roles', roleData)
+      .then(response => {
+        console.log(response.data);
+        this.currentPage = 'roles';
+        this.getRoles();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
+    assignPermissionToUser(permissionId) {
+      if (!this.selectedUser) {
+        alert('Please select a user.');
+        return;
+      }
+      // 发送请求到后端 API，为用户分配权限
+      axios.post(`/api/users/${this.selectedUser}/permissions`, { permissionId })
+        .then(() => {
+          alert('Permission assigned to user successfully.');
+        })
+        .catch(error => {
+          console.error('Error assigning permission to user:', error);
+        });
+    },
+    assignPermissionToRole(permissionId) {
+      if (!this.selectedRole) {
+        alert('Please select a role.');
+        return;
+      }
+      // 发送请求到后端 API，为角色分配权限
+      axios.post(`/api/roles/${this.selectedRole}/permissions`, { permissionId })
+        .then(() => {
+          alert('Permission assigned to role successfully.');
+        })
+        .catch(error => {
+          console.error('Error assigning permission to role:', error);
+        });
+    },
+    getPermissions() {
+      axios.get('/api/permissions')
+      
+        .then(response => {
+          this.permissions = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching permissions:', error);
+        });
+    },
 
     confirmDeleteItem() {
       if (this.currentPage === 'users') {

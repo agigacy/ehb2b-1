@@ -56,13 +56,21 @@ export default {
   },
   computed: {
     // 判断用户是否有 admin_page_view 权限
+    // userId() {
+    //   return localStorage.getItem('user_id');
+    // },
+    // username() {
+    //   return localStorage.getItem('username');
+    // },
     canViewAdminPage() {
     const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
     const userid = JSON.parse(localStorage.getItem('user_id') || '[]');
+    const username = localStorage.getItem('username')
     console.log("Permissions from localStorage:", permissions); // 输出权限数据
     const hasPermission = permissions.includes('admin_page_view');
     console.log("Can view admin page:", hasPermission); // 输出是否有权限
     console.log("User ID" , userid)
+    console.log("User Name" , username)
     return hasPermission;
     
   }
@@ -103,4 +111,5 @@ export default {
 .custom-toolbar {
   max-height: 70px;
 }
+
 </style>

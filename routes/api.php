@@ -32,4 +32,5 @@ Route::middleware('auth:sanctum')->apiResource('/bookings', 'App\Http\Controller
 // Route::apiResource('/bookings', 'App\Http\Controllers\Api\BookingController');
 Route::middleware('auth:sanctum')->apiResource('/passengers', 'App\Http\Controllers\Api\PassengerController');
 Route::post('/send-message', 'App\Http\Controllers\Api\MessageController@sendMessage');
+Route::middleware('auth:sanctum')->apiResource('/permissions', 'App\Http\Controllers\Api\PermissionController');
 

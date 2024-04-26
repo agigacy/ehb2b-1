@@ -19,13 +19,13 @@ class UserSeeder extends Seeder
             [
             'id' => '1',
             'name' => 'cy',
-            'email' => 'cy@thebenz.com.my',
+            'email' => 'cy@thebeanz.com.my',
             'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
             ],
             [
             'id' => '2',
             'name' => 'antoney',
-            'email' => 'antoney@thebenz.com.my',
+            'email' => 'antoney@thebeanz.com.my',
             'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
             ],
         ]);
