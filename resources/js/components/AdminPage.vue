@@ -51,14 +51,14 @@
         <v-card v-if="currentPage === 'dashboard'">
           <v-card-title>Dashboard</v-card-title>
           <v-card-text>
-            <v-row>
+            <!-- <v-row>
               <v-col>
                 User ID: {{ $userId() }}
               </v-col>
               <v-col>
                 Username: {{ $username() }}
               </v-col>
-            </v-row>
+            </v-row> -->
          
 
             <v-row>
@@ -325,6 +325,21 @@
                   <v-switch label="Tier 3" v-model="newGroup.tier3" @change="handleAddTier3Change"></v-switch>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-text-field label="SSM Number" type="text" v-model="newGroup.ssm_number" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Address" type="text" v-model="newGroup.address" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Phone" type="text" v-model="newGroup.phone" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Email" type="text" v-model="newGroup.email" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Website" type="text" v-model="newGroup.website" required></v-text-field>
+              </v-row>
               <v-btn @click="currentPage = 'groups'">Back</v-btn>
               <v-btn type="submit">Add Group</v-btn>
             </v-form>
@@ -348,6 +363,21 @@
                 <v-col cols="3">
                   <v-switch label="Tier 3" v-model="editingGroup.tier3" @change="handleTier3Change"></v-switch>
                 </v-col>
+              </v-row>
+              <v-row>
+                <v-text-field label="SSM Number" type="text" v-model="editingGroup.ssm_number" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Address" type="text" v-model="editingGroup.address" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Phone" type="text" v-model="editingGroup.phone" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Email" type="text" v-model="editingGroup.email" required></v-text-field>
+              </v-row>
+              <v-row>
+                <v-text-field label="Website" type="text" v-model="editingGroup.website" required></v-text-field>
               </v-row>
               <v-btn @click="currentPage = 'groups'">Cancel</v-btn>
               <v-btn type="submit">Save</v-btn>
@@ -524,8 +554,16 @@ export default {
     this.getUsers();
     this.getGroups().then(() => {
       this.groupSeries = this.groups.map(group => group.users_count);
-      this.groupChartOptions.labels = this.groups.map(group => group.name);
-      this.groupChartOptions2.labels = this.groups.filter(group => group.sp === 1).map(group => group.name);
+      // this.groupChartOptions.labels = this.groups.map(group => group.name);
+      // this.groupChartOptions2.labels = this.groups.filter(group => group.sp === 1).map(group => group.name);
+      this.groupChartOptions2.labels = [...new Set(this.groups.map(group => {
+        const tour = this.groups.find(group => group.id === group.name);        
+        return group ? group.name.slice(0, 10) + '..' : '';
+      }))];
+      this.groupChartOptions.labels = [...new Set(this.groups.map(group => {
+        const tour = this.groups.find(group => group.id === group.name);        
+        return group ? group.name.slice(0, 10) + '..' : '';
+      }))];
       this.groupDataLoaded = true;
     });
     // this.getGroups();
@@ -633,7 +671,7 @@ export default {
     getUsers() {
       axios.get('/api/users')
       .then(response => {
-        this.users = response.data.data;
+        this.users = response.data;
         // this.userCount = response.data.length;
       })
       .catch(error => {

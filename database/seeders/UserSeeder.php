@@ -28,6 +28,36 @@ class UserSeeder extends Seeder
             'email' => 'antoney@thebeanz.com.my',
             'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
             ],
+            [
+            'id' => '3',
+            'name' => 'mlchan',
+            'email' => 'mlchan@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
+            [
+            'id' => '4',
+            'name' => 'ian',
+            'email' => 'ian@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
+            [
+            'id' => '5',
+            'name' => 'john',
+            'email' => 'john@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
+            [
+            'id' => '6',
+            'name' => 'jane',
+            'email' => 'jane@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
+            [
+            'id' => '7',
+            'name' => 'mike',
+            'email' => 'mike@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
         ]);
     }
 }

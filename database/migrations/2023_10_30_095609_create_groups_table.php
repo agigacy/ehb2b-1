@@ -16,6 +16,11 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('ssm_number')->nullable();
+            $table->string('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('website')->nullable();
             $table->boolean('sp')->nullable();;
             $table->boolean('tier1')->nullable();;
             $table->boolean('tier2')->nullable();;

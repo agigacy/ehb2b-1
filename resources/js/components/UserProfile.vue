@@ -17,12 +17,24 @@
         <v-card v-if="currentPage === 'users'">
           <v-card-title>My Profile Details</v-card-title>
           <v-card-text>
-            <div>Name: {{ editingUser.name }}</div>
-            <div>Email: {{ editingUser.email }}</div>
-            <div>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</div>
-            <div>Groups: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
+            <v-row>
+              <v-col cols="6">
+                <v-col>Name: {{ editingUser.name }}</v-col>
+                <v-col>Email: {{ editingUser.email }}</v-col>
+                <v-col>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</v-col>
+              </v-col>
+              <v-col cols="6">
+                <div>Group Information</div>
+                <div>Group Name: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
+                <div>SSM Number: {{ editingUser.groups.map(group => group.ssm_number).join(', ') }}</div>
+                <div>Address: {{ editingUser.groups.map(group => group.address).join(', ') }}</div>
+                <div>Phone: {{ editingUser.groups.map(group => group.phone).join(', ') }}</div>
+                <div>Email: {{ editingUser.groups.map(group => group.email).join(', ') }}</div>
+                <div>Website: {{ editingUser.groups.map(group => group.website).join(', ') }}</div>
+              </v-col>
+            </v-row>
           </v-card-text>
-          <v-btn @click="currentPage = 'editUser'">Edit</v-btn>
+          <v-btn @click="currentPage = 'editUser'">Edit Profile</v-btn>
         </v-card>
         <v-card v-if="currentPage === 'editUser'">
           <v-card-title>Edit User</v-card-title>
@@ -52,7 +64,11 @@
         password: '',
         currentPage: 'users', // 'users', 'addUser', 'editUser', 'groups', 'addGroup', 'editGroup'
         searchUser: '',
-        editingUser: null,
+        editingUser: {
+          name: '',
+          email: '',
+          password: '',
+        },
         users: [],
       }
     },
@@ -90,7 +106,7 @@
         if (this.editingUser.password) {
           userData.password = this.editingUser.password;
         }
-        axios.put(`/api/users/${this.editingUser.id}`, userData)
+        axios.put(`/api/users/current/${this.editingUser.id}`, userData)
         .then(response => {
           console.log(response.data);
           this.currentPage = 'users';

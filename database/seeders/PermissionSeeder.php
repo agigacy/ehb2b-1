@@ -33,6 +33,13 @@ class PermissionSeeder extends Seeder
          Permission::create(['name' => 'group_create']);
          Permission::create(['name' => 'group_edit']);
          Permission::create(['name' => 'group_delete']);
+         Permission::create(['name' => 'role_view']);
+         Permission::create(['name' => 'role_create']);
+         Permission::create(['name' => 'role_edit']);
+         Permission::create(['name' => 'role_delete']);
+         Permission::create(['name' => 'permission_view']);
+         Permission::create(['name' => 'permission_edit']);
+         Permission::create(['name' => 'permission_assign']);
          Permission::create(['name' => 'country_view']);
          Permission::create(['name' => 'country_create']);
          Permission::create(['name' => 'country_edit']);
@@ -76,8 +83,18 @@ class PermissionSeeder extends Seeder
          
          $user1 = User::find(1);
          $user2 = User::find(2);
+         $user3 = User::find(3);
+         $user4 = User::find(4);
+         $user5 = User::find(5);
+         $user6 = User::find(6);
+         $user7 = User::find(7);
          $user1->assignRole('super-admin');
          $user2->assignRole('super-admin');
+         $user3->assignRole('super-admin');
+         $user4->assignRole('super-admin');
+         $user5->assignRole('admin');
+         $user6->assignRole('staff');
+         $user7->assignRole('agent');
         //  $user->givePermissionTo($role);
     }
 }

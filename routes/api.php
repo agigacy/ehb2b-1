@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->post('/register', 'App\Http\Controllers\Api\U
 // Route::post('/register', 'App\Http\Controllers\AuthController@register');
 // Route::middleware('auth:sanctum')->post('/logout', 'App\Http\Controllers\AuthController@logout');
 Route::middleware('auth:sanctum')->apiResource('/users', 'App\Http\Controllers\Api\UserController');
+Route::middleware('auth:sanctum')->put('/users/current/{id}', 'App\Http\Controllers\Api\UserController@updateCurrentUser');
 Route::middleware('auth:sanctum')->apiResource('/groups', 'App\Http\Controllers\Api\GroupController');
 Route::middleware('auth:sanctum')->apiResource('/roles', 'App\Http\Controllers\Api\RoleController');
 Route::middleware('auth:sanctum')->apiResource('/countries', 'App\Http\Controllers\Api\CountryController');

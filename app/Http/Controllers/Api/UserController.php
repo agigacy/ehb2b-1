@@ -76,7 +76,8 @@ class UserController extends Controller
         if ($request->has('roles')) {
             $user->roles()->sync($request->roles);
         }
-        return response()->json($user, 200);
+        // return response()->json($user, 200);
+        return new UserResource($user);
     }
 
     /**
@@ -137,6 +138,19 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->groups()->detach($request->groups);
         return response()->json($user->groups, 200);
+    }
+    public function updateCurrentUser(Request $request, $id)
+    {
+        // $user = User::findOrFail($id);
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->has('password')) {
+            $input['password'] = Hash::make($request->password);
+        }
+        $user->save();
+        // return response()->json($user, 200);
+        return new UserResource($user);
     }
 
 
