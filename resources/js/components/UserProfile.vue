@@ -17,12 +17,12 @@
         <v-card v-if="currentPage === 'users'">
           <v-card-title>My Profile Details</v-card-title>
           <v-card-text>
-            <div>Name: {{ editingUser.name }}</div>
-            <div>Email: {{ editingUser.email }}</div>
-            <div>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</div>
-            <div>Groups: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
+            <p>Name: {{ editingUser.name }}</p>
+            <p>Email: {{ editingUser.email }}</p>
+            <p>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</p>
+            <p>Groups: {{ editingUser.groups.map(group => group.name).join(', ') }}</p>
           </v-card-text>
-          <v-btn @click="currentPage = 'editUser'">Edit</v-btn>
+          <v-btn class="m-2" color="primary" @click="currentPage = 'editUser'">Edit My Details</v-btn>
         </v-card>
         <v-card v-if="currentPage === 'editUser'">
           <v-card-title>Edit User</v-card-title>
@@ -32,7 +32,7 @@
               <v-text-field label="Email" type="email" v-model="editingUser.email" required></v-text-field>
               <v-text-field label="Password" type="password" v-model="editingUser.password" required></v-text-field>
               <v-btn @click="currentPage = 'users'">Cancel</v-btn>
-              <v-btn type="submit">Save</v-btn>
+              <v-btn type="submit" color="primary" >Save</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
