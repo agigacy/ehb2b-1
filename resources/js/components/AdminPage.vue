@@ -33,13 +33,15 @@
             </v-list-item>
             <v-list-item @click="currentPage = 'roles'">
               <v-list-item-action>
-                <v-icon>mdi-account-key</v-icon>
+                <!-- <v-icon>mdi-account-key</v-icon> -->
+                <span class="material-symbols-outlined">rule </span>
               </v-list-item-action>
               <v-list-item-content>Roles</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'permissions'">
               <v-list-item-action>
-                <v-icon>mdi-key</v-icon>
+                <!-- <v-icon>mdi-key</v-icon> -->
+                <span class="material-symbols-outlined">manage_accounts </span>
               </v-list-item-action>
               <v-list-item-content>Permissions</v-list-item-content>
             </v-list-item>

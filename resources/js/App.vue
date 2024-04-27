@@ -6,7 +6,7 @@
         <router-link target="_self"
           to="/"
           >
-          <img src="/images/esplanad-logo-small.png" class="mt-4" style="height: 50px;" /> <small>B2B 1.0</small>
+          <img src="/images/esplanad-logo-small.png" class="mt-4 mx-4" style="height: 50px;" /> <small>B2B 1.0</small>
         </router-link>                            
       </v-toolbar-title>
       <v-spacer></v-spacer>

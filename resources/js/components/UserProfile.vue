@@ -34,7 +34,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-btn @click="currentPage = 'editUser'">Edit Profile</v-btn>
+          <v-btn class="m-2" color="primary" @click="currentPage = 'editUser'">Edit My Details</v-btn>
         </v-card>
         <v-card v-if="currentPage === 'editUser'">
           <v-card-title>Edit User</v-card-title>
@@ -44,7 +44,7 @@
               <v-text-field label="Email" type="email" v-model="editingUser.email" required></v-text-field>
               <v-text-field label="Password" type="password" v-model="editingUser.password" required></v-text-field>
               <v-btn @click="currentPage = 'users'">Cancel</v-btn>
-              <v-btn type="submit">Save</v-btn>
+              <v-btn type="submit" color="primary" >Save</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
