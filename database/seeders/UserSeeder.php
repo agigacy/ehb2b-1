@@ -58,6 +58,24 @@ class UserSeeder extends Seeder
             'email' => 'mike@thebeanz.com.my',
             'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
             ],
+            [
+            'id' => '8',
+            'name' => 'johnson',
+            'email' => 'johnson@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
+            [
+            'id' => '9',
+            'name' => 'davis',
+            'email' => 'davis@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ],
+            [
+            'id' => '10',
+            'name' => 'taylor',
+            'email' => 'taylor@thebeanz.com.my',
+            'password' => '$2y$10$6n9xLvBgqTEZg61IXIp1AOEFc6czyR4nE8Qu7nNZVJKt3QVFHLi4y',
+            ]
         ]);
     }
 }
