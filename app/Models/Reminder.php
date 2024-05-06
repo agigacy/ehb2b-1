@@ -11,6 +11,11 @@ class Reminder extends Model
 
     protected $fillable = ['flight_ticket_id','booking_id','user_id','date','before','title','info'];
 
+    protected $casts = [
+        'before' => 'integer',
+        // other casts...
+    ];
+
     public function flight_ticket()
     {
         return $this->belongsTo(FlightTicket::class, 'flight_ticket_id');

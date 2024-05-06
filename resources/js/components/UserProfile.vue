@@ -14,7 +14,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="9">
-        <v-card v-if="currentPage === 'users'">
+        <v-card v-if="currentPage === 'users'" class="mb-4">
           <v-card-title>My Profile Details</v-card-title>
           <v-card-text>
             <v-row>
@@ -34,18 +34,23 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-btn class="m-2" color="primary" @click="currentPage = 'editUser'">Edit My Details</v-btn>
+          <v-btn class="ml-4" color="primary" @click="currentPage = 'editUser'">Edit My Details</v-btn>
+          <br />
+          <br />
         </v-card>
-        <v-card v-if="currentPage === 'editUser'">
+        <v-card v-if="currentPage === 'editUser'" class="mb-4">
           <v-card-title>Edit User</v-card-title>
           <v-card-text>
             <v-form @submit.prevent="editUser">
               <v-text-field label="Name" type="text" v-model="editingUser.name" required></v-text-field>
               <v-text-field label="Email" type="email" v-model="editingUser.email" required></v-text-field>
               <v-text-field label="Password" type="password" v-model="editingUser.password" required></v-text-field>
-              <v-btn @click="currentPage = 'users'">Cancel</v-btn>
-              <v-btn type="submit" color="primary" >Save</v-btn>
+              <br />
+              <v-btn @click="currentPage = 'users'" class="ml-2">Cancel</v-btn>
+              <v-btn type="submit" color="primary" class="ml-4">Save</v-btn>
             </v-form>
+            <br />
+            <br />
           </v-card-text>
         </v-card>
       </v-col>

@@ -22,9 +22,11 @@ class CreateRemindersTable extends Migration
             $table->unsignedBigInteger('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->dateTime('date');
-            $table->dateTime('before');
-            $table->dateTime('title');
-            $table->dateTime('info');
+            $table->dateTime('stopped_at');
+            // $table->dateTime('before'); // Antoney changed
+            $table->integer('before');
+            $table->string('title');
+            $table->string('info');
             $table->timestamps();
         });
     }

@@ -10,6 +10,7 @@ import ReportPage from './components/ReportPage.vue'
 // import RegisterPage from './components/RegisterPage.vue'
 import Home from './components/Home.vue'
 import NotificationComponent from './components/NotificationComponent.vue'
+import ReminderComponent from './components/ReminderPage.vue'
 import UserProfile from './components/UserProfile.vue'
 
 Vue.use(VueRouter)
@@ -25,6 +26,7 @@ const routes = [
   // { path: '/register', component: RegisterPage },
   { path: '/', component: Home },
   { path: '/notification', component: NotificationComponent },
+  { path: '/reminder', component: ReminderComponent },
   { path: '/userprofile', component: UserProfile },
   {
     path: '/tours/:id',

@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\SendFirstPaymentReminder::class,
     ];
 
     /**
@@ -25,6 +25,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('reminder:send-payment')
+            ->everyMinute();
+            //  ->dailyAt('9:00');
+            //  ->everyFiveMinutes();
     }
 
     /**

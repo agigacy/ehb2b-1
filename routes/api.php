@@ -35,3 +35,6 @@ Route::middleware('auth:sanctum')->apiResource('/passengers', 'App\Http\Controll
 Route::post('/send-message', 'App\Http\Controllers\Api\MessageController@sendMessage');
 Route::middleware('auth:sanctum')->apiResource('/permissions', 'App\Http\Controllers\Api\PermissionController');
 
+// Anton working Reminder Controller
+Route::middleware('auth:sanctum')->apiResource('/reminders', 'App\Http\Controllers\Api\ReminderController');
+

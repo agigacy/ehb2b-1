@@ -78,8 +78,15 @@
               <template v-slot:item.tour_id="{ item }">
                 {{ item.tour.package_name }}
               </template>
+              <template v-slot:item.pax="{ item }">
+                <!-- {{ item.tour.user_id }} -->
+                {{ item.total / item.tour.tier1 }}
+              </template>
               <template v-slot:item.user_id="{ item }">
                 {{ item.user.name }}
+              </template>
+              <template v-slot:item.total="{ item }">
+                {{ item.total.toFixed(2) }}
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn small color="blue darken-1" text @click="showBookingDetails(item)">
@@ -103,9 +110,9 @@
           <v-card-title v-if="currentBooking && currentBooking.user">{{ currentBooking.user.name }}'s Booking</v-card-title>
           <v-card-text v-if="currentBooking">
             <p>Tour: {{ currentBooking.tour.package_name }}</p>
-            <p>Date: {{ currentBooking.date }}</p>
-            <p>Total: {{ currentBooking.total }}</p>
-            <h3>Passengers:</h3>
+            <p>Travel Date: {{ currentBooking.date }}</p>
+            <p>Total Amount: RM {{ currentBooking.total.toFixed(2) }}</p>
+            <h3>Passenger(s):</h3>
             <v-data-table :headers="passengerHeaders" :items="currentBooking.passengers" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
             <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
@@ -241,9 +248,10 @@ export default {
       bookingHeaders: [
         { text: 'No', value: 'index' },
         { text: 'Tour', value: 'tour_id' },
-        { text: 'User', value: 'user_id' },
+        { text: 'PAX (tempo)', value: 'pax' },
+        { text: 'User/Agent', value: 'user_id' },
         { text: 'Date', value: 'date' },
-        { text: 'Total', value: 'total' },
+        { text: 'Total (RM)', value: 'total' },
         { text: 'Actions', value: 'actions' },
       ],
       passengerHeaders: [

@@ -6,7 +6,7 @@
         <router-link target="_self"
           to="/"
           >
-          <img src="/images/esplanad-logo-small.png" class="mt-4 mx-4" style="height: 50px;" /> <small>B2B 1.0</small>
+          <img src="/images/esplanad-logo-small.png" class="mt-4 mx-4" style="height: 50px;" />
         </router-link>                            
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -19,14 +19,40 @@
         <v-btn text to="/agent" v-if="isLoggedIn">Agent</v-btn>
         <v-btn text to="/login" v-if="!isLoggedIn">Login</v-btn>
         <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> <h6> {{ $username() }} ({{ $userId() }})</h6></v-btn>
-        <v-btn text to="/notification" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Notification</v-btn>
+        <v-btn text to="/notification" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Notification(s)</v-btn>
+        <v-btn text to="/reminder" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Reminder(s)</v-btn>
+        <v-btn text @click="toggleDropdown" v-if="isLoggedIn"> <!-- Add click event to toggle dropdown -->
+          <v-menu v-model="dropdown" :close-on-content-click="false" offset-y>
+              <template v-slot:activator="{ on }">
+                  <span v-on="on" title="Notification">
+                      <!-- <center><span class="material-symbols-outlined btn btn-info btn-md p-2">sms</span></center> -->
+                      <center><span class="material-symbols-outlined btn btn-info btn-md p-2">sms</span></center>
+                  </span>
+              </template>
+              <v-list style="min-width: 240px;">
+                  <v-list-item @click="handleDropdownItemClick('Option 1')">Option 1</v-list-item> <!-- Replace 'Option 1' with your actual options -->
+                  <v-list-item @click="handleDropdownItemClick('Option 2')">Option 2</v-list-item> <!-- Replace 'Option 2' with your actual options -->
+                  <v-list-item @click="handleDropdownItemClick('Option 3')">Option 3</v-list-item> <!-- Replace 'Option 2' with your actual options -->
+                  <v-list-item @click="handleDropdownItemClick('Option 4')">Option 4</v-list-item> <!-- Replace 'Option 2' with your actual options -->
+                  <!-- Add more list items as needed -->
+              </v-list>
+          </v-menu>
+        </v-btn>
+        <!-- <div>
+          <div class="fontsearch mr-1 mt-2">                        
+              <button
+                  type="button"
+                  class="btn btn-info btn-md p-1"
+                  @click="showAlert"
+                  title="Notification"
+                  >
+                  <center><span class="material-symbols-outlined">sms</span></center>
+              </button>
+          </div>
+        </div> -->
+
         <v-btn text @click.prevent="logout" v-if="isLoggedIn">Logout</v-btn>
-        <div class="container-fluid w-100 p-0 control_top">
-            <!-- <notification-component class="w-100" v-if="!($route.path == '/timer') && !($route.path == '/test5')"></notification-component> -->
-            <!-- <notification-component class="w-100 mb-0"></notification-component> -->
-            <!-- <span class="material-icons mt-4">face</span> -->
-            <!-- <span class="material-icons">&#xE87C;</span> -->
-        </div>
+        
       </v-toolbar-items>
     </v-toolbar>
     <v-main>
@@ -41,7 +67,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      isLoggedIn: !!localStorage.getItem('token')
+      isLoggedIn: !!localStorage.getItem('token'),
+      dropdown: false
     }
   },
   created() {
@@ -78,23 +105,66 @@ export default {
   },
   methods: {
     logout() {
-      // Send a request to the logout API
-      axios.post('/api/auth/logout', {}, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-      .then(() => {
-        // Remove the token from localStorage
-        localStorage.removeItem('token');
+      if (confirm("Confirm to log out?")) {
+          // Send a request to the logout API
+          axios.post('/api/auth/logout', {}, {
+                  headers: {
+                      'Authorization': `Bearer ${localStorage.getItem('token')}`
+                  }
+              })
+              .then(() => {
+                  // Remove the token from localStorage
+                  localStorage.removeItem('token');
 
-        // Redirect to the login page
-        this.$router.push('/');
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    }
+                  // Redirect to the login page
+                  this.$router.push('/');
+              })
+              .catch(error => {
+                  console.log(error);
+              });
+      } else {
+          // User cancelled logout, do nothing
+          return false;
+      }
+  },
+    logout_OLD() {
+      if (confirm("Confirm to log out?")) {
+
+        // Send a request to the logout API
+        axios.post('/api/auth/logout', {}, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        .then(() => {
+          // Remove the token from localStorage
+          localStorage.removeItem('token');
+          
+          // Redirect to the login page
+          this.$router.push('/');
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      } else {
+        // User cancelled logout, do nothing
+        return false;
+      }
+    },
+
+    showAlert() {
+      alert("You clicked on the face!");
+    },
+    toggleDropdown() {
+        this.dropdown = !this.dropdown;
+    },
+    handleDropdownItemClick(option) {
+        // Handle click on dropdown items
+        console.log('Selected option:', option);
+        // Perform any necessary action here, like opening another page or executing a function
+        // You can close the dropdown here if needed
+        this.dropdown = false;
+    },
   },
   // mounted() {
   //   if (this.isLoggedIn) {

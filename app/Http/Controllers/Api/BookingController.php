@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Booking;
 use App\Models\Passenger;
+use App\Models\Reminder;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TourBookingConfirmation;
 
 class BookingController extends Controller
 {
@@ -29,7 +32,7 @@ class BookingController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function store(Request $request)
+    public function store(Request $request)
     {
         try {
             // Create Booking object with the main data
@@ -42,6 +45,17 @@ class BookingController extends Controller
                     $booking->passengers()->save($passenger);
                 }
             }
+            
+            // Create reminders - Antoney working
+            $this->createReminders($booking);
+
+            // Send email confirmation
+            Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));
+
+            // Send email confirmation
+            // Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));
+            // Mail::to('test@example.com')->send(new TourBookingConfirmation($booking));
+
 
             // Return response with booking data and loaded passengers
             return response()->json($booking->load('passengers'), 201);
@@ -51,6 +65,58 @@ class BookingController extends Controller
             return response()->json(['message' => 'Error creating booking'], 500);
         }
     }
+
+    // Antoney working for reminders - booking tour
+    private function createReminders($booking)
+    {
+        $reminders = [];
+
+        // Create the first reminder
+        $firstReminderDate = date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($booking->created_at)));
+        $reminderBeforeFlight = new Reminder([
+            'booking_id' => $booking->id,
+            'user_id' => $booking->user_id,
+            'date' => $firstReminderDate,
+            'before' => '90',
+            'title' => 'First Payment Reminder - Tour Booking',
+            'info' => 'Tour Booked Total Amount - ' . $booking->total,
+        ]);
+        $reminders[] = $reminderBeforeFlight;
+
+        // Create the second reminder
+        $secondReminderDate = date('Y-m-d H:i:s', strtotime('+2 weeks', strtotime($booking->created_at)));
+        $reminderBeforeTotal = new Reminder([
+            'booking_id' => $booking->id,
+            'user_id' => $booking->user_id,
+            'date' => $secondReminderDate,
+            'before' => '30',
+            'title' => 'Second Payment Reminder - Tour Booking',
+            'info' => 'Tour Booked Total Amount - ' . $booking->total,
+        ]);
+        $reminders[] = $reminderBeforeTotal;
+
+        // Insert each reminder individually
+        foreach ($reminders as $reminder) {
+            $reminder->save();
+        }
+
+
+        // $reminder = new Reminder([
+        //     // 'flight_ticket_id' => $booking->flight_ticket_id,
+        //     // 'flight_ticket_id' => $booking->tour_id,
+        //     'booking_id' => $booking->id,
+        //     'user_id' => $booking->user_id,
+        //     'date' => $booking->date,
+        //     // 'before' => 'Flight', // This indicates it's before the flight
+        //     'before' => '90', // This indicates it's before the flight
+        //     // Add other fields accordingly
+        //     'title' => 'First Payment Reminder - Tour Booking',
+        //     'info' => 'Tour Booked Total Amount - ' . $booking->total,
+        // ]);
+
+        // $reminder->save();
+    }
+
 
     public function CY_store(Request $request)
     {

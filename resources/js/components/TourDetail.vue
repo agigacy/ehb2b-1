@@ -1,7 +1,7 @@
 <template>
     <div v-if="tour">
       <v-row>
-        <v-col cols="8">
+        <v-col cols="8" class="mb-4">
           <v-card class="pl-4 pb-2">
             <v-card-title>{{ tour.package_name }}</v-card-title>
             <!-- Slider with tour dates and prices -->
@@ -46,33 +46,22 @@
             </div>
           </v-card>
           <br />
-        <v-btn class="ml-2" @click="bookTour">Book Now</v-btn>
+        <v-btn class="ml-4 mb-5 btn-lg" color="primary" @click="bookTour">Book Now</v-btn>
         </v-col>
         <v-col cols="4">
-          <!-- Summary -->
-          <!-- <v-card class="pl-4 pb-5" style="background-color: blanchedalmond;">
-            <v-card-title>Summary</v-card-title>
-            <div>Tour: <b>{{ tour.package_name }}</b></div>
-            <div>Code: <b>{{ tour.code }}</b></div>
-            <div>Departure Date: {{ tour.departure_date }}</div>
-            <div v-if="selectedQuantity < 0">Total Pax: {{ selectedQuantity }}</div>
-            <div v-if="selectedPrice">Price Per Pax: RM {{ selectedPrice.toFixed(2) }}</div>
-            <div v-if="total">Total Before Discount: RM {{ total.toFixed(2) }}</div>
-            <div v-if="discountedTotal">Total After Discount: <b>RM {{ discountedTotal.toFixed(2) }}</b></div>
-          </v-card> -->
-          <v-card class="pl-4 pb-5" style="background-color: blanchedalmond;">
+          <v-card class="pl-4 pb-5 fixed-summary" style="background-color: blanchedalmond;">
             <v-card-title>Summary</v-card-title>
             <div class="mb-2 pl-3">Tour: <b>{{ tour.package_name }}</b></div>
             <div class="mb-2 pl-3">Code: <b>{{ tour.code }}</b></div>
             <div class="mb-2 pl-3">Departure Date: {{ tour.departure_date }}</div>
-            <div class="summary-item pl-3" v-for="(value, key) in tourDetails" :key="key">
-              <div class="label">{{ key }}:</div>
-              <div class="value"><b>{{ value }}</b></div>
-            </div>
             <!-- Conditional rendering for specific fields -->
-            <div v-if="selectedQuantity >= 0" class="summary-item pl-3">
+            <div v-if="selectedQuantity >= 1" class="summary-item pl-3">
               <div class="label">Total Pax:</div>
               <div class="value"><b>{{ selectedQuantity }}</b></div>
+            </div>
+            <div v-if="!selectedQuantity" class="summary-item pl-3">
+              <div class="label"><b>Please Select Total Pax</b></div>
+              <!-- <div class="value"><b>{{ selectedQuantity }}</b></div> -->
             </div>
             <div v-if="selectedPrice" class="summary-item pl-3">
               <div class="label">Price Per Pax:</div>
@@ -258,6 +247,15 @@
       .value {
         flex: 1;
         text-align: left;
+      }
+
+      .fixed-summary {
+        position: fixed;
+        top: 100px;           /* Aligns to the top of the viewport */
+        right: 0;         /* Aligns to the right of the viewport */
+        width: 30%;       /* Adjust this based on your layout's needs */
+        height: 45vh;    /* Optional: Makes the card full viewport height */
+        overflow-y: auto; /* Adds scroll to the card if content overflows */
       }
 
   </style>

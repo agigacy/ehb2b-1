@@ -283,16 +283,16 @@
                 {{ index + 1 }}
               </template>
               <template v-slot:item.sp="{ item }">
-                <v-switch disabled :input-value="item.sp"></v-switch>
+                <v-switch disabled :input-value="item.sp" style="opacity: 0.7"></v-switch>
               </template>
               <template v-slot:item.tier1="{ item }">
-                <v-switch disabled :input-value="item.tier1"></v-switch>
+                <v-switch disabled :input-value="item.tier1" style="opacity: 0.7"></v-switch>
               </template>
               <template v-slot:item.tier2="{ item }">
-                <v-switch disabled :input-value="item.tier2"></v-switch>
+                <v-switch disabled :input-value="item.tier2" style="opacity: 0.7"></v-switch>
               </template>
               <template v-slot:item.tier3="{ item }">
-                <v-switch disabled :input-value="item.tier3"></v-switch>
+                <v-switch disabled :input-value="item.tier3" style="opacity: 0.7"></v-switch>
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn v-if="canEditAdminPage || canEditGroup" small color="blue darken-1" text @click="showEditGroupPage(item)">

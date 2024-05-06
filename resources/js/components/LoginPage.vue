@@ -6,7 +6,7 @@
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
             <v-card>
-              <v-card-title>Login</v-card-title>
+              <v-card-title>B2B Login <sup class="pl-2">v1.0.1</sup></v-card-title>
               <v-card-text>
                 <v-form @submit.prevent="login">
                   <v-text-field label="Email" type="email" v-model="email" required></v-text-field>
