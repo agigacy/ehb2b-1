@@ -28,29 +28,64 @@ class BookingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
-     public function store(Request $request)
+    public function store(Request $request)
     {
         try {
-            // Create Booking object with the main data
-            $booking = Booking::create($request->all());
+        $bookingData = $request->only(['tour_id', 'date', 'total', 'user_id', 'status']);
+        $booking = Booking::create($bookingData);
 
-            // Save passengers data
-            if ($request->has('passengers')) {
-                foreach ($request->passengers as $passengerData) {
-                    $passenger = new Passenger($passengerData);
-                    $booking->passengers()->save($passenger);
+        if ($request->has('passengers')) {
+            foreach ($request->passengers as $index => $passengerData) {
+                $passenger = new Passenger([
+                    'name' => $passengerData['name'],
+                    'passport' => $passengerData['passport'],
+                    'date_of_birth' => $passengerData['date_of_birth'],
+                    'designation' => $passengerData['designation'],
+                    'hp' => $passengerData['hp'],
+                    'remark' => $passengerData['remark'],
+                    // 确保其他字段也被正确处理
+                ]);
+                if ($request->hasFile("passengers.$index.passport_upload")) {
+                    $file = $request->file("passengers.$index.passport_upload");
+                    $path = $file->store('public/passports');
+                    $url = Storage::url($path);
+                    $passenger->passport_upload = $url;
                 }
+                $booking->passengers()->save($passenger);
             }
+        }
 
-            // Return response with booking data and loaded passengers
             return response()->json($booking->load('passengers'), 201);
+
         } catch (\Exception $e) {
-            // Log any exceptions that occur during the creation process
             \Log::error('Error creating booking:', ['error' => $e->getMessage()]);
-            return response()->json(['message' => 'Error creating booking'], 500);
+            return response()->json(['message' => 'Error creating booking', 'error' => $e->getMessage()], 500);
         }
     }
+
+
+    //  public function store(Request $request)
+    // {
+    //     try {
+    //         // Create Booking object with the main data
+    //         $booking = Booking::create($request->all());
+
+    //         // Save passengers data
+    //         if ($request->has('passengers')) {
+    //             foreach ($request->passengers as $passengerData) {
+    //                 $passenger = new Passenger($passengerData);
+    //                 $booking->passengers()->save($passenger);
+    //             }
+    //         }
+
+    //         // Return response with booking data and loaded passengers
+    //         return response()->json($booking->load('passengers'), 201);
+    //     } catch (\Exception $e) {
+    //         // Log any exceptions that occur during the creation process
+    //         \Log::error('Error creating booking:', ['error' => $e->getMessage()]);
+    //         return response()->json(['message' => 'Error creating booking'], 500);
+    //     }
+    // }
 
     public function CY_store(Request $request)
     {

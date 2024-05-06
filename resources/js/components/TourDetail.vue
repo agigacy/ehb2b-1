@@ -3,6 +3,7 @@
       <v-row>
         <v-col cols="8">
           <v-card class="pl-4 pb-2">
+            <v-btn @click="$router.back()">back</v-btn>
             <v-card-title>{{ tour.package_name }}</v-card-title>
             <!-- Slider with tour dates and prices -->
             <!-- <v-slider v-model="selectedDate" :items="tour.dates" item-text="date" item-value="price"></v-slider> -->
@@ -42,7 +43,7 @@
               <v-text-field label="Date of Birth" style="max-width: 300px;" v-model="detail.dateOfBirth" type="date"></v-text-field>
               <v-text-field label="HP Number" v-model="detail.hp"></v-text-field>
               <v-textarea label="Remark" v-model="detail.remark"></v-textarea>
-              <v-file-input label="Passport Upload" v-model="detail.passportUpload" @change="onFileChange" accept="image/*"></v-file-input>
+              <v-file-input label="Passport Upload" @change="file => onFileChange(file, index)" accept="image/*"></v-file-input>
             </div>
           </v-card>
           <br />
@@ -114,9 +115,9 @@
           hp: '',
           passport: '',
           remark: '',
-          passportUpload: ''
-        }
-
+          passport_upload: ''
+        },
+        tourDetails: null,
       };
     },
     methods: {
@@ -150,7 +151,7 @@
             this.passengerDetails.push({
               name: '',
               passport: '',
-              passportUpload: null,
+              passport_upload: '',
               designation: '',
               dateOfBirth: '',
               hp: '',
@@ -161,9 +162,17 @@
           this.passengerDetails = this.passengerDetails.slice(0, this.selectedQuantity);
         }
       },
+      onFileChange(file, index) {
+        console.log("Received file:", file);  // 打印接收到的文件
+          if (file) {
+              this.passengerDetails[index].passport_upload = file;
+          } else {  
+              this.passengerDetails[index].passport_upload = '';
+          }
+      },
       bookTour_working(){
+        // console.log("Passenger details before submitting:", this.passengerDetails);
         const formData = new FormData();
-        formData.append('passportUpload', this.detail.passportUpload);
 
         // Append other booking data to the FormData object
         formData.append('tour_id', this.tour.id);
@@ -180,8 +189,11 @@
             formData.append(`passengers[${index}][designation]`, detail.designation);
             formData.append(`passengers[${index}][hp]`, detail.hp);
             formData.append(`passengers[${index}][remark]`, detail.remark);
-            formData.append(`passengers[${index}][passportUpload]`, detail.passportUpload);
+            formData.append(`passengers[${index}][passport_upload]`, detail.passport_upload);
         });
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
 
         axios.post('/api/bookings', formData, {
             headers: {
@@ -215,7 +227,7 @@
             designation: detail.designation,
             hp: detail.hp,
             remark: detail.remark,
-            passport_upload: detail.passportUpload, // 这里假设你已经处理了文件上传，并有一个URL或标识符
+            passport_upload: detail.passport_upload, // 这里假设你已经处理了文件上传，并有一个URL或标识符
           }))
         };
 
@@ -229,14 +241,11 @@
           })
           .catch(error => {
             // 处理错误
-            console.error('Booking failed', error);
+            console.error('Booking failed1', error);
             alert('Booking failed. Please try again.');
           });
       },
-      onFileChange(event) {
-       const file = event.target.files[0];
-       this.detail.passportUpload = file;
-     },
+      
     },
     mounted() {
       this.getTour();

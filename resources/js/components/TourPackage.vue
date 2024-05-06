@@ -21,7 +21,9 @@
       <v-card v-if="currentPage === 'tours'">
         <h3>Tour Packages</h3>
         <br />
+        <v-btn @click="currentPage = 'countries'">back</v-btn>
         <v-row>
+          
           <v-col cols="12" sm="4" md="4" v-for="tour in tours" :key="tour.id">
             <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })">
               <v-img src="https://a.cdn-hotels.com/gdcs/production172/d1381/8efd3f69-63bb-4398-a595-095cea25fc37.jpg" height="200px"></v-img>
