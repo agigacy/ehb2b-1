@@ -155,6 +155,18 @@
               <v-text-field label="Airline" type="text" v-model="airline" required></v-text-field>
               <v-text-field label="Departure Date" type="text" v-model="departure_date" required></v-text-field>
               <v-text-field label="Return Date" type="text" v-model="return_date" required></v-text-field>
+              <label class="my-label">Departure Date</label>
+              <flat-pickr
+                :modelValue="departure_date"
+                @update:modelValue="value => departure_date = value"
+                :config="dateConfig"
+              ></flat-pickr>
+              <label class="my-label">Return Date</label>
+              <flat-pickr
+                :modelValue="return_date"
+                @update:modelValue="value => return_date = value"
+                :config="dateConfig"
+              ></flat-pickr>
               <v-text-field label="From" type="text" v-model="from" required></v-text-field>
               <v-text-field label="To" type="text" v-model="to" required></v-text-field>
               <v-text-field label="Seat" type="text" v-model="seat" required></v-text-field>
@@ -169,8 +181,18 @@
             <v-form @submit.prevent="editFlightTicket">
               <v-text-field label="PNR" type="text" v-model="editingFlightTicket.pnr" required></v-text-field>
               <v-text-field label="Airline" type="text" v-model="editingFlightTicket.airline" required></v-text-field>
-              <v-text-field label="Departure Date" type="text" v-model="editingFlightTicket.departure_date" required></v-text-field>
-              <v-text-field label="Return Date" type="text" v-model="editingFlightTicket.return_date" required></v-text-field>
+              <label class="my-label">Departure Date</label>
+              <flat-pickr
+                :modelValue="editingFlightTicket.departure_date"
+                @update:modelValue="value => editingFlightTicket.departure_date = value"
+                :config="dateConfig"
+              ></flat-pickr>
+              <label class="my-label">Return Date</label>
+              <flat-pickr
+                :modelValue="editingFlightTicket.return_date"
+                @update:modelValue="value => editingFlightTicket.return_date = value"
+                :config="dateConfig"
+              ></flat-pickr>
               <v-text-field label="From" type="text" v-model="editingFlightTicket.from" required></v-text-field>
               <v-text-field label="To" type="text" v-model="editingFlightTicket.to" required></v-text-field>
               <v-text-field label="Seat" type="text" v-model="editingFlightTicket.seat" required></v-text-field>
@@ -251,8 +273,18 @@
               <v-text-field label="Package Name (Chinese)" type="text" v-model="package_name_chinese"></v-text-field>
               <v-text-field label="Airline" type="text" v-model="airline" required></v-text-field>
               <v-text-field label="Tour Code" type="text" v-model="code" required></v-text-field>
-              <v-text-field label="Departure Date" type="text" v-model="departure_date" required></v-text-field>
-              <v-text-field label="Return Date" type="text" v-model="return_date" required></v-text-field>
+              <label class="my-label">Departure Date</label>
+              <flat-pickr
+                :modelValue="departure_date"
+                @update:modelValue="value => departure_date = value"
+                :config="dateConfig"
+              ></flat-pickr>
+              <label class="my-label">Return Date</label>
+              <flat-pickr
+                :modelValue="return_date"
+                @update:modelValue="value => return_date = value"
+                :config="dateConfig"
+              ></flat-pickr>
               <v-text-field label="Special Price" type="text" v-model="sp"></v-text-field>
               <v-text-field label="Tier 1 Price" type="text" v-model="tier1"></v-text-field>
               <v-text-field label="Tier 2 Price" type="text" v-model="tier2"></v-text-field>
@@ -261,8 +293,23 @@
               <v-text-field label="Tier 1 Price (Commission)" type="text" v-model="tier1_c"></v-text-field>
               <v-text-field label="Tier 2 Price (Commission)" type="text" v-model="tier2_c"></v-text-field>
               <v-text-field label="Tier 3 Price (Commission)" type="text" v-model="tier3_c" required></v-text-field>
-              <v-text-field label="Country" type="text" v-model="country_id" required></v-text-field>
+              <v-select
+                label="Country"
+                :items="countries"
+                item-text="name"
+                item-value="id"
+                v-model="country_id"
+                required
+              ></v-select>
               <v-text-field label="Minimum Group Size" type="text" v-model="min_g" required></v-text-field>
+              <v-select
+              label="Flight Tickets"
+              :items="flight_tickets"
+              item-text="pnr"
+              item-value="id"
+              v-model="selectedFlightTickets"
+              multiple
+              ></v-select>
               <v-text-field label="Remark" type="text" v-model="remark"></v-text-field>
               <v-btn @click="currentPage = 'tours'">Back</v-btn>
               <v-btn type="submit">Add Tour</v-btn>
@@ -391,7 +438,10 @@ export default {
       countryToDelete: null,
       confirmDelete: false,
       itemToDelete: null,
+      departure_date: '',
+      return_date: '', 
       editingTourFlightTickets: [],
+      selectedFlightTickets: [],
       // editingCountryRoles: '',
       searchPackageName: '',
       searchDepartureDate: '',
@@ -710,7 +760,7 @@ export default {
       });
     },
     addTour() {
-      axios.post('/api/register', {
+      axios.post('/api/tours', {
         package_name: this.package_name,
         package_name_chinese: this.package_name_chinese,
         airline: this.airline,
@@ -727,6 +777,7 @@ export default {
         tier3_c: this.tier3_c,
         country_id: this.country_id,
         min_g: this.min_g,
+        flight_tickets: this.selectedFlightTickets,
         remark: this.remark,
         groups: this.newTourGroups,
         roles: this.newTourRoles
