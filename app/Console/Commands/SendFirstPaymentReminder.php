@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Booking;
 use App\Mail\FirstPaymentReminder;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Api\BookingController;
 
 
 class SendFirstPaymentReminder extends Command
@@ -19,6 +20,7 @@ class SendFirstPaymentReminder extends Command
 
     protected $signature = 'reminder:send-payment';
     protected $description = 'Send first payment reminders to users';
+    protected $bookingController;
 
     /**
      * The console command description.
@@ -32,9 +34,10 @@ class SendFirstPaymentReminder extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(BookingController $bookingController)
     {
         parent::__construct();
+        $this->bookingController = $bookingController;
     }
 
     /**
@@ -52,7 +55,12 @@ class SendFirstPaymentReminder extends Command
 
         // Send reminders to each booking
         foreach ($bookings as $booking) {
-            Mail::to($booking->user)->send(new FirstPaymentReminder($booking));
+            // Mail::to($booking->user)->send(new FirstPaymentReminder($booking));
+            // $pdfPath = $this->pdfBilling($booking); // Assuming pdfPath is generated here
+            
+
+            $pdfPath = $this->bookingController->pdfBilling($booking);
+            Mail::to($booking->user)->send(new FirstPaymentReminder($booking, $pdfPath));
         }
 
         $this->info('First Payment reminders sent successfully.');

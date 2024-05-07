@@ -1,9 +1,9 @@
-<p>Dear {{ $booking->user->name }},</p>
+<p>Dear {{ ucfirst($booking->user->name) }},</p>
 
 <p>Thank you for booking the tour. Here are the details of your booking:</p>
 
-<p>Booking ID: {{ $booking->id }}</p>
-<p>Total Amount: {{ $booking->total }}</p>
+<p>Tour ID - {{ $booking->id }}:  <b>{{ $booking->tour->package_name }}</b></p>
+<p>Total Amount: RM {{ number_format($booking->total, 2, '.', ',') }}</p>
 
 <p>We look forward to seeing you on the tour!</p>
 

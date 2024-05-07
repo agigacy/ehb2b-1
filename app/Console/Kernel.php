@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('reminder:send-payment')
-            ->everyMinute();
+            ->everyTwoMinutes();
             //  ->dailyAt('9:00');
             //  ->everyFiveMinutes();
     }

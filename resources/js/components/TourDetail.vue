@@ -1,6 +1,14 @@
 <template>
     <div v-if="tour">
       <v-row>
+        <!-- Loading Modal -->
+        <v-dialog v-model="loading" persistent max-width="50%">
+          <v-card style="min-height: 300px; padding: 150px; text-align: center;">
+            <v-card-text>
+              <h3 class="loading-text">Loading...</h3>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
         <v-col cols="8" class="mb-4">
           <v-card class="pl-4 pb-2">
             <v-btn @click="$router.back()">back</v-btn>
@@ -145,6 +153,7 @@
           passport_upload: ''
         },
         tourDetails: null,
+        loading: false
       };
     },
     methods: {
@@ -239,6 +248,9 @@
       },
 
       bookTour() {
+        this.loading = true;
+        
+        setTimeout(() => {
         const formData = new FormData();
         formData.append('tour_id', this.tour.id);
         formData.append('date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
@@ -272,6 +284,7 @@
             console.error('Booking failed', error);
             alert('Booking failed. Please try again.');
         });
+      }, 4500); 
     },
       
     },
@@ -304,6 +317,26 @@
         width: 30%;       /* Adjust this based on your layout's needs */
         height: 45vh;    /* Optional: Makes the card full viewport height */
         overflow-y: auto; /* Adds scroll to the card if content overflows */
+      }
+
+      .loading-dialog {
+        height: 400px; /* Set the height to 50% of the viewport height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loading-text {
+        animation: pulse 1.5s infinite alternate; /* Add animation to the loading text */
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.4);
+        }
       }
 
   </style>
