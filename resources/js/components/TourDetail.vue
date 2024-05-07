@@ -1,6 +1,14 @@
 <template>
     <div v-if="tour">
       <v-row>
+        <!-- Loading Modal -->
+        <v-dialog v-model="loading" persistent max-width="50%">
+          <v-card style="min-height: 300px; padding: 150px; text-align: center;">
+            <v-card-text>
+              <h3 class="loading-text">Loading...</h3>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
         <v-col cols="8" class="mb-4">
           <v-card class="pl-4 pb-2">
             <v-btn @click="$router.back()">back</v-btn>
@@ -107,6 +115,7 @@
           passport_upload: ''
         },
         tourDetails: null,
+        loading: false
       };
     },
     methods: {
@@ -201,38 +210,46 @@
       },
 
       bookTour() {
-        // 构建请求体
-        const bookingData = {
-          tour_id: this.tour.id,
-          date: this.selectedDate, // 确保你有一个选择日期的输入
-          total: this.total, // 这应该是计算出的总价
-          user_id: Number(localStorage.getItem('user_id')),
-          status: 1,
-          date: moment(this.date).format('YYYY-MM-DD HH:mm:ss'),
-          passengers: this.passengerDetails.map(detail => ({
-            name: detail.name,
-            passport: detail.passport,
-            date_of_birth: detail.dateOfBirth,
-            designation: detail.designation,
-            hp: detail.hp,
-            remark: detail.remark,
-            passport_upload: detail.passport_upload, // 这里假设你已经处理了文件上传，并有一个URL或标识符
-          }))
-        };
+        this.loading = true;
+        
+        setTimeout(() => {
+        
+          // 构建请求体
+          const bookingData = {
+            tour_id: this.tour.id,
+            date: this.selectedDate, // 确保你有一个选择日期的输入
+            total: this.total, // 这应该是计算出的总价
+            user_id: Number(localStorage.getItem('user_id')),
+            status: 1,
+            date: moment(this.date).format('YYYY-MM-DD HH:mm:ss'),
+            passengers: this.passengerDetails.map(detail => ({
+              name: detail.name,
+              passport: detail.passport,
+              date_of_birth: detail.dateOfBirth,
+              designation: detail.designation,
+              hp: detail.hp,
+              remark: detail.remark,
+              passport_upload: detail.passport_upload, // 这里假设你已经处理了文件上传，并有一个URL或标识符
+            }))
+          };
 
-        // 发送 POST 请求到后端 API
-        axios.post('/api/bookings', bookingData)
-          .then(response => {
-            // 处理成功的响应
-            console.log('Booking successful', response);
-            alert('Booking successful!');
-            this.$router.push('/agent');
-          })
-          .catch(error => {
-            // 处理错误
-            console.error('Booking failed1', error);
-            alert('Booking failed. Please try again.');
-          });
+          // 发送 POST 请求到后端 API
+          axios.post('/api/bookings', bookingData)
+            .then(response => {
+              // 处理成功的响应
+              console.log('Booking successful', response);
+              alert('Booking successful!');
+              this.$router.push('/agent');
+            })
+            .catch(error => {
+              // 处理错误
+              console.error('Booking failed1', error);
+              alert('Booking failed. Please try again.');
+            });
+
+          this.loading = false;
+        }, 4500); 
+
       },
       
     },
@@ -265,6 +282,26 @@
         width: 30%;       /* Adjust this based on your layout's needs */
         height: 45vh;    /* Optional: Makes the card full viewport height */
         overflow-y: auto; /* Adds scroll to the card if content overflows */
+      }
+
+      .loading-dialog {
+        height: 400px; /* Set the height to 50% of the viewport height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loading-text {
+        animation: pulse 1.5s infinite alternate; /* Add animation to the loading text */
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.4);
+        }
       }
 
   </style>
