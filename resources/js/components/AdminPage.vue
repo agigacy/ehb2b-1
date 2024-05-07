@@ -45,6 +45,12 @@
               </v-list-item-action>
               <v-list-item-content>Permissions</v-list-item-content>
             </v-list-item>
+            <v-list-item @click="currentPage = 'activeLogins'">
+              <v-list-item-action>
+                <span class="material-symbols-outlined">login</span>
+              </v-list-item-action>
+              <v-list-item-content>Active Logins</v-list-item-content>
+            </v-list-item>
             <!-- Add more items here -->
           </v-list>
         </v-card>
@@ -447,6 +453,40 @@
             </v-data-table>
           </v-card-text>
         </v-card>
+        <v-card v-if="currentPage === 'activeLogins'">
+          <v-card-title>Active Logins</v-card-title>
+          <v-card-text>
+            <v-data-table
+                :headers="loginHeaders"
+                :items="logins"
+                :items-per-page="5"
+                class="elevation-1"
+              >
+                <template v-slot:item="{ item }">
+                  <tr>
+                    <td>{{ item.username }}</td> <!-- 显示用户名 -->
+                    <td>{{ item.updated_at }}</td> <!-- 显示最后使用时间作为登录时间 -->
+                    <td>
+                      <v-btn small color="red" @click="kickUser(item.id)">
+                        Kick
+                      </v-btn>
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
+          </v-card-text>
+        </v-card>
+        <v-dialog v-model="kickDialog" persistent max-width="290">
+          <v-card>
+            <v-card-title class="headline">Confirm Action</v-card-title>
+            <v-card-text>Are you sure you want to kick this user?</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
+              <v-btn color="red darken-1" text @click="confirmKick">Confirm</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="confirmDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline">Are you sure you want to delete this ?</v-card-title>
@@ -550,6 +590,13 @@ export default {
         labels: [], // 这里将用于显示组名
       },
       groupDataLoaded: false,
+      logins: [], // 存储登录信息的数组
+      loginHeaders: [
+      { text: 'User', value: 'username' }, // 使用 API 返回的用户名字段
+      { text: 'Logged In At', value: 'updated_at' }, // 使用 updated_at 作为登录时间
+      ],
+      kickDialog: false,
+      userIdToKick: null,
     }
   },
   mounted() {
@@ -572,7 +619,7 @@ export default {
     this.getRoles();
     // this.loadData();
     this.getPermissions();
-   
+    this.fetchActiveLogins();
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
@@ -658,6 +705,47 @@ export default {
   //     data: [10, 20, 30] // 示例数据
   //   }];
   // },
+    kickUser(userId) {
+      this.userIdToKick = userId;
+      this.kickDialog = true; // 打开确认对话框
+    },
+    confirmKick() {
+      if (this.userIdToKick) {
+        axios.delete(`/api/kick-user/${this.userIdToKick}`)
+          .then(response => {
+            this.logins = this.logins.filter(login => login.id !== this.userIdToKick);
+            this.$toast.success('User kicked successfully');
+            this.fetchActiveLogins();
+          })
+          .catch(error => {
+            console.error("Error kicking user:", error);
+            this.$toast.error('Failed to kick user');
+          });
+      }
+      this.kickDialog = false; // 关闭对话框
+      this.userIdToKick = null; // 清除存储的用户ID
+    },
+    // kickUser(tokenId) {
+    //   axios.delete(`/api/kick-user/${tokenId}`)
+    //     .then(response => {
+    //       this.logins = this.logins.filter(login => login.id !== tokenId);
+    //       this.$toast.success('User kicked successfully');
+    //     })
+    //     .catch(error => {
+    //       console.error("Error kicking user:", error);
+    //       this.$toast.error('Failed to kick user');
+    //     });
+    // },
+    fetchActiveLogins() {
+      // 使用 Axios 或其他 HTTP 客户端来从您的 API 获取数据
+      axios.get('/api/active-logins')
+        .then(response => {
+          this.logins = response.data;
+        })
+        .catch(error => {
+          console.error("Error fetching active logins:", error);
+        });
+    },
     showUsersPage() {
       this.currentPage = 'users';
     },

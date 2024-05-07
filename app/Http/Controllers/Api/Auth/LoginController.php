@@ -28,8 +28,17 @@ class LoginController extends Controller
             ]);
         }
 
+        // 删除现有的所有令牌
+        $user->tokens->each(function ($token, $key) {
+            $token->delete();
+        });
+
         // 加载用户角色和权限
         $user->load('roles', 'permissions');
+
+        // 创建新的令牌
+        // $token = $user->createToken('laravel_api_token')->plainTextToken;
+
 
         return response()->json([
             'user_id' => $user->id,

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Mail\TourBookingConfirmation;
 
 class BookingController extends Controller
@@ -60,10 +61,10 @@ class BookingController extends Controller
                 }
                 
                 // Create reminders - Antoney working
-                $this->createReminders($booking);
+                // $this->createReminders($booking);
 
-                // Send email confirmation
-                Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));
+                // // Send email confirmation
+                // Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));
 
                 // Send email confirmation
                 // Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));
