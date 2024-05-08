@@ -41,7 +41,8 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
-          <v-card-title>Dashboard</v-card-title>
+          <!-- <v-card-title>Dashboard</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Dashboard</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" sm="6" md="4">
@@ -78,7 +79,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'countries'">
-          <v-card-title>Countries</v-card-title>
+          <!-- <v-card-title>Countries</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Countries</v-card-title>
           <v-card-text>
             <v-data-table :headers="countryHeaders" :items="countries" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
@@ -119,7 +121,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'flight_tickets'">
-          <v-card-title>Flight Tickets</v-card-title>
+          <!-- <v-card-title>Flight Tickets</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Flight Tickets (PNR)</v-card-title>
           <v-card-text>
             <v-text-field v-model="searchText" label="Search" single-line hide-details></v-text-field>
             <flat-pickr
@@ -202,7 +205,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'tours'">
-          <v-card-title>Tours</v-card-title>
+          <!-- <v-card-title>Tours</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Tours</v-card-title>
           <v-card-text>
             <v-text-field v-model="searchPackageName" label="Search by package name"></v-text-field>
             <flat-pickr

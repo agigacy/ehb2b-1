@@ -7,6 +7,7 @@
             <v-card-text>
               <h3 class="loading-text">Loading...</h3>
             </v-card-text>
+            <v-img class="mx-auto" src="http://localhost:8000/images/loading-loader-vertical.gif" width="120px"></v-img>
           </v-card>
         </v-dialog>
         <v-col cols="8" class="mb-4">
@@ -212,7 +213,7 @@
       bookTour() {
         this.loading = true;
         
-        setTimeout(() => {
+        // setTimeout(() => {
         
           // 构建请求体
           const bookingData = {
@@ -236,6 +237,7 @@
           // 发送 POST 请求到后端 API
           axios.post('/api/bookings', bookingData)
             .then(response => {
+              this.loading = false;
               // 处理成功的响应
               console.log('Booking successful', response);
               alert('Booking successful!');
@@ -247,8 +249,8 @@
               alert('Booking failed. Please try again.');
             });
 
-          this.loading = false;
-        }, 4500); 
+        //   this.loading = false;
+        // }, 4500); 
 
       },
       

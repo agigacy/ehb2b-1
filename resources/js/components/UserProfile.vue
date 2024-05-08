@@ -15,7 +15,8 @@
       </v-col>
       <v-col cols="12" md="9">
         <v-card v-if="currentPage === 'users'" class="mb-4">
-          <v-card-title>My Profile Details</v-card-title>
+          <!-- <v-card-title>My Profile Details</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">My Profile Details</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="6">
@@ -24,7 +25,7 @@
                 <v-col>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</v-col>
               </v-col>
               <v-col cols="6">
-                <div>Group Information</div>
+                <div class="pt-2"><b>Group Information</b></div>
                 <div>Group Name: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
                 <div>SSM Number: {{ editingUser.groups.map(group => group.ssm_number).join(', ') }}</div>
                 <div>Address: {{ editingUser.groups.map(group => group.address).join(', ') }}</div>

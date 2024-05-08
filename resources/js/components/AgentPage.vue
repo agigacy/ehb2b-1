@@ -30,7 +30,8 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
-          <v-card-title>Dashboard</v-card-title>
+          <!-- <v-card-title>Dashboard</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Dashboard</v-card-title>
           <v-card-text>
 
             <v-row>
@@ -69,9 +70,10 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'bookings'">
-          <v-card-title>Bookings</v-card-title>
+          <!-- <v-card-title>Bookings</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Bookings</v-card-title>
           <v-card-text>
-            <v-data-table :headers="bookingHeaders" :items="bookings" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
+            <v-data-table :headers="bookingHeaders" :items="bookings" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50, 100, 500] }">
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
               </template>
@@ -85,8 +87,14 @@
               <template v-slot:item.user_id="{ item }">
                 {{ item.user.name }}
               </template>
+              <template v-slot:item.date="{ item }">
+                <!-- <div class="text-right">{{ item.date }}</div> -->
+                <div>{{ formatDate(item.date) }}</div>
+              </template>
               <template v-slot:item.total="{ item }">
-                {{ item.total.toFixed(2) }}
+                <!-- {{ item.total.toFixed(2) }} -->
+                <!-- <div class="text-right">{{ item.total.toFixed(2) }}</div> -->
+                <div class="text-right">{{ formatCurrency(item.total) }}</div>
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn small color="blue darken-1" text @click="showBookingDetails(item)">
@@ -250,7 +258,7 @@ export default {
         { text: 'Tour', value: 'tour_id' },
         { text: 'PAX (tempo)', value: 'pax' },
         { text: 'User/Agent', value: 'user_id' },
-        { text: 'Date', value: 'date' },
+        { text: 'Booking Date', value: 'date' },
         { text: 'Total (RM)', value: 'total' },
         { text: 'Actions', value: 'actions' },
       ],
@@ -544,6 +552,22 @@ export default {
       //   };
       // });
 
+    },
+
+    formatCurrency(value) {
+      return value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    },
+
+    formatDate(dateString) {
+      const options = { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      };
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', options);
     }
 
   }
@@ -551,5 +575,13 @@ export default {
 </script>
 
 <style  scoped>
+  .text-right {
+    text-align: right;
+    padding-right: 10px;
+  }
+  .text-center {
+    text-align: center;
+    padding-right: 20px;
+  }
 
 </style>

@@ -4,15 +4,18 @@
         <h3>Country</h3>
         <v-row>
           <v-col cols="12" sm="3" md="3" v-for="country in countries" :key="country.id">
-            <v-card @click="selectCountry(country.id)">
-              <!-- <v-img :src="country.image" height="200px"></v-img> -->
-              <!-- <v-img src="https://cfirguide.org/wp-content/uploads/2021/04/Japanese-Flag.jpg" height="200px"></v-img> -->
-              <v-img v-if="country.id === 1" src="https://www.worldometers.info/img/flags/ja-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
-              <v-img v-if="country.id === 2" src="https://www.worldometers.info/img/flags/tw-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
-              <v-img v-if="country.id === 3" src="https://www.worldometers.info/img/flags/nz-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
-              <v-img v-if="country.id === 4" src="https://www.worldometers.info/img/flags/hk-flag.gif" height="260px" style="margin-top: 60px; margin-bottom: 60px;"></v-img>
-              <!-- <v-img v-if="country.id === 4" src="https://www.worldometers.info/img/flags/sn-flag.gif" height="200px" style="margin-top: 60px; margin-bottom: 60px;"></v-img> -->
-              <v-card-title>{{ country.name }}</v-card-title>
+            <v-card @click="selectCountry(country.id)" 
+              :disabled="countTours.filter(ctour => ctour.country_id === country.id).length == 0">
+
+              <v-img v-if="country.id === 1" src="https://www.worldometers.info/img/flags/ja-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 2" src="https://www.worldometers.info/img/flags/tw-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 3" src="https://www.worldometers.info/img/flags/nz-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 4" src="https://www.worldometers.info/img/flags/hk-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 5" src="https://www.worldometers.info/img/flags/th-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 6" src="https://www.worldometers.info/img/flags/ch-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 7" src="https://www.worldometers.info/img/flags/as-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-img v-if="country.id === 8" src="https://www.worldometers.info/img/flags/id-flag.gif" height="30vh" width="auto" style="margin-top: 20px; margin-bottom: 20px;"></v-img>
+              <v-card-title class="pt-0">{{ country.name }} ({{ countTours.filter(ctour => ctour.country_id === country.id).length }})</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -45,9 +48,19 @@
         countries: [],
         selectedCountry: null,
         tours: [],
+        countTours: [],
       };
     },
     methods: {
+      countToursCountry() {
+        axios.get('/api/tours')
+          .then(response => {
+              this.countTours = response.data;
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      },
       getCountries() {
         axios.get('/api/countries')
           .then(response => {
@@ -96,6 +109,7 @@
     },
     mounted() {
       this.getCountries();
+      this.countToursCountry();
     },
   };
   </script>

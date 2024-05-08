@@ -51,7 +51,7 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
-          <v-card-title>Dashboard</v-card-title>
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Dashboard</v-card-title>
           <v-card-text>
             <!-- <v-row>
               <v-col>
@@ -99,7 +99,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'users'">
-          <v-card-title>Users</v-card-title>
+          <!-- <v-card-title>Users</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Users</v-card-title>
           <v-card-text>
               <v-text-field v-model="searchUser" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
               <v-data-table
@@ -276,7 +277,8 @@
           </v-card-text>
         </v-card> -->
         <v-card v-if="currentPage === 'groups'">
-          <v-card-title>Groups</v-card-title>
+          <!-- <v-card-title>Groups</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Groups</v-card-title>
           <v-card-text>
             <v-data-table :headers="groupHeaders" :items="groups" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
@@ -387,7 +389,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'roles'">
-          <v-card-title>Roles</v-card-title>
+          <!-- <v-card-title>Roles</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Roles</v-card-title>
           <v-card-text>
             <v-data-table :headers="roleHeaders" :items="roles" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
@@ -428,7 +431,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'permissions'">
-          <v-card-title>Permissions</v-card-title>
+          <!-- <v-card-title>Permissions</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Permissions</v-card-title>
           <v-card-text>
             <v-data-table
               :headers="permissionHeaders"

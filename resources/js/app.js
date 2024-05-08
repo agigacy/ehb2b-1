@@ -23,6 +23,17 @@ Vue.use(Vuetify)
 Vue.prototype.$userId = () => localStorage.getItem('user_id');
 Vue.prototype.$username = () => localStorage.getItem('username');
 
+Vue.prototype.$formatDate = function(dateString) {
+    const options = {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', options);
+  };
 
 const app = new Vue({
     el: '#app',
