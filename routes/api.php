@@ -37,4 +37,6 @@ Route::middleware('auth:sanctum')->apiResource('/permissions', 'App\Http\Control
 
 // Anton working Reminder Controller
 Route::middleware('auth:sanctum')->apiResource('/reminders', 'App\Http\Controllers\Api\ReminderController');
+Route::middleware('auth:sanctum')->get('/active-logins', 'App\Http\Controllers\Api\AdminController@activeLogins');
+Route::middleware('auth:sanctum')->delete('/kick-user/{tokenId}', 'App\Http\Controllers\Api\AdminController@kickUser');
 

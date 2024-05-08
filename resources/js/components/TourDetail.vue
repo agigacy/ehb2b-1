@@ -43,16 +43,54 @@
             <!-- <div>{{ tour.departure.time }} -> {{ tour.arrival.time }}</div> -->
           </v-card>
           <v-card class="pl-6 pt-2" style="background-color: azure;">
-            <v-select class="pl-4" :items="[1,2,3,4,5,6,7,8,9]" label="Select Pax" v-model="selectedQuantity" @change="onQuantityChange"></v-select>
+            <v-select
+              class="pl-4"
+              :items="[1,2,3,4,5,6,7,8,9]"
+              label="Select Pax"
+              v-model="selectedQuantity"
+              @change="onQuantityChange"
+              :rules="[v => !!v || 'Please select a quantity']"
+            ></v-select>
             <div v-for="(detail, index) in passengerDetails" :key="index" class="pl-4">
               <label>Passenger <span v-if="selectedQuantity > 1">{{ index + 1 }}</span></label>
-              <v-text-field label="Name" v-model="detail.name"></v-text-field>
-              <v-text-field label="Passport Number" v-model="detail.passport"></v-text-field>
-              <v-text-field label="Designation" v-model="detail.designation"></v-text-field>
-              <v-text-field label="Date of Birth" style="max-width: 300px;" v-model="detail.dateOfBirth" type="date"></v-text-field>
-              <v-text-field label="HP Number" v-model="detail.hp"></v-text-field>
-              <v-textarea label="Remark" v-model="detail.remark"></v-textarea>
-              <v-file-input label="Passport Upload" @change="file => onFileChange(file, index)" accept="image/*"></v-file-input>
+              <v-text-field
+                label="Name"
+                v-model="detail.name"
+                :rules="[v => !!v || 'Name is required']"
+              ></v-text-field>
+              <v-text-field
+                label="Passport Number"
+                v-model="detail.passport"
+                :rules="[v => !!v || 'Passport number is required']"
+              ></v-text-field>
+              <v-text-field
+                label="Designation"
+                v-model="detail.designation"
+                :rules="[v => !!v || 'Designation is required']"
+              ></v-text-field>
+              <v-text-field
+                label="Date of Birth"
+                style="max-width: 300px;"
+                v-model="detail.dateOfBirth"
+                type="date"
+                :rules="[v => !!v || 'Date of birth is required']"
+              ></v-text-field>
+              <v-text-field
+                label="HP Number"
+                v-model="detail.hp"
+                :rules="[v => !!v || 'HP number is required']"
+              ></v-text-field>
+              <v-textarea
+                label="Remark"
+                v-model="detail.remark"
+                :rules="[v => !!v || 'Remark is required']"
+              ></v-textarea>
+              <v-file-input
+                label="Passport Upload"
+                @change="file => onFileChange(file, index)"
+                accept="image/*"
+                :rules="[v => !!v || 'Passport upload is required']"
+              ></v-file-input>
             </div>
           </v-card>
           <br />
@@ -210,49 +248,46 @@
         });
       },
 
-      bookTour() {
+      // bookTour() {
         this.loading = true;
         
-        // setTimeout(() => {
-        
-          // 构建请求体
-          const bookingData = {
-            tour_id: this.tour.id,
-            date: this.selectedDate, // 确保你有一个选择日期的输入
-            total: this.total, // 这应该是计算出的总价
-            user_id: Number(localStorage.getItem('user_id')),
-            status: 1,
-            date: moment(this.date).format('YYYY-MM-DD HH:mm:ss'),
-            passengers: this.passengerDetails.map(detail => ({
-              name: detail.name,
-              passport: detail.passport,
-              date_of_birth: detail.dateOfBirth,
-              designation: detail.designation,
-              hp: detail.hp,
-              remark: detail.remark,
-              passport_upload: detail.passport_upload, // 这里假设你已经处理了文件上传，并有一个URL或标识符
-            }))
-          };
+        setTimeout(() => {
+        const formData = new FormData();
+        formData.append('tour_id', this.tour.id);
+        formData.append('date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
+        formData.append('total', this.total);
+        formData.append('user_id', Number(localStorage.getItem('user_id')));
+        formData.append('status', 1);
 
-          // 发送 POST 请求到后端 API
-          axios.post('/api/bookings', bookingData)
-            .then(response => {
-              this.loading = false;
-              // 处理成功的响应
-              console.log('Booking successful', response);
-              alert('Booking successful!');
-              this.$router.push('/agent');
-            })
-            .catch(error => {
-              // 处理错误
-              console.error('Booking failed1', error);
-              alert('Booking failed. Please try again.');
-            });
+        this.passengerDetails.forEach((detail, index) => {
+            formData.append(`passengers[${index}][name]`, detail.name);
+            formData.append(`passengers[${index}][passport]`, detail.passport);
+            formData.append(`passengers[${index}][date_of_birth]`, detail.dateOfBirth);
+            formData.append(`passengers[${index}][designation]`, detail.designation);
+            formData.append(`passengers[${index}][hp]`, detail.hp);
+            formData.append(`passengers[${index}][remark]`, detail.remark);
+            if (detail.passport_upload instanceof File) {
+                formData.append(`passengers[${index}][passport_upload]`, detail.passport_upload);
+            }
+        });
 
-        //   this.loading = false;
-        // }, 4500); 
-
-      },
+        axios.post('/api/bookings', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            console.log('Booking successful', response);
+            this.loading = false;
+            alert('Booking successful!');
+            this.$router.push('/agent');
+        })
+        .catch(error => {
+            console.error('Booking failed', error);
+            alert('Booking failed. Please try again.');
+        });
+      // }, 4500); 
+    },
       
     },
     mounted() {

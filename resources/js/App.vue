@@ -71,11 +71,29 @@ export default {
       dropdown: false
     }
   },
+  // created() {
+  //   if (this.isLoggedIn) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+  //   };
+  //   const user_id = localStorage.getItem('user_id');
+  // },
   created() {
-    if (this.isLoggedIn) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-    };
-    const user_id = localStorage.getItem('user_id');
+    axios.interceptors.response.use(response => {
+        return response;
+    }, error => {
+        if (error.response && error.response.status === 401) {
+            if (this.$router.currentRoute.path !== '/login') {
+                alert('Session timed out, please re-login.');
+                this.forceLogout();  // 只有当当前路由不是登录页时才调用
+            }
+        }
+        return Promise.reject(error);
+    });
+
+      if (this.isLoggedIn) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+      }
+      const user_id = localStorage.getItem('user_id');
   },
   watch: {
     '$route': function() {
@@ -104,29 +122,38 @@ export default {
   }
   },
   methods: {
+    forceLogout() {
+        localStorage.clear();  // 清除所有本地存储数据
+        this.$router.push('/login');  // 重定向到登录页面
+    },
     logout() {
-      if (confirm("Confirm to log out?")) {
-          // Send a request to the logout API
-          axios.post('/api/auth/logout', {}, {
-                  headers: {
-                      'Authorization': `Bearer ${localStorage.getItem('token')}`
-                  }
-              })
-              .then(() => {
-                  // Remove the token from localStorage
-                  localStorage.removeItem('token');
+        if (confirm("Confirm to log out?")) {
+            // 先发送注销请求到服务器
+            axios.post('/api/auth/logout', {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(() => {
+                // 请求成功后，清除本地会话并重定向
+                this.clearSession();
+            })
+            .catch(error => {
+                console.log("Logout failed on server, clearing local session anyway:", error);
+                // 即使服务器端注销失败，也清除本地会话
+                this.clearSession();
+            });
+        } else {
+            // 用户取消注销，不执行任何操作
+            return false;
+        }
+    },
 
-                  // Redirect to the login page
-                  this.$router.push('/');
-              })
-              .catch(error => {
-                  console.log(error);
-              });
-      } else {
-          // User cancelled logout, do nothing
-          return false;
-      }
-  },
+    clearSession() {
+        localStorage.clear();  // 清除所有本地存储数据
+        this.$router.push('/');  // 重定向到首页
+    },
+    
     logout_OLD() {
       if (confirm("Confirm to log out?")) {
 

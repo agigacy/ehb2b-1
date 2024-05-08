@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Mail\TourBookingConfirmation;
 // use Codedge\Tcpdf\Facades\Tcpdf;
 use TCPDF;
