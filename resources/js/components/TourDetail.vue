@@ -248,10 +248,10 @@
         });
       },
 
-      // bookTour() {
+      bookTour() {
         this.loading = true;
         
-        setTimeout(() => {
+        // setTimeout(() => {
         const formData = new FormData();
         formData.append('tour_id', this.tour.id);
         formData.append('date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
