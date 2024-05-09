@@ -9,14 +9,14 @@
                 <!-- <v-icon>mdi-view-dashboard</v-icon> -->
                 <span class="material-symbols-outlined">dashboard </span>
               </v-list-item-action>
-              <v-list-item-content>Dashboard</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'dashboard' }">Dashboard</v-list-item-content>
             </v-list-item>
             <v-list-item v-if="canViewBooking" @click="currentPage = 'bookings'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-multiple</v-icon> -->
                 <span class="material-symbols-outlined">airplane_ticket </span>
               </v-list-item-action>
-              <v-list-item-content>Bookings</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'bookings' }">Bookings</v-list-item-content>
             </v-list-item>
             <!-- <v-list-item @click="currentPage = 'passengers'">
               <v-list-item-action>
@@ -30,7 +30,8 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
-          <v-card-title>Dashboard</v-card-title>
+          <!-- <v-card-title>Dashboard</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Dashboard</v-card-title>
           <v-card-text>
 
             <v-row>
@@ -69,9 +70,10 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'bookings'">
-          <v-card-title>Bookings</v-card-title>
+          <!-- <v-card-title>Bookings</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Bookings</v-card-title>
           <v-card-text>
-            <v-data-table :headers="bookingHeaders" :items="bookings" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
+            <v-data-table :headers="bookingHeaders" :items="bookings" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50, 100, 500] }">
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
               </template>
@@ -80,13 +82,22 @@
               </template>
               <template v-slot:item.pax="{ item }">
                 <!-- {{ item.tour.user_id }} -->
-                {{ item.total / item.tour.tier1 }}
+                <div style="text-align: center">
+                  {{ item.total / item.tour.tier1 }} Pax
+                </div>
               </template>
               <template v-slot:item.user_id="{ item }">
-                {{ item.user.name }}
+                <!-- {{ item.user.name }} -->
+                {{ item.user.name.charAt(0).toUpperCase() + item.user.name.slice(1)  }} 
+              </template>
+              <template v-slot:item.date="{ item }">
+                <!-- <div class="text-right">{{ item.date }}</div> -->
+                <div>{{ formatDate(item.date) }}</div>
               </template>
               <template v-slot:item.total="{ item }">
-                {{ item.total.toFixed(2) }}
+                <!-- {{ item.total.toFixed(2) }} -->
+                <!-- <div class="text-right">{{ item.total.toFixed(2) }}</div> -->
+                <div class="text-right">{{ $formatCurrency(item.total) }}</div>
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn small color="blue darken-1" text @click="showBookingDetails(item)">
@@ -107,12 +118,14 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'bookingDetails'">
-          <v-card-title v-if="currentBooking && currentBooking.user">{{ currentBooking.user.name }}'s Booking</v-card-title>
+          <v-card-title v-if="currentBooking && currentBooking.user">{{ currentBooking.user.name.charAt(0).toUpperCase() + currentBooking.user.name.slice(1) }}'s Booking</v-card-title>
+          <!-- <v-card-title v-if="currentBooking && currentBooking.user">{{ currentBooking.user.name }}'s Booking</v-card-title> -->
           <v-card-text v-if="currentBooking">
-            <p>Tour: {{ currentBooking.tour.package_name }}</p>
+            <p>Tour: <b>{{ currentBooking.tour.package_name }}</b></p>
             <p>Travel Date: {{ currentBooking.date }}</p>
             <p>Total Amount: RM {{ currentBooking.total.toFixed(2) }}</p>
-            <h3>Passenger(s):</h3>
+            <br />
+            <h5>Travel Passenger(s):</h5>
             <v-data-table :headers="passengerHeaders" :items="currentBooking.passengers" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
             <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
@@ -271,9 +284,9 @@ export default {
       bookingHeaders: [
         { text: 'No', value: 'index' },
         { text: 'Tour', value: 'tour_id' },
-        { text: 'PAX (tempo)', value: 'pax' },
+        { text: 'Passenger(s)', value: 'pax' },
         { text: 'User/Agent', value: 'user_id' },
-        { text: 'Date', value: 'date' },
+        { text: 'Booking Date', value: 'date' },
         { text: 'Total (RM)', value: 'total' },
         { text: 'Actions', value: 'actions' },
       ],
@@ -289,11 +302,37 @@ export default {
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       value: [10, 15, 7, 20, 10],
       groupSeries: [],
+      // groupChartOptions: {
+      //   chart: {
+      //     type: 'donut',
+      //   },
+      //   labels: [], // 这里将用于显示组名
+      // },
       groupChartOptions: {
         chart: {
           type: 'donut',
+          height: 350
         },
-        labels: [], // 这里将用于显示组名
+        series: [{
+          name: 'Sales',
+          data: this.groupSeries // This assumes you're keeping the numerical data for charting
+        }],
+        tooltip: {
+          y: {
+            formatter: (val) => {
+              // Now 'this' refers to the Vue instance, where $formatCurrency is defined
+              const formattedValue = this.$formatCurrency(val); // Assuming 'RM' is default
+              return formattedValue;
+            }
+          }
+          
+        },
+        // dataLabels: {
+        //   enabled: true,
+        //   formatter: function (val) {
+        //     // return `Total: $${val.toFixed(2)}`;
+        //   }
+        // }
       },
       groupChartOptions2: {
         chart: {
@@ -338,10 +377,22 @@ export default {
       //   return user? user.name : '';
       // });
 
-      this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => {
-        const user = this.users.find(user => user.id === booking.user_id);
-        return user? user.name : '';
-      }))];
+      // New method to sort user id accordingly
+      const userIds = [...new Set(this.bookings.map(booking => booking.user_id))];
+      userIds.sort((a, b) => a - b);
+      // Map sorted user IDs to corresponding user names
+      this.groupChartOptions.labels = userIds.map(userId => {
+          const user = this.users.find(user => user.id === userId);
+          // return user ? user.name : '';
+          return user ? user.name.charAt(0).toUpperCase() + user.name.slice(1) : '';
+
+      });
+
+      // OLD Method not sorting user id
+      // this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => {
+      //   const user = this.users.find(user => user.id === booking.user_id);
+      //   return user? user.name : '';
+      // }))];
 
 
       // this.groupChartOptions.labels = this.getUserTotals(userName, totalAmount);
@@ -639,6 +690,22 @@ export default {
       //   };
       // });
 
+    },
+
+    // formatCurrency(value) {
+    //   return value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    // },
+
+    formatDate(dateString) {
+      const options = { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      };
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', options);
     }
 
   }
@@ -646,5 +713,13 @@ export default {
 </script>
 
 <style  scoped>
+  .text-right {
+    text-align: right;
+    padding-right: 10px;
+  }
+  .text-center {
+    text-align: center;
+    padding-right: 20px;
+  }
 
 </style>

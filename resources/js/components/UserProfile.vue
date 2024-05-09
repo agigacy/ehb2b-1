@@ -21,7 +21,8 @@
       </v-col>
       <v-col cols="12" md="9">
         <v-card v-if="currentPage === 'users'" class="mb-4">
-          <v-card-title>My Profile Details</v-card-title>
+          <!-- <v-card-title>My Profile Details</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">My Profile Details</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="6">

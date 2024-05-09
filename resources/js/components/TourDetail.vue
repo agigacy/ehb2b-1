@@ -5,13 +5,14 @@
         <v-dialog v-model="loading" persistent max-width="50%">
           <v-card style="min-height: 300px; padding: 150px; text-align: center;">
             <v-card-text>
+              <img class="mx-auto" src="/images/loading-loader-vertical.gif" width="120px"></img>
               <h3 class="loading-text">Loading...</h3>
             </v-card-text>
           </v-card>
         </v-dialog>
         <v-col cols="8" class="mb-4">
           <v-card class="pl-4 pb-2">
-            <v-btn @click="$router.back()">back</v-btn>
+            <v-btn class="m-2" @click="$router.back()">back</v-btn>
             <v-card-title>{{ tour.package_name }}</v-card-title>
             <!-- Slider with tour dates and prices -->
             <!-- <v-slider v-model="selectedDate" :items="tour.dates" item-text="date" item-value="price"></v-slider> -->
@@ -114,15 +115,15 @@
             </div>
             <div v-if="selectedPrice" class="summary-item pl-3">
               <div class="label">Price Per Pax:</div>
-              <div class="value">RM {{ selectedPrice.toFixed(2) }}</div>
+              <div class="value">{{ $formatCurrency(selectedPrice) }}</div>
             </div>
             <div v-if="total" class="summary-item pl-3">
               <div class="label">Total Before Discount:</div>
-              <div class="value">RM {{ total.toFixed(2) }}</div>
+              <div class="value">{{ $formatCurrency(total) }}</div>
             </div>
             <div v-if="discountedTotal" class="summary-item pl-3">
               <div class="label">Total After Discount:</div>
-              <div class="value"><b>RM {{ discountedTotal.toFixed(2) }}</b></div>
+              <div class="value"><b>{{ $formatCurrency(discountedTotal) }}</b></div>
             </div>
           </v-card>
 
@@ -267,7 +268,7 @@
       bookTour() {
         this.loading = true;
         
-        setTimeout(() => {
+        // setTimeout(() => {
         const formData = new FormData();
         formData.append('tour_id', this.tour.id);
         formData.append('date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
@@ -294,15 +295,18 @@
         })
         .then(response => {
             console.log('Booking successful', response);
+            this.loading = false;
             alert('Booking successful!');
             this.$router.push('/agent');
         })
         .catch(error => {
             console.error('Booking failed', error);
             alert('Booking failed. Please try again.');
+            this.loading = false;
         });
-        }, 4500); 
-      },
+      // }, 4500); 
+    },
+      
     },
     mounted() {
       this.getTour();

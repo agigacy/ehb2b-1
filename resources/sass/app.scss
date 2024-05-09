@@ -10,10 +10,31 @@
 body{
     background-color: #4211a4 !important;
     color: #f8f8f8 !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     // font-size: 13px !important;
 }
 
 .bg-light-blue {
     background-color: rgb(180, 180, 223) !important; /* Replace 'blue' with your desired shade if necessary */
+  }
+
+.v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child {
+    margin-right: 10px !important;
+  }
+
+.active {
+    color: #00657D;
+    font-weight: normal;
+    background-color: #0080FF20;
+    border-radius: 12px;
+    padding: 8px 0 8px 20px !important;
+}
+
+.v-list-item__content.active {
+    padding-left: 16px;
+    padding-right: 20px;
+}
+.v-list-item__content > * {
+    flex: none !important; /* Disable flex behavior */
+    padding-right: 10px;
   }

@@ -4,52 +4,59 @@
       <v-col cols="12" md="2" class="bg-light-blue">
         <v-card>
           <v-list>
-            <v-list-item @click="currentPage = 'dashboard'">
+            <!-- <v-list-item @click="currentPage = 'dashboard'">
               <v-list-item-action>
-                <!-- <v-icon>mdi-view-dashboard</v-icon> -->
                 <span class="material-symbols-outlined">dashboard </span>
               </v-list-item-action>
-              <v-list-item-content>Dashboard</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'dashboard' }">Dashboard</v-list-item-content>
+            </v-list-item> -->
+
+            <v-list-item @click="currentPage = 'dashboard'" class="d-flex align-center">
+              <v-list-item-content :class="{ 'active': currentPage === 'dashboard' }">
+                <span class="material-symbols-outlined mr-2">dashboard</span>
+                Dashboard
+              </v-list-item-content>
             </v-list-item>
-            <v-list-item v-if="canViewUser" @click="currentPage = 'users'">
-              <v-list-item-action>
-                <!-- <v-icon>mdi-account-multiple</v-icon> -->
+
+            <v-list-item v-if="canViewUser" @click="currentPage = 'users'" class="d-flex align-center">
+              <v-list-item-content :class="{ 'active': currentPage === 'users' }">
                 <span class="material-symbols-outlined">person </span>
-              </v-list-item-action>
-              <v-list-item-content>Users</v-list-item-content>
+                Users
+              </v-list-item-content>
             </v-list-item>
+
             <!-- <v-list-item @click="currentPage = 'agentsUsers'">
               <v-list-item-action>
                 <v-icon>mdi-account-multiple</v-icon>
               </v-list-item-action>
               <v-list-item-content>Agents</v-list-item-content>
             </v-list-item> -->
-            <v-list-item v-if="canViewGroup" @click="currentPage = 'groups'">
-              <v-list-item-action>
-                <!-- <v-icon>mdi-account-group</v-icon> -->
+
+            <v-list-item v-if="canViewGroup" @click="currentPage = 'groups'" class="d-flex align-center">
+              <v-list-item-content :class="{ 'active': currentPage === 'groups' }">
                 <span class="material-symbols-outlined">group </span>
-              </v-list-item-action>
-              <v-list-item-content>Company</v-list-item-content>
+                Company
+              </v-list-item-content>
             </v-list-item>
+
             <v-list-item @click="currentPage = 'roles'">
-              <v-list-item-action>
-                <!-- <v-icon>mdi-account-key</v-icon> -->
+              <v-list-item-content :class="{ 'active': currentPage === 'roles' }" class="d-flex align-center">
                 <span class="material-symbols-outlined">rule </span>
-              </v-list-item-action>
-              <v-list-item-content>Roles</v-list-item-content>
+                Roles
+              </v-list-item-content>
             </v-list-item>
+
             <v-list-item @click="currentPage = 'permissions'">
-              <v-list-item-action>
-                <!-- <v-icon>mdi-key</v-icon> -->
+              <v-list-item-content :class="{ 'active': currentPage === 'permissions' }" class="d-flex align-center">
                 <span class="material-symbols-outlined">manage_accounts </span>
-              </v-list-item-action>
-              <v-list-item-content>Permissions</v-list-item-content>
+                Permissions
+              </v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'activeLogins'">
-              <v-list-item-action>
+              <v-list-item-content :class="{ 'active': currentPage === 'activeLogins' }" class="d-flex align-center">
                 <span class="material-symbols-outlined">login</span>
-              </v-list-item-action>
-              <v-list-item-content>Active Logins</v-list-item-content>
+                Active Logins
+              </v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'settings'">
               <v-list-item-action>
@@ -63,7 +70,7 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card v-if="currentPage === 'dashboard'">
-          <v-card-title>Dashboard</v-card-title>
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Dashboard</v-card-title>
           <v-card-text>
             <!-- <v-row>
               <v-col>
@@ -72,8 +79,7 @@
               <v-col>
                 Username: {{ $username() }}
               </v-col>
-            </v-row> -->
-         
+            </v-row> -->        
 
             <v-row>
               <v-col cols="12" sm="6" md="4">
@@ -111,7 +117,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'users'">
-          <v-card-title>Users</v-card-title>
+          <!-- <v-card-title>Users</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Users</v-card-title>
           <v-card-text>
               <v-text-field v-model="searchUser" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
               <v-data-table
@@ -123,6 +130,9 @@
               >
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
+              </template>
+              <template v-slot:item.name="{ item }">
+                {{ item.name.charAt(0).toUpperCase() + item.name.slice(1)  }}
               </template>
               <template v-slot:item.group="{ item }">
                 {{ item.groups?.map(group => group.name).join(', ') }}
@@ -288,7 +298,8 @@
           </v-card-text>
         </v-card> -->
         <v-card v-if="currentPage === 'groups'">
-          <v-card-title>Company</v-card-title>
+          <!-- <v-card-title>Groups</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Company</v-card-title>
           <v-card-text>
             <v-data-table :headers="groupHeaders" :items="groups" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
@@ -399,7 +410,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'roles'">
-          <v-card-title>Roles</v-card-title>
+          <!-- <v-card-title>Roles</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Roles</v-card-title>
           <v-card-text>
             <v-data-table :headers="roleHeaders" :items="roles" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
@@ -440,7 +452,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'permissions'">
-          <v-card-title>Permissions</v-card-title>
+          <!-- <v-card-title>Permissions</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Permissions</v-card-title>
           <v-card-text>
             <v-data-table
               :headers="permissionHeaders"
@@ -460,7 +473,8 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'activeLogins'">
-          <v-card-title>Active Logins</v-card-title>
+          <!-- <v-card-title>Active Logins</v-card-title> -->
+          <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Active User(s) Login</v-card-title>
           <v-card-text>
             <v-data-table
                 :headers="loginHeaders"
@@ -470,10 +484,10 @@
               >
                 <template v-slot:item="{ item }">
                   <tr>
-                    <td>{{ item.username }}</td> <!-- 显示用户名 -->
-                    <td>{{ item.updated_at }}</td> <!-- 显示最后使用时间作为登录时间 -->
+                    <td>{{ item.username.charAt(0).toUpperCase() + item.username.slice(1)  }} <span v-show="item.username == getUsername()" style="color: #b5b5b5;">(You)</span></td> <!-- 显示用户名 -->
+                    <td>{{ $formatDate(item.updated_at) }}</td> <!-- 显示最后使用时间作为登录时间 -->
                     <td>
-                      <v-btn small color="red" @click="kickUser(item.id)">
+                      <v-btn small color="red" @click="kickUser(item.id)" style="color: #FFF">
                         Kick
                       </v-btn>
                     </td>
@@ -505,13 +519,13 @@
             </v-form>
           </v-card-text>
         </v-card>
-        <v-dialog v-model="kickDialog" persistent max-width="290">
+        <v-dialog v-model="kickDialog" persistent max-width="490">
           <v-card>
             <v-card-title class="headline">Confirm Action</v-card-title>
             <v-card-text>Are you sure you want to kick this user?</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
+              <v-btn color="blue darken-1" text @click="kickDialog = false">Cancel</v-btn>
               <v-btn color="red darken-1" text @click="confirmKick">Confirm</v-btn>
             </v-card-actions>
           </v-card>
@@ -622,7 +636,7 @@ export default {
       logins: [], // 存储登录信息的数组
       loginHeaders: [
       { text: 'User', value: 'username' }, // 使用 API 返回的用户名字段
-      { text: 'Logged In At', value: 'updated_at' }, // 使用 updated_at 作为登录时间
+      { text: 'Last logged in at', value: 'updated_at' }, // 使用 updated_at 作为登录时间
       ],
       kickDialog: false,
       userIdToKick: null,
@@ -1106,6 +1120,9 @@ export default {
           });
       }
     },
+    getUsername() {
+      return this.$username(); // Call the globally declared $username method
+    }
 
   }
 };
