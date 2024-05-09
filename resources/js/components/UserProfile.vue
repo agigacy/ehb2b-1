@@ -10,6 +10,12 @@
               </v-list-item-action>
               <v-list-item-content>My Profile</v-list-item-content>
             </v-list-item>
+            <v-list-item @click="currentPage = 'settings'">
+              <v-list-item-action>
+                <span class="material-icons pr-1">settings</span>
+              </v-list-item-action>
+              <v-list-item-content>Settings</v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-card>
       </v-col>
@@ -24,8 +30,8 @@
                 <v-col>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</v-col>
               </v-col>
               <v-col cols="6">
-                <div>Group Information</div>
-                <div>Group Name: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
+                <div>Company Information</div>
+                <div>Company Name: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
                 <div>SSM Number: {{ editingUser.groups.map(group => group.ssm_number).join(', ') }}</div>
                 <div>Address: {{ editingUser.groups.map(group => group.address).join(', ') }}</div>
                 <div>Phone: {{ editingUser.groups.map(group => group.phone).join(', ') }}</div>
@@ -53,6 +59,29 @@
             <br />
           </v-card-text>
         </v-card>
+        <v-card v-if="currentPage === 'settings'" class="mb-4">
+          <v-card-title>User Settings</v-card-title>
+          <v-card-text>
+            <v-data-table :headers="settingHeaders" :items="settings">
+              <template v-slot:item.actions="{ item }">
+                <v-btn small color="blue darken-1" text @click="showEditSetting(item)">
+                  Edit
+                </v-btn>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'editSetting'" class="mb-4">
+          <v-card-title>Edit Setting</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="editSetting">
+              <v-text-field label="Key" type="text" v-model="editingSetting.key" required :disabled="true"></v-text-field>
+              <v-text-field label="Value" type="text" v-model="editingSetting.value" required></v-text-field>
+              <v-btn @click="currentPage = 'settings'">Cancel</v-btn>
+              <v-btn type="submit">Save</v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -75,15 +104,52 @@
           password: '',
         },
         users: [],
+        settings: [],
+        editingSetting: {
+          key: '',
+          value: '',
+        },
+        settingHeaders: [
+          { text: 'Setting', value: 'key' },
+          { text: 'Value', value: 'value' },
+          { text: 'Actions', value: 'actions' },
+        ],
       }
     },
     mounted() {
       this.getUsers();
+      this.getSettings();
     },
     created() {
       axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
     },
     methods: {
+      getSettings() {
+        const userId = localStorage.getItem('user_id');
+        axios.get(`/api/user-settings/${userId}`)
+        .then(response => {
+          this.settings = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      },
+      showEditSetting(setting) {
+        this.editingSetting = Object.assign({}, setting);
+        this.currentPage = 'editSetting';
+      },
+      editSetting() {
+        const userId = localStorage.getItem('user_id');
+        axios.put(`/api/user-settings/${userId}/${this.editingSetting.key}/${this.editingSetting.value}`, this.editingSetting)
+        .then(response => {
+          console.log(response.data);
+          this.currentPage = 'settings';
+          this.getSettings();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      },
       showUsersPage() {
         this.currentPage = 'users';
       },

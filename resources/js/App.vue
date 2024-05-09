@@ -14,9 +14,9 @@
         <v-btn text to="/">Home</v-btn>
         <v-btn text to="/admin" v-if="isLoggedIn && canViewAdminPage">Admin</v-btn>
         <v-btn text to="/report" v-if="isLoggedIn">Report</v-btn>
-        <v-btn text to="/tour" v-if="isLoggedIn">Tour Setting</v-btn>
+        <v-btn text to="/tour" v-if="isLoggedIn && canViewTourPage">Tour Setting</v-btn>
         <v-btn text to="/tourpackage" v-if="isLoggedIn">Tour Booking</v-btn>
-        <v-btn text to="/agent" v-if="isLoggedIn">Agent</v-btn>
+        <v-btn text to="/agent" v-if="isLoggedIn && canViewAgentPage">Agent</v-btn>
         <v-btn text to="/login" v-if="!isLoggedIn">Login</v-btn>
         <v-btn text to="/userprofile" v-if="isLoggedIn"><span class="material-icons pr-1">face</span> <h6> {{ $username() }} ({{ $userId() }})</h6></v-btn>
         <v-btn text to="/notification" v-if="isLoggedIn"><span class="material-symbols-outlined pr-1"> notifications</span> Notification(s)</v-btn>
@@ -113,13 +113,25 @@ export default {
     const userid = JSON.parse(localStorage.getItem('user_id') || '[]');
     const username = localStorage.getItem('username')
     console.log("Permissions from localStorage:", permissions); // 输出权限数据
-    const hasPermission = permissions.includes('admin_page_view');
+    const hasPermission = permissions.includes('admin_page');
     console.log("Can view admin page:", hasPermission); // 输出是否有权限
     console.log("User ID" , userid)
     console.log("User Name" , username)
     return hasPermission;
-    
-  }
+    },
+    canViewTourPage() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasPermission = permissions.includes('tour_page');
+      console.log("Can view tour page:", hasPermission); // 输出是否有权限
+      return hasPermission;
+    },
+    canViewAgentPage() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasPermission = permissions.includes('agent_page');
+      console.log("Can view agent page:", hasPermission); // 输出是否有权限
+      return hasPermission;
+    }
+
   },
   methods: {
     forceLogout() {

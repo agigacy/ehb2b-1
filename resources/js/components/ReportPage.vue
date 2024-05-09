@@ -1,77 +1,102 @@
 <template>
-    <v-container>
-      Welcome {{ userId }}
-      <v-select
-        v-model="selectedTourId"
-        :items="tours"
-        item-value="id"
-        item-text="package_name"
-        label="选择 Tour"
-      ></v-select>
-      <v-btn color="primary" @click="fetchReportDataForSelectedTour">生成报告</v-btn>
-      <div id="report-content">
-        <br />
-        <h1>配套: {{ package_name }}</h1>
-        <p>配套华语: {{ package_name_chinese }}<br />
-          国家: {{ country.name }}<br />
-          配套编号: {{ code }}<br />
-          预订总数: {{ bookings.length }}<br />
-          乘客总数: {{ bookings.reduce((total, booking) => total + booking.passengers.length, 0) }}<br />
-          总计: RM {{ bookings.reduce((total, booking) => total + booking.total, 0).toFixed(2) }}<br />
-          平均每位乘客: RM {{ (bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length).toFixed(2) }}
-        </p>
-        
-        <h2>航班票信息</h2>
-        <p>航空公司: {{ airline }}<br />
-          出发日期: {{ departure_date }}<br />
-          返回日期: {{ return_date }}
-        </p>
-        <ul>
-          <li v-for="ticket in flight_tickets" :key="ticket.id">
-            航班号: {{ ticket.pnr }},
-            航空公司: {{ ticket.airline }},
-            出发日期: {{ ticket.departure_date }},
-            返回日期: {{ ticket.return_date }},
-            出发地: {{ ticket.from }},
-            目的地: {{ ticket.to }},
-            座位号: {{ ticket.seat }}
-          </li>
-        </ul>
-        <h2>预订信息</h2>
-        <ol v-if="bookings.length > 0">
-          <li v-for="booking in bookings" :key="booking.id" style="padding-top:20px">
-            预订: {{ booking.id }}, 日期: {{ booking.date }}, 总计: <b>RM {{ booking.total }}</b> ({{booking.passengers.length}} Pax)
-            <h5>乘客信息:</h5>
-            <ol type="a">
-              <li v-for="passenger in booking.passengers" :key="passenger.id">
-                <span class="pl-1">名字: <b>{{ passenger.name }}</b></span>
-                <span class="pl-5">护照号: {{ passenger.passport }} </span>
-                <span class="pl-5">出生日期: {{ passenger.date_of_birth }} </span>
-                <span class="pl-5">联系方式: {{ passenger.hp }} </span>
-                <span class="pl-5">备注: {{ passenger.remark }} </span>
+    <v-container fluid>
+      <v-row v-if="currentPage === 'selectReport'">
+       <v-col cols="12" sm="4">
+         <v-card @click="currentPage = 'selectTour'" height="100">
+          <label style="font-size:1.5em; font-weight:bold;">Tour Report</label>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-card @click="currentPage = 'selectFlightTicket'" height="100">
+          <label style="font-size:1.5em; font-weight:bold;">FlightTicket Report</label>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-card @click="currentPage = 'selectTransport'" height="100">
+          <label style="font-size:1.5em; font-weight:bold;">Transport Report</label>
+        </v-card> 
+      </v-col>
+      </v-row>
+      <v-card v-if="currentPage === 'selectTour'">
+        <v-btn @click="currentPage = 'selectReport'">返回</v-btn>
+          <v-select
+            v-model="selectedTourId"
+            :items="tours"
+            item-value="id"
+            item-text="package_name"
+            label="选择 Tour"
+          ></v-select>
+          <v-btn color="primary" @click="fetchReportDataForSelectedTour">生成报告</v-btn>
+          <div id="report-content">
+            <br />
+            <h1>配套: {{ package_name }}</h1>
+            <p>配套华语: {{ package_name_chinese }}<br />
+              国家: {{ country.name }}<br />
+              配套编号: {{ code }}<br />
+              预订总数: {{ bookings.length }}<br />
+              乘客总数: {{ bookings.reduce((total, booking) => total + booking.passengers.length, 0) }}<br />
+              总计: RM {{ bookings.reduce((total, booking) => total + booking.total, 0).toFixed(2) }}<br />
+              平均每位乘客: RM {{ (bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length).toFixed(2) }}
+            </p>
+            
+            <h2>航班票信息</h2>
+            <p>航空公司: {{ airline }}<br />
+              出发日期: {{ departure_date }}<br />
+              返回日期: {{ return_date }}
+            </p>
+            <ul>
+              <li v-for="ticket in flight_tickets" :key="ticket.id">
+                航班号: {{ ticket.pnr }},
+                航空公司: {{ ticket.airline }},
+                出发日期: {{ ticket.departure_date }},
+                返回日期: {{ ticket.return_date }},
+                出发地: {{ ticket.from }},
+                目的地: {{ ticket.to }},
+                座位号: {{ ticket.seat }}
               </li>
-              <!-- <li v-for="passenger in booking.passengers" :key="passenger.id" style="padding-bottom:10px">
-                <span class="pl-1">名字: [ <b>{{ passenger.name }}</b> ]</span>
-                <span class="pl-5">护照号: [ {{ passenger.passport }} ] </span>
-                <span class="pl-5">出生日期: [ {{ passenger.date_of_birth }} ] </span>
-                <span class="pl-5">联系方式: [ {{ passenger.hp }} ] </span>
-                <span class="pl-5">备注: [ {{ passenger.remark }} ] </span>
-              </li> -->
-              <!-- <li v-for="passenger in booking.passengers" :key="passenger.id" style="padding-bottom:10px">
-                名字: <b>{{ passenger.name }}</b>,
-                护照号: {{ passenger.passport }},
-                出生日期: {{ passenger.date_of_birth }},
-                联系方式: {{ passenger.hp }},
-                备注: {{ passenger.remark }}
-              </li> -->
+            </ul>
+            <h2>预订信息</h2>
+            <ol v-if="bookings.length > 0">
+              <li v-for="booking in bookings" :key="booking.id" style="padding-top:20px">
+                预订: {{ booking.id }}, 日期: {{ booking.date }}, 总计: <b>RM {{ booking.total }}</b> ({{booking.passengers.length}} Pax)
+                <h5>乘客信息:</h5>
+                <ol type="a">
+                  <li v-for="passenger in booking.passengers" :key="passenger.id">
+                    <span class="pl-1">名字: <b>{{ passenger.name }}</b></span>
+                    <span class="pl-5">护照号: {{ passenger.passport }} </span>
+                    <span class="pl-5">出生日期: {{ passenger.date_of_birth }} </span>
+                    <span class="pl-5">联系方式: {{ passenger.hp }} </span>
+                    <span class="pl-5">备注: {{ passenger.remark }} </span>
+                  </li>
+                  <!-- <li v-for="passenger in booking.passengers" :key="passenger.id" style="padding-bottom:10px">
+                    <span class="pl-1">名字: [ <b>{{ passenger.name }}</b> ]</span>
+                    <span class="pl-5">护照号: [ {{ passenger.passport }} ] </span>
+                    <span class="pl-5">出生日期: [ {{ passenger.date_of_birth }} ] </span>
+                    <span class="pl-5">联系方式: [ {{ passenger.hp }} ] </span>
+                    <span class="pl-5">备注: [ {{ passenger.remark }} ] </span>
+                  </li> -->
+                  <!-- <li v-for="passenger in booking.passengers" :key="passenger.id" style="padding-bottom:10px">
+                    名字: <b>{{ passenger.name }}</b>,
+                    护照号: {{ passenger.passport }},
+                    出生日期: {{ passenger.date_of_birth }},
+                    联系方式: {{ passenger.hp }},
+                    备注: {{ passenger.remark }}
+                  </li> -->
+                </ol>
+              </li>
             </ol>
-          </li>
-        </ol>
-        <ol v-else>No Record Found.</ol>
-        <br />
-      
-    </div>
-    <v-btn class="fixed-bottom" v-if="bookings.length > 0" color="primary" @click="generatePDF">导出PDF</v-btn>
+            <ol v-else>No Record Found.</ol>
+            <br />
+          
+        </div>
+        <v-btn class="fixed-bottom" v-if="bookings.length > 0" color="primary" @click="generatePDF">导出PDF</v-btn>
+      </v-card>
+      <v-card v-if="currentPage === 'selectFlightTicket'">
+        <v-btn @click="currentPage = 'selectReport'">返回</v-btn>
+      </v-card>
+      <v-card v-if="currentPage === 'selectTransport'">
+        <v-btn @click="currentPage = 'selectReport'">返回</v-btn>
+      </v-card>
     </v-container>
   </template>
   
@@ -81,6 +106,7 @@ import jsPDF from 'jspdf';
   export default {
     data() {
       return {
+        currentPage: 'selectReport',
         tours: [], // 存储所有 Tour 的列表
         selectedTourId: null, // 存储选中的 Tour ID
         package_name: '',
@@ -97,6 +123,9 @@ import jsPDF from 'jspdf';
       this.fetchTours();
     },
     methods: {
+      selectReportType(type) {
+        this.selectedReportType = type;
+      },
       async generatePDF() 
       {
         const headerImg = new Image();

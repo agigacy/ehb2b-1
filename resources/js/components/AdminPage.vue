@@ -29,7 +29,7 @@
                 <!-- <v-icon>mdi-account-group</v-icon> -->
                 <span class="material-symbols-outlined">group </span>
               </v-list-item-action>
-              <v-list-item-content>Groups</v-list-item-content>
+              <v-list-item-content>Company</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'roles'">
               <v-list-item-action>
@@ -50,6 +50,12 @@
                 <span class="material-symbols-outlined">login</span>
               </v-list-item-action>
               <v-list-item-content>Active Logins</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="currentPage = 'settings'">
+              <v-list-item-action>
+                <span class="material-symbols-outlined">settings</span>
+              </v-list-item-action>
+              <v-list-item-content>Settings</v-list-item-content>
             </v-list-item>
             <!-- Add more items here -->
           </v-list>
@@ -125,17 +131,17 @@
                 {{ item.roles?.map(role => role.name).join(', ') }}
               </template>
               <template v-slot:item.actions="{ item }">
-                <v-btn v-if="canEditAdminPage || canEditUser" small color="blue darken-1" text @click="showEditUserPage(item)">
+                <v-btn v-if="canEditUser" small color="blue darken-1" text @click="showEditUserPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
-                <v-btn v-if="canDeleteAdminPage || canDeleteUser" small color="red darken-1" text @click="startDeletingUser(item)">
+                <v-btn v-if="canDeleteUser" small color="red darken-1" text @click="startDeletingUser(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
               </template>
             </v-data-table>
-            <v-btn v-if="canCreateAdminPage || canCreateUser" @click="currentPage = 'addUser'">Add User</v-btn>
+            <v-btn v-if="canCreateUser" @click="currentPage = 'addUser'">Add User</v-btn>
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'addUser'">
@@ -282,7 +288,7 @@
           </v-card-text>
         </v-card> -->
         <v-card v-if="currentPage === 'groups'">
-          <v-card-title>Groups</v-card-title>
+          <v-card-title>Company</v-card-title>
           <v-card-text>
             <v-data-table :headers="groupHeaders" :items="groups" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
@@ -301,21 +307,21 @@
                 <v-switch disabled :input-value="item.tier3" style="opacity: 0.7"></v-switch>
               </template>
               <template v-slot:item.actions="{ item }">
-                <v-btn v-if="canEditAdminPage || canEditGroup" small color="blue darken-1" text @click="showEditGroupPage(item)">
+                <v-btn v-if="canEditGroup" small color="blue darken-1" text @click="showEditGroupPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
-                <v-btn v-if="canDeleteAdminPage || canDeleteGroup" small color="red darken-1" text @click="startDeletingGroup(item)">
+                <v-btn v-if="canDeleteGroup" small color="red darken-1" text @click="startDeletingGroup(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
               </template>
             </v-data-table>
-            <v-btn v-if="canCreateAdminPage || canCreateGroup" @click="currentPage = 'addGroup'">Add Group</v-btn>
+            <v-btn v-if="canCreateGroup" @click="currentPage = 'addGroup'">Add Group</v-btn>
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'addGroup'">
-          <v-card-title>Add Group</v-card-title>
+          <v-card-title>Add Company</v-card-title>
           <v-card-text>
             <v-form @submit.prevent="addGroup">
               <v-text-field label="Name" type="text" v-model="newGroup.name" required></v-text-field>
@@ -354,7 +360,7 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'editGroup'">
-          <v-card-title>Edit Group</v-card-title>
+          <v-card-title>Edit Company</v-card-title>
           <v-card-text>
             <v-form @submit.prevent="editGroup">
               <v-text-field label="Name" type="text" v-model="editingGroup.name" required></v-text-field>
@@ -474,6 +480,29 @@
                   </tr>
                 </template>
               </v-data-table>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'settings'">
+          <v-card-title>Global Settings</v-card-title>
+          <v-card-text>
+            <v-data-table :headers="settingHeaders" :items="settings">
+              <template v-slot:item.actions="{ item }">
+                <v-btn small color="blue darken-1" text @click="showEditSetting(item)">
+                  Edit
+                </v-btn>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="currentPage === 'editSetting'">
+          <v-card-title>Edit Setting</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="editSetting">
+              <v-text-field label="Key" type="text" v-model="editingSetting.key" required :disabled="true"></v-text-field>
+              <v-text-field label="Value" type="text" v-model="editingSetting.value" required></v-text-field>
+              <v-btn @click="currentPage = 'settings'">Cancel</v-btn>
+              <v-btn type="submit">Save</v-btn>
+            </v-form>
           </v-card-text>
         </v-card>
         <v-dialog v-model="kickDialog" persistent max-width="290">
@@ -597,6 +626,12 @@ export default {
       ],
       kickDialog: false,
       userIdToKick: null,
+      settings: [],
+      settingHeaders: [
+        { text: 'Setting', value: 'key' },
+        { text: 'Value', value: 'value' },
+        { text: 'Actions', value: 'actions' },
+      ],
     }
   },
   mounted() {
@@ -620,30 +655,13 @@ export default {
     // this.loadData();
     this.getPermissions();
     this.fetchActiveLogins();
+    this.getSettings();
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   },
   computed: {
     // 判断用户是否有 admin_page_view 权限
-    canCreateAdminPage() {
-    const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
-    const hasCreatePermission = permissions.includes('admin_page_create');
-    console.log("Can create admin page:", hasCreatePermission); // 输出是否有权限
-    return hasCreatePermission;
-    },
-    canEditAdminPage() {
-      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
-      const hasEditPermission = permissions.includes('admin_page_edit');
-      console.log("Can edit admin page:", hasEditPermission); // 输出是否有权限
-      return hasEditPermission;
-    },
-    canDeleteAdminPage() {
-      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
-      const hasDeletePermission = permissions.includes('admin_page_delete');
-      console.log("Can delete admin page:", hasDeletePermission); // 输出是否有权限
-      return hasDeletePermission;
-    },
     canViewUser() {
       const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
       const hasViewUserPermission = permissions.includes('user_view');
@@ -705,6 +723,30 @@ export default {
   //     data: [10, 20, 30] // 示例数据
   //   }];
   // },
+    getSettings() {
+      axios.get('/api/global-settings')
+      .then(response => {
+        this.settings = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
+    showEditSetting(setting) {
+      this.editingSetting = Object.assign({}, setting);
+      this.currentPage = 'editSetting';
+    },
+    editSetting() {
+      axios.put(`/api/global-settings/${this.editingSetting.id}`, this.editingSetting)
+      .then(response => {
+        console.log(response.data);
+        this.currentPage = 'settings';
+        this.getSettings();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
     kickUser(userId) {
       this.userIdToKick = userId;
       this.kickDialog = true; // 打开确认对话框
@@ -714,12 +756,10 @@ export default {
         axios.delete(`/api/kick-user/${this.userIdToKick}`)
           .then(response => {
             this.logins = this.logins.filter(login => login.id !== this.userIdToKick);
-            this.$toast.success('User kicked successfully');
             this.fetchActiveLogins();
           })
           .catch(error => {
             console.error("Error kicking user:", error);
-            this.$toast.error('Failed to kick user');
           });
       }
       this.kickDialog = false; // 关闭对话框

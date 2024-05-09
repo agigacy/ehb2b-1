@@ -2,39 +2,43 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Passenger;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\GlobalSetting;
+use App\Models\UserSetting;
 
-class PassengerController extends Controller
+class SettingsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index()
+    // public function getGlobalSettings()
     // {
-    //     $passengers = Passenger::with('booking')->get();
-    //     return response()->json($passengers, 200);
+    //     return GlobalSetting::all();
     // }
+
+    public function getUserSettings($userId)
+    {
+        return UserSetting::where('user_id', $userId)->get();
+    }
+
+    // public function getUserSetting($userId, $key)
+    // {
+    //     return UserSetting::where('user_id', $userId)->where('key', $key)->first();
+    // }
+
+    public function editUserSetting($userId, $key, $value)
+    {
+        return UserSetting::where('user_id', $userId)->where('key', $key)->update(['value' => $value]);
+    }
 
     public function index()
     {
-        $passengers = Passenger::with('booking')->get();
-
-        // 添加完整的 URL 到每个乘客的数据中
-        $passengers->transform(function ($passenger) {
-            if ($passenger->passport_upload) {
-                $passenger->passport_upload_url = asset($passenger->passport_upload);
-            } else {
-                $passenger->passport_upload_url = null;
-            }
-            return $passenger;
-        });
-
-        return response()->json($passengers, 200);
+        return GlobalSetting::all();
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -43,8 +47,7 @@ class PassengerController extends Controller
      */
     public function store(Request $request)
     {
-        $booking = Passenger::create($request->all());
-        return response()->json($booking, 201);
+        return GlobalSetting::create($request->all());
     }
 
     /**
@@ -55,7 +58,7 @@ class PassengerController extends Controller
      */
     public function show($id)
     {
-        return Passenger::findOrFail($id);
+        return GlobalSetting::find($id);
     }
 
     /**
@@ -67,9 +70,7 @@ class PassengerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $booking = Passenger::findOrFail($id);
-        $booking->update($request->all());
-        return response()->json($booking, 200);
+        return GlobalSetting::find($id)->update($request->all());
     }
 
     /**
@@ -80,7 +81,6 @@ class PassengerController extends Controller
      */
     public function destroy($id)
     {
-        Passenger::destroy($id);
-        return response()->json(null, 204);
+        return GlobalSetting::find($id)->delete();
     }
 }

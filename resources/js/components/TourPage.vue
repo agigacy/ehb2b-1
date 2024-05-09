@@ -13,14 +13,14 @@
               <!-- <span class="material-icons pr-1">face</span> -->
               <v-list-item-content>Dashboard</v-list-item-content>
             </v-list-item>
-            <v-list-item @click="currentPage = 'countries'">
+            <v-list-item v-if="canViewCountry" @click="currentPage = 'countries'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-country</v-icon> -->
                 <span class="material-symbols-outlined">language </span>
               </v-list-item-action>
               <v-list-item-content>Countries</v-list-item-content>
             </v-list-item>
-            <v-list-item @click="currentPage = 'flight_tickets'">
+            <v-list-item v-if="canViewFlightTicket" @click="currentPage = 'flight_tickets'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-flight_ticket</v-icon> -->
                 <!-- <span class="material-symbols-outlined">language </span> -->
@@ -28,7 +28,7 @@
               </v-list-item-action>
               <v-list-item-content>Flight Tickets</v-list-item-content>
             </v-list-item>
-            <v-list-item @click="currentPage = 'tours'">
+            <v-list-item v-if="canViewTour" @click="currentPage = 'tours'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-tour</v-icon> -->
                 <span class="material-symbols-outlined">tour</span>
@@ -85,11 +85,11 @@
                 {{ index + 1 }}
               </template>
               <template v-slot:item.actions="{ item }">
-                <v-btn small color="blue darken-1" text @click="showEditCountryPage(item)">
+                <v-btn v-if="canEditCountry" small color="blue darken-1" text @click="showEditCountryPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
-                <v-btn small color="red darken-1" text @click="startDeletingCountry(item)">
+                <v-btn v-if="canDeleteCountry" small color="red darken-1" text @click="startDeletingCountry(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
@@ -134,11 +134,11 @@
                 {{ index + 1 }}
               </template>
               <template v-slot:item.actions="{ item }">
-                <v-btn small color="blue darken-1" text @click="showEditFlightTicketPage(item)">
+                <v-btn v-if="canEditFlightTicket" small color="blue darken-1" text @click="showEditFlightTicketPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
-                <v-btn small color="red darken-1" text @click="startDeletingFlightTicket(item)">
+                <v-btn v-if="canDeleteFlightTicket" small color="red darken-1" text @click="startDeletingFlightTicket(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
@@ -229,7 +229,7 @@
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn> -->
-                <v-btn small color="red darken-1" text @click="startDeletingTour(item)">
+                <v-btn v-if="canDeleteTour" small color="red darken-1" text @click="startDeletingTour(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
@@ -261,8 +261,8 @@
             <!-- <p><strong>Total Seats1:</strong> {{ Array.isArray(viewingTour.flight_tickets) ? viewingTour.flight_tickets.reduce((total, ticket) => total + Number(ticket.seat), 0) : 0 }}</p> -->
             <p><strong>Remark:</strong> {{ viewingTour.remark }}</p>
             <v-btn @click="currentPage = 'tours'">Back</v-btn>
-            <v-btn @click="showEditTourPage(viewingTour)">Edit</v-btn>
-            <v-btn @click="showDuplicateTourPage(viewingTour)">Duplicate</v-btn>
+            <v-btn v-if="canEditTour" @click="showEditTourPage(viewingTour)">Edit</v-btn>
+            <v-btn v-if="canEditTour" @click="showDuplicateTourPage(viewingTour)">Duplicate</v-btn>
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'addTour'">
@@ -574,6 +574,78 @@ export default {
   //     }
   //   },
   //   // other computed properties...
+      canViewTour() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasTourViewPermission = permissions.includes('tour_view');
+        console.log("Can view tour:", hasTourViewPermission); // 输出是否有权限
+        return hasTourViewPermission;
+      },
+      canCreateTour() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasTourCreatePermission = permissions.includes('tour_create');
+        console.log("Can create tour:", hasTourCreatePermission); // 输出是否有权限
+        return hasTourCreatePermission;
+        },
+      canEditTour() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasTourEditPermission = permissions.includes('tour_edit');
+        console.log("Can edit tour:", hasTourEditPermission); // 输出是否有权限
+        return hasTourEditPermission;
+      },
+      canDeleteTour() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasTourDeletePermission = permissions.includes('tour_delete');
+        console.log("Can delete tour:", hasTourDeletePermission); // 输出是否有权限
+        return hasTourDeletePermission;
+      },
+      canViewCountry() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasCountryViewPermission = permissions.includes('country_view');
+        console.log("Can view country:", hasCountryViewPermission); // 输出是否有权限
+        return hasCountryViewPermission;
+      },
+      canCreateCountry() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasCountryCreatePermission = permissions.includes('country_create');
+        console.log("Can create country:", hasCountryCreatePermission); // 输出是否有权限
+        return hasCountryCreatePermission;
+      },
+      canEditCountry() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasCountryEditPermission = permissions.includes('country_edit');
+        console.log("Can edit country:", hasCountryEditPermission); // 输出是否有权限
+        return hasCountryEditPermission;
+      },
+      canDeleteCountry() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasCountryDeletePermission = permissions.includes('country_delete');
+        console.log("Can delete country:", hasCountryDeletePermission); // 输出是否有权限
+        return hasCountryDeletePermission;
+      },
+      canViewFlightTicket() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasFlightTicketViewPermission = permissions.includes('flight_ticket_view');
+        console.log("Can view flight ticket:", hasFlightTicketViewPermission); // 输出是否有权限
+        return hasFlightTicketViewPermission;
+      },
+      canCreateFlightTicket() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasFlightTicketCreatePermission = permissions.includes('flight_ticket_create');
+        console.log("Can create flight ticket:", hasFlightTicketCreatePermission); // 输出是否有权限
+        return hasFlightTicketCreatePermission;
+      },
+      canEditFlightTicket() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasFlightTicketEditPermission = permissions.includes('flight_ticket_edit');
+        console.log("Can edit flight ticket:", hasFlightTicketEditPermission); // 输出是否有权限
+        return hasFlightTicketEditPermission;
+      },
+      canDeleteFlightTicket() {
+        const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+        const hasFlightTicketDeletePermission = permissions.includes('flight_ticket_delete');
+        console.log("Can delete flight ticket:", hasFlightTicketDeletePermission); // 输出是否有权限
+        return hasFlightTicketDeletePermission;
+      },
       filteredTours() {
       return this.tours.filter(tour => {
         return (!this.searchPackageName || tour.package_name.toLowerCase().includes(this.searchPackageName.toLowerCase())) &&

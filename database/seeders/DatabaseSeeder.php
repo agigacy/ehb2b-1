@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FlightTicketTourSeeder::class);
         $this->call(BookingSeeder::class);
         $this->call(PermissionSeeder::class);
+        $this->call(GlobalSettingSeeder::class);
         // $role = Role::create(['name' => 'admin']);
         // $permission = Permission::create(['name' => 'edit articles']);
         // $role->givePermissionTo($permission);

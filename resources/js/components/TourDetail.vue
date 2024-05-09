@@ -90,6 +90,8 @@
                 accept="image/*"
                 :rules="[v => !!v || 'Passport upload is required']"
               ></v-file-input>
+              <v-img v-if="detail.passport_upload" :src="detail.passport_upload_url" alt="Passport Upload" style="max-width: 500px;"></v-img>
+              <v-spacer style="padding-bottom: 40px;"></v-spacer>
             </div>
           </v-card>
           <br />
@@ -150,7 +152,9 @@
           hp: '',
           passport: '',
           remark: '',
-          passport_upload: ''
+          passport_upload: '',
+          passport_upload_url: '',
+          passport_upload_file: null,
         },
         tourDetails: null,
         loading: false
@@ -199,13 +203,26 @@
         }
       },
       onFileChange(file, index) {
-        console.log("Received file:", file);  // 打印接收到的文件
+          console.log("Received file:", file);  // 打印接收到的文件
           if (file) {
+              // 创建一个指向该文件的 URL 用于预览
+              const fileURL = URL.createObjectURL(file);
+              this.passengerDetails[index].passport_upload_url = fileURL;
+              // 保存文件对象用于上传
               this.passengerDetails[index].passport_upload = file;
           } else {  
               this.passengerDetails[index].passport_upload = '';
+              this.passengerDetails[index].passport_upload_url = '';
           }
       },
+      // beforeDestroy() {
+      //     // 遍历所有的详情，撤销所有的 URL
+      //     this.passengerDetails.forEach(detail => {
+      //         if (detail.passport_upload) {
+      //             URL.revokeObjectURL(detail.passport_upload);
+      //         }
+      //     });
+      // },
       bookTour_working(){
         // console.log("Passenger details before submitting:", this.passengerDetails);
         const formData = new FormData();
@@ -284,9 +301,8 @@
             console.error('Booking failed', error);
             alert('Booking failed. Please try again.');
         });
-      }, 4500); 
-    },
-      
+        }, 4500); 
+      },
     },
     mounted() {
       this.getTour();

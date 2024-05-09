@@ -27,6 +27,17 @@ class BookingController extends Controller
     {
         // return Booking::all();
         $bookings = Booking::with('user', 'tour','passengers')->get();
+        $bookings->transform(function ($booking) {
+            $booking->passengers->transform(function ($passenger) {
+                if ($passenger->passport_upload) {
+                    $passenger->passport_upload_url = asset($passenger->passport_upload);
+                } else {
+                    $passenger->passport_upload_url = null;
+                }
+                return $passenger;
+            });
+            return $booking;
+        });
         return response()->json($bookings, 200);
     }
 
@@ -65,18 +76,18 @@ class BookingController extends Controller
                 }
                 
                 // Create reminders - Antoney working
-                $this->createReminders($booking);
+                // $this->createReminders($booking);
                 
                 // Create reminders - Antoney working
                 // $this->pdfBilling($booking);
                 
                 // Generate the PDF and get the file path
-                $pdfPath = $this->pdfBilling($booking);
+                // $pdfPath = $this->pdfBilling($booking);
 
 
                 // Send email confirmation
                 // Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));
-                Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking, $pdfPath));
+                // Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking, $pdfPath));
 
                 // Send email confirmation
                 // Mail::to($request->user()->email)->send(new TourBookingConfirmation($booking));

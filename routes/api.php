@@ -39,4 +39,8 @@ Route::middleware('auth:sanctum')->apiResource('/permissions', 'App\Http\Control
 Route::middleware('auth:sanctum')->apiResource('/reminders', 'App\Http\Controllers\Api\ReminderController');
 Route::middleware('auth:sanctum')->get('/active-logins', 'App\Http\Controllers\Api\AdminController@activeLogins');
 Route::middleware('auth:sanctum')->delete('/kick-user/{tokenId}', 'App\Http\Controllers\Api\AdminController@kickUser');
+Route::middleware('auth:sanctum')->apiResource('/global-settings', 'App\Http\Controllers\Api\SettingsController');
+Route::middleware('auth:sanctum')->get('/user-settings/{userId}', 'App\Http\Controllers\Api\SettingsController@getUserSettings');
+Route::middleware('auth:sanctum')->put('/user-settings/{userId}/{key}/{value}', 'App\Http\Controllers\Api\SettingsController@editUserSetting');
+
 

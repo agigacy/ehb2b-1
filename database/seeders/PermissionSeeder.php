@@ -21,10 +21,7 @@ class PermissionSeeder extends Seeder
          app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
          // create permissions
-         Permission::create(['name' => 'admin_page_view']);
-         Permission::create(['name' => 'admin_page_create']);
-         Permission::create(['name' => 'admin_page_edit']);
-         Permission::create(['name' => 'admin_page_delete']);
+         Permission::create(['name' => 'admin_page']);
          Permission::create(['name' => 'user_view']);
          Permission::create(['name' => 'user_create']);
          Permission::create(['name' => 'user_edit']);
@@ -40,6 +37,7 @@ class PermissionSeeder extends Seeder
          Permission::create(['name' => 'permission_view']);
          Permission::create(['name' => 'permission_edit']);
          Permission::create(['name' => 'permission_assign']);
+         Permission::create(['name' => 'tour_page']);
          Permission::create(['name' => 'country_view']);
          Permission::create(['name' => 'country_create']);
          Permission::create(['name' => 'country_edit']);
@@ -52,10 +50,7 @@ class PermissionSeeder extends Seeder
          Permission::create(['name' => 'tour_create']);
          Permission::create(['name' => 'tour_edit']);
          Permission::create(['name' => 'tour_delete']);
-         Permission::create(['name' => 'agent_page_view']);
-         Permission::create(['name' => 'agent_page_create']);
-         Permission::create(['name' => 'agent_page_edit']);
-         Permission::create(['name' => 'agent_page_delete']);
+         Permission::create(['name' => 'agent_page']);
          Permission::create(['name' => 'booking_view']);
          Permission::create(['name' => 'booking_create']);
          Permission::create(['name' => 'booking_edit']);

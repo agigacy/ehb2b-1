@@ -11,7 +11,7 @@
               </v-list-item-action>
               <v-list-item-content>Dashboard</v-list-item-content>
             </v-list-item>
-            <v-list-item @click="currentPage = 'bookings'">
+            <v-list-item v-if="canViewBooking" @click="currentPage = 'bookings'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-multiple</v-icon> -->
                 <span class="material-symbols-outlined">airplane_ticket </span>
@@ -97,7 +97,7 @@
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn> -->
-                <v-btn small color="red darken-1" text @click="startDeletingBooking(item)">
+                <v-btn v-if="canDeleteBooking" small color="red darken-1" text @click="startDeletingBooking(item)">
                   <v-icon small>mdi-delete</v-icon>
                   Delete
                 </v-btn>
@@ -117,8 +117,8 @@
             <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
             </template>
-            <template v-slot:item.actions="{ item }">
-                <v-btn small color="blue darken-1" text @click="showEditPassengerPage(item)">
+              <template v-slot:item.actions="{ item }">
+                <v-btn v-if="canEditBooking" small color="blue darken-1" text @click="showEditPassengerPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
                   Edit
                 </v-btn>
@@ -204,7 +204,24 @@
               <v-text-field label="Date Of Birth" type="text" v-model="editingPassenger.date_of_birth" required></v-text-field>
               <v-text-field label="Phone Number" type="text" v-model="editingPassenger.hp" required></v-text-field>
               <v-text-field label="Remark" type="text" v-model="editingPassenger.remark"></v-text-field>
-             
+              <!-- <v-file-input
+                label="Passport Upload"
+                @change="file => handlePassportUpload(file)"
+                accept="image/*"
+                :rules="[v => !!v || 'Passport upload is required']"
+              ></v-file-input> -->
+              <v-file-input
+                label="Passport Upload"
+                @change="handlePassportUpload"
+                accept="image/*"
+                :rules="[v => !!v || 'Passport upload is required']"
+              ></v-file-input>
+              <v-img
+                :src="editingPassenger.passport_upload_url"
+                alt="Passport Upload"
+                style="max-width: 500px;"
+              ></v-img>
+              <v-spacer style="padding-bottom: 40px;"></v-spacer>
               <v-btn @click="currentPage = 'bookingDetails'">Cancel</v-btn>
               <v-btn type="submit">Save</v-btn>
             </v-form>
@@ -245,6 +262,12 @@ export default {
       currentBooking: null,
       bookings: [],
       passengers: [],
+      passenger:{
+        passport_upload_url: '',
+      },
+      editingPassenger:{
+        passport_upload_url: '',
+      },
       bookingHeaders: [
         { text: 'No', value: 'index' },
         { text: 'Tour', value: 'tour_id' },
@@ -280,8 +303,13 @@ export default {
       },
       groupDataLoaded: false,
       users: [],
-      userTotals: []
-      
+      userTotals: [],
+      editingPassenger:{},
+      // editingPassenger: {
+      //   passport_upload: '',
+      //   passport_upload_url: '',
+      //   passport_upload_file: null,
+      // },
     }
   },
   mounted() {
@@ -330,10 +358,67 @@ export default {
     //   this.groupDataLoaded = true;
     // });
   },
+  computed: {
+    canViewBooking() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasBookingViewPermission = permissions.includes('booking_view');
+      console.log("Can view booking:", hasBookingViewPermission); // 输出是否有权限
+      return hasBookingViewPermission;
+    },
+    canCreateBooking() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasBookingCreatePermission = permissions.includes('booking_create');
+      console.log("Can create booking:", hasBookingCreatePermission); // 输出是否有权限
+      return hasBookingCreatePermission;
+    },
+    canEditBooking() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasBookingEditPermission = permissions.includes('booking_edit');
+      console.log("Can edit booking:", hasBookingEditPermission); // 输出是否有权限
+      return hasBookingEditPermission;
+    },
+    canDeleteBooking() {
+      const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+      const hasBookingDeletePermission = permissions.includes('booking_delete');
+      console.log("Can delete booking:", hasBookingDeletePermission); // 输出是否有权限
+      return hasBookingDeletePermission;
+    },
+  },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   },
   methods: {
+    // handlePassportUpload(e) {
+    //     const file = e.target.files[0]; // 获取文件
+    //     if (file) {
+    //         // 创建文件的 URL 用于预览
+    //         const fileURL = URL.createObjectURL(file);
+    //         this.editingPassenger.passport_upload_url = fileURL;
+    //         // 保存文件对象用于后续上传
+    //         this.editingPassenger.passport_upload = file;
+    //     } else {
+    //         this.editingPassenger.passport_upload_url = '';
+    //         this.editingPassenger.passport_upload = null;
+    //     }
+    // },
+    handlePassportUpload(files) {
+        const file = files[0]; // 获取第一个文件
+        if (file) {
+            // 创建文件的 URL 用于预览
+            const fileURL = URL.createObjectURL(file);
+            this.editingPassenger.passport_upload_url = fileURL;
+            // 保存文件对象用于后续上传
+            this.editingPassenger.passport_upload = file;
+        } else {
+            this.editingPassenger.passport_upload_url = '';
+            this.editingPassenger.passport_upload = null;
+        }
+    },
+    // beforeDestroy() {
+    //     if (this.editingPassenger.passport_upload_url) {
+    //         URL.revokeObjectURL(this.editingPassenger.passport_upload_url);
+    //     }
+    // },
     showBookingsPage() {
       this.currentPage = 'bookings';
     },
@@ -411,6 +496,8 @@ export default {
     },
     showEditPassengerPage(passenger) {
       this.editingPassenger = Object.assign({}, passenger);
+      // this.editingPassenger.passport_upload_url = this.passengers.[passenger].passport_upload_url;
+      // this.editingPassenger.passport_upload_url = 'http://localhost:8000/storage/passports/OdWLEKmkJuWIB3SZWXBgNNWCyqOo5XAq0Rqk0M03.png';
       this.currentPage = 'editPassenger';
     },
 
@@ -418,6 +505,14 @@ export default {
       axios.get('/api/passengers')
         .then(response => {
           this.passengers = response.data;
+          // if (this.passengers.length > 0) {
+          //   // 假设我们设置第一个乘客为编辑对象
+          //   this.editingPassenger = this.passengers[0];
+          // }
+          // const baseUrl = process.env.BASE_URL.endsWith('/') ? process.env.BASE_URL : process.env.BASE_URL + '/';
+          // this.editingPassenger.passport_upload_url = response.data.passport_upload ? baseUrl + response.data.passport_upload : '';
+          // this.editingPassenger = response.data;
+          // this.editingPassenger.passport_upload_url = response.data.passport_upload ? process.env.BASE_URL + response.data.passport_upload : '';
           if (this.currentBooking) {
             this.currentBooking.passengers = this.passengers.filter(passenger => passenger.booking_id === this.currentBooking.id);
           }
