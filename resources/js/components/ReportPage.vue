@@ -17,8 +17,10 @@
           配套编号: {{ code }}<br />
           预订总数: {{ bookings.length }}<br />
           乘客总数: {{ bookings.reduce((total, booking) => total + booking.passengers.length, 0) }}<br />
-          总计: RM {{ bookings.reduce((total, booking) => total + booking.total, 0).toFixed(2) }}<br />
-          平均每位乘客: RM {{ (bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length).toFixed(2) }}
+          <!-- 总计: RM {{ bookings.reduce((total, booking) => total + booking.total, 0).toFixed(2) }}<br /> -->
+          Total (总计): {{ $formatCurrency(bookings.reduce((total, booking) => total + booking.total, 0)) }}<br />
+          <!-- Average (平均每位乘客): {{ $formatCurrency((bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length)) }} -->
+          Average (平均每位乘客): {{ $formatCurrency((bookings.reduce((total, booking) => total + booking.total, 0) / bookings.reduce((total, booking) => total + booking.passengers.length, 0) )) }}
         </p>
         
         <h2>航班票信息</h2>
@@ -40,8 +42,8 @@
         <h2>预订信息</h2>
         <ol v-if="bookings.length > 0">
           <li v-for="booking in bookings" :key="booking.id" style="padding-top:20px">
-            预订: {{ booking.id }}, 日期: {{ booking.date }}, 总计: <b>RM {{ booking.total }}</b> ({{booking.passengers.length}} Pax)
-            <h5>乘客信息:</h5>
+            预订: {{ booking.id }}, 日期: {{ booking.date }}, 总计: <b> {{ $formatCurrency(booking.total) }}</b> ({{booking.passengers.length}} Pax)
+            <h6>Passenger(s) (乘客)</h6>
             <ol type="a">
               <li v-for="passenger in booking.passengers" :key="passenger.id">
                 <span class="pl-1">名字: <b>{{ passenger.name }}</b></span>

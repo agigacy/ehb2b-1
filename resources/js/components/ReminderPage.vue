@@ -8,19 +8,27 @@
                 <v-list-item-action>
                   <span class="material-symbols-outlined">flightsmode</span>
                 </v-list-item-action>
-                <v-list-item-content>Flight Tickets</v-list-item-content>
+                <!-- <v-list-item-content>Flight Tickets</v-list-item-content> -->
+                <v-list-item-content :class="{ 'active': currentPage === 'flight_tickets' }">Flight Tickets ({{ userId }})</v-list-item-content>
+              </v-list-item>
+              <v-list-item @click="currentPage = 'flight_tickets2'">
+                <v-list-item-action>
+                  <span class="material-symbols-outlined">flightsmode</span>
+                </v-list-item-action>
+                <!-- <v-list-item-content>Flight Tickets</v-list-item-content> -->
+                <v-list-item-content :class="{ 'active': currentPage === 'flight_tickets2' }">Flight Tickets (ALL)</v-list-item-content>
               </v-list-item>
               <v-list-item @click="currentPage = 'tours'">
                 <v-list-item-action>
                   <span class="material-symbols-outlined">tour</span>
                 </v-list-item-action>
-                <v-list-item-content>Tours Booking ({{ userId }})</v-list-item-content>
+                <v-list-item-content :class="{ 'active': currentPage === 'tours' }">Tours Booking ({{ userId }})</v-list-item-content>
               </v-list-item>
               <v-list-item @click="currentPage = 'tours2'">
                 <v-list-item-action>
                   <span class="material-symbols-outlined">tour</span>
                 </v-list-item-action>
-                <v-list-item-content>Tours Booking (ALL)</v-list-item-content>
+                <v-list-item-content :class="{ 'active': currentPage === 'tours2' }">Tours Booking (ALL)</v-list-item-content>
               </v-list-item>
             </v-list>
           </v-card>
@@ -55,6 +63,53 @@
               ></flat-pickr>
               <v-btn small color="blue" v-if="searchDate" @click="searchDate = null">Clear</v-btn>
               <v-data-table :headers="flightReminderHeaders" :items="filteredFlightReminders" :footer-props="{ itemsPerPageOptions: [10, 25, 50, 200, 500] }">
+                <template v-slot:item.index="{ index }">
+                  {{ index + 1 }}
+                </template>
+                <template v-slot:item.group="{ item }">
+                  {{ item.groups?.map(group => group.name).join(', ') }}
+                </template>
+                <template v-slot:item.before="{ item }">
+                  <center>{{ item.before }}</center>
+                </template>
+                <template v-slot:item.flight_ticket_id="{ item }">
+                  <center>{{ item.flight_ticket_id }}</center>
+                </template>
+                <template v-slot:item.date="{ item }">
+                  {{ $formatDate(item.date) }}
+                </template>
+                <template v-slot:item.info="{ item }">
+                  {{ item.info }}
+                </template>
+                <template v-slot:item.title="{ item }">
+                  {{ item.title }}
+                </template>
+                <template v-slot:item.actions="{ item }">
+                  <v-btn small color="blue darken-1" text @click="showEditFlightTicketPage(item)">
+                    <v-icon small>mdi-pencil</v-icon>
+                    Edit
+                  </v-btn>
+                  <v-btn small color="red darken-1" text @click="startDeletingFlightTicket(item)">
+                    <v-icon small>mdi-delete</v-icon>
+                    Delete
+                  </v-btn>
+                </template>
+              </v-data-table>
+              <v-btn @click="currentPage = 'addFlightTicket'">Add Flight Ticket</v-btn>
+            </v-card-text>
+          </v-card>
+          <v-card v-if="currentPage === 'flight_tickets2'">
+            <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Flight Tickets (PNR) Reminder (ALL) </v-card-title>
+            <v-card-text>
+              <v-text-field v-model="searchText" label="Search" single-line hide-details></v-text-field>
+              <flat-pickr
+                :modelValue="searchDate"
+                :config="dateConfigSearch"
+                @update:modelValue="value => searchDate = value"
+                placeholder="Search by departure date"
+              ></flat-pickr>
+              <v-btn small color="blue" v-if="searchDate" @click="searchDate = null">Clear</v-btn>
+              <v-data-table :headers="flightReminderHeaders" :items="allFlightReminders" :footer-props="{ itemsPerPageOptions: [10, 25, 50, 200, 500] }">
                 <template v-slot:item.index="{ index }">
                   {{ index + 1 }}
                 </template>
@@ -622,11 +677,15 @@
         allTourReminders() {
             return this.reminders.filter(reminder => reminder.booking_id);
         },
+        // Currently flgiht no filtering user id as table dont have user_id 
         filteredFlightReminders() {
             // const userId = this.userId; // Access userId property
             // return this.reminders.filter(reminder => reminder.flight_ticket_id !== '');
             return this.reminders.filter(reminder => reminder.flight_ticket_id);
             // return this.reminders;
+        },
+        allFlightReminders() {
+            return this.reminders.filter(reminder => reminder.flight_ticket_id);
         },
         userId() {
             return localStorage.getItem('user_id');
@@ -986,5 +1045,10 @@
   };
   </script>
   <style  scoped>
-    
+    /* .active {
+        padding: 10px;
+        background-color: #00657D;
+        color: #FFF;
+        border-radius: 12px;
+    } */
   </style>

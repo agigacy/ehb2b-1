@@ -11,14 +11,14 @@
 
               </v-list-item-action>
               <!-- <span class="material-icons pr-1">face</span> -->
-              <v-list-item-content>Dashboard</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'dashboard' }">Dashboard</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'countries'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-country</v-icon> -->
                 <span class="material-symbols-outlined">language </span>
               </v-list-item-action>
-              <v-list-item-content>Countries</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'countries' }">Countries</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'flight_tickets'">
               <v-list-item-action>
@@ -26,14 +26,14 @@
                 <!-- <span class="material-symbols-outlined">language </span> -->
                 <span class="material-symbols-outlined">flightsmode</span>
               </v-list-item-action>
-              <v-list-item-content>Flight Tickets</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'flight_tickets' }">Flight Tickets</v-list-item-content>
             </v-list-item>
             <v-list-item @click="currentPage = 'tours'">
               <v-list-item-action>
                 <!-- <v-icon>mdi-account-tour</v-icon> -->
                 <span class="material-symbols-outlined">tour</span>
               </v-list-item-action>
-              <v-list-item-content>Tours</v-list-item-content>
+              <v-list-item-content :class="{ 'active': currentPage === 'tours' }">Tours</v-list-item-content>
             </v-list-item>
             <!-- Add more items here -->
           </v-list>
@@ -136,6 +136,18 @@
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
               </template>
+              <template v-slot:item.departure_date="{ item }">
+                {{ $formatDate(item.departure_date) }}
+              </template>
+              <template v-slot:item.return_date="{ item }">
+                {{ $formatDate(item.return_date) }}
+              </template>
+              <template v-slot:header.icon={item} v-slot:item.icon="{ item }">
+                <v-icon>flight_takeoff</v-icon>
+              </template>
+              <template v-slot:item.icon="{ item }">
+                <span class="material-symbols-outlined" title="Round trip">swap_horiz</span>
+              </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn small color="blue darken-1" text @click="showEditFlightTicketPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
@@ -220,6 +232,14 @@
             <v-data-table :headers="tourHeaders" :items="filteredTours" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
+              </template>
+              <template v-slot:item.departure_date="{ item }">
+                {{ $formatDate(item.departure_date) }}
+              </template>
+              <template v-slot:item.remark="{ item }">
+                <div style="max-width: 360px;">
+                  {{ item.remark }}
+                </div>
               </template>
               <template v-slot:item.group="{ item }">
                 {{ item.groups?.map(group => group.name).join(', ') }}
@@ -467,9 +487,12 @@ export default {
         { text: 'No', value: 'index' },
         { text: 'PNR', value: 'pnr' },
         { text: 'Airline', value: 'airline' },
-        { text: 'Date', value: 'departure_date' },
-        { text: 'To', value: 'to' },
         { text: 'Seat', value: 'seat' },
+        { text: 'Departure Date', value: 'departure_date' },
+        { text: 'From', value: 'from' },
+        { text: 'Icon', value: 'icon' },
+        { text: 'To', value: 'to' },
+        { text: 'Return Date', value: 'return_date' },
         { text: 'Actions', value: 'actions' },
       ],
       tourHeaders: [
@@ -500,11 +523,43 @@ export default {
         showClearDate: true,
       },
       groupSeries: [],
+      // groupChartOptions: {
+      //   chart: {
+      //     type: 'donut',
+      //   },
+      //   labels: [], // 这里将用于显示组名
+      // },
       groupChartOptions: {
         chart: {
           type: 'donut',
+          height: 350
         },
-        labels: [], // 这里将用于显示组名
+        series: [{
+          name: 'Sales',
+          data: this.groupSeries // This assumes you're keeping the numerical data for charting
+        }],
+        tooltip: {
+          y: {
+            formatter: (val) => {
+              // Now 'this' refers to the Vue instance, where $formatCurrency is defined
+              const formattedValue = this.$formatCurrency(val); // Assuming 'RM' is default
+              return formattedValue;
+            }
+          }
+          // y: {
+          //   formatter: function (val) {
+          //     // return `RM: ${val.toFixed(2)}`;
+          //     const formattedValue = this.$formatCurrency(val); // Assuming 'RM' is default
+          //     return formattedValue;
+          //   }
+          // }
+        },
+        // dataLabels: {
+        //   enabled: true,
+        //   formatter: function (val) {
+        //     // return `Total: $${val.toFixed(2)}`;
+        //   }
+        // }
       },
       groupSeries4: [],
       groupChartOptions4: {
@@ -512,6 +567,16 @@ export default {
           type: 'donut',
         },
         labels: [], // 这里将用于显示组名
+
+        tooltip: {
+          y: {
+            formatter: (val) => {
+              // Now 'this' refers to the Vue instance, where $formatCurrency is defined
+              const formattedValue = this.$formatCurrency(val); // Assuming 'RM' is default
+              return formattedValue;
+            }
+          }
+        },
       },
       groupChartOptions2: {
         chart: {
@@ -521,7 +586,8 @@ export default {
       },
       groupDataLoaded: false,
       users: [],
-      userTotals: []
+      userTotals: [],
+      bookings: []
     }
   },
   mounted() {
@@ -530,7 +596,8 @@ export default {
     this.getTours();
     this.getUsers();
     this.getBookings();
-    this.getGroups().then(() => {
+    this.getGroups().then(() => {      
+
       this.groupSeries = Object.values(this.bookings.reduce((acc, booking) => {
         if (!acc[booking.user_id]) {
           acc[booking.user_id] = 0;
@@ -539,10 +606,21 @@ export default {
         return acc;
       }, {}));
 
-      this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => {
-        const user = this.users.find(user => user.id === booking.user_id);
-        return user? user.name : '';
-      }))];
+      // New method to sort user id accordingly
+      const userIds = [...new Set(this.bookings.map(booking => booking.user_id))];
+      userIds.sort((a, b) => a - b);
+      // Map sorted user IDs to corresponding user names
+      this.groupChartOptions.labels = userIds.map(userId => {
+          const user = this.users.find(user => user.id === userId);
+          // return user ? user.name : '';
+          return user ? user.name.charAt(0).toUpperCase() + user.name.slice(1) : '';
+      });
+
+      // // OLD method user id not sorting so matching wrong data
+      // this.groupChartOptions.labels = [...new Set(this.bookings.map(booking => {
+      //   const user = this.users.find(user => user.id === booking.user_id);
+      //   return user? user.name : '';
+      // }))];
       
       // this.groupSeries4 = [40, 50, 90];
       
@@ -553,15 +631,13 @@ export default {
         acc[booking.tour_id] += booking.total;
         return acc;
       }, {}));
-
-      // this.groupChartOptions4.labels = ['A', 'B', 'C'];
       
       this.groupChartOptions4.labels = [...new Set(this.bookings.map(booking => {
         // const user = this.users.find(user => user.id === booking.tour_id);
         // return user? user.name : '';
         const tour = this.tours.find(tour => tour.id === booking.tour_id);
-        // return tour? tour.package_name.slice() : '';
-        return tour ? tour.package_name.slice(0, 10) + '..' : '';
+        // return tour? tour.package_name : '';
+        return tour ? tour.package_name.slice(0, 14) + '..' : 'unknown';
         // return tour ? tour.package_name.slice(0, tour.package_name.indexOf(',')) + '..' : ''; // Slice text after comma 
 
       }))];
