@@ -78,7 +78,7 @@
                 {{ index + 1 }}
               </template>
               <template v-slot:item.tour_id="{ item }">
-                {{ item.tour.package_name }}
+                <span class="text-uppercase" style="color: #00657D; font-size: 0.9em; font-weight: bold;">{{ item.tour.package_name }}</span>
               </template>
               <template v-slot:item.pax="{ item }">
                 <!-- {{ item.tour.user_id }} -->
@@ -122,8 +122,10 @@
           <!-- <v-card-title v-if="currentBooking && currentBooking.user">{{ currentBooking.user.name }}'s Booking</v-card-title> -->
           <v-card-text v-if="currentBooking">
             <p>Tour: <b>{{ currentBooking.tour.package_name }}</b></p>
-            <p>Travel Date: {{ currentBooking.date }}</p>
-            <p>Total Amount: RM {{ currentBooking.total.toFixed(2) }}</p>
+            <!-- <p>Travel Date: {{ currentBooking.date }}</p> -->
+            <p>Travel Date: {{ $formatDate(currentBooking.date) }}</p>
+            <!-- <p>Total Amount: RM {{ currentBooking.total.toFixed(2) }}</p> -->
+            <p>Total Amount: {{ $formatCurrency(currentBooking.total) }}</p>
             <br />
             <h5>Travel Passenger(s):</h5>
             <v-data-table :headers="passengerHeaders" :items="currentBooking.passengers" :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }">

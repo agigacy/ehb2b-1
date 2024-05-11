@@ -1,24 +1,44 @@
 <template>
     <v-container fluid>
-      <v-row v-if="currentPage === 'selectReport'">
-       <v-col cols="12" sm="4">
-         <v-card @click="currentPage = 'selectTour'" height="100">
-          <label style="font-size:1.5em; font-weight:bold;">Tour Report</label>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="4">
-        <v-card @click="currentPage = 'selectFlightTicket'" height="100">
-          <label style="font-size:1.5em; font-weight:bold;">FlightTicket Report</label>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="4">
-        <v-card @click="currentPage = 'selectTransport'" height="100">
-          <label style="font-size:1.5em; font-weight:bold;">Transport Report</label>
-        </v-card> 
-      </v-col>
+      <v-card-title class="py-2 px-4" style="background-color: bisque; width: 100%; padding-left: 28px; font-size: 14px; font-weight: bold">Reporting</v-card-title>
+
+      <v-row v-if="currentPage === 'selectReport'" class="text-center pt-4"> <!-- Add class="text-center" to center align all labels -->
+        <v-col cols="12" sm="4">
+          <v-card @click="currentPage = 'selectTour'" height="100" class="py-4 hoverable-card">
+            <label style="font-size:1.2em; color: #00657D; font-weight:bold;"><span class="material-symbols-outlined" style="font-size: 2em;">picture_as_pdf</span> Tour(s) Booking </label>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card @click="currentPage = 'selectFlightTicket'" height="100" class="py-4 hoverable-card">
+            <label style="font-size:1.2em; color: #00657D; font-weight:bold;"><span class="material-symbols-outlined" style="font-size: 2em;">picture_as_pdf</span> Flight Ticket(s)</label>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card @click="currentPage = 'selectTransport'" height="100" class="py-4 hoverable-card">
+            <label style="font-size:1.2em; color: #00657D; font-weight:bold;"><span class="material-symbols-outlined" style="font-size: 2em;">picture_as_pdf</span> Agent(s)</label>
+          </v-card> 
+        </v-col>
       </v-row>
-      <v-card v-if="currentPage === 'selectTour'">
-        <v-btn @click="currentPage = 'selectReport'">返回</v-btn>
+      <v-row v-if="currentPage === 'selectReport'" class="text-center"> <!-- Add class="text-center" to center align all labels -->
+        <v-col cols="12" sm="4">
+          <v-card @click="currentPage = 'selectTour'" height="100" class="py-4 hoverable-card">
+            <label style="font-size:1.2em; color: #00657D; font-weight:bold;"><span class="material-symbols-outlined" style="font-size: 2em;">picture_as_pdf</span> Staff(s) </label>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card @click="currentPage = 'selectFlightTicket'" height="100" class="py-4 hoverable-card">
+            <label style="font-size:1.2em; color: #00657D; font-weight:bold;"><span class="material-symbols-outlined" style="font-size: 2em;">picture_as_pdf</span> Companies</label>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card @click="currentPage = 'selectTransport'" height="100" class="py-4 hoverable-card">
+            <label style="font-size:1.2em; color: #00657D; font-weight:bold;"><span class="material-symbols-outlined" style="font-size: 2em;">picture_as_pdf</span> Sales</label>
+          </v-card> 
+        </v-col>
+      </v-row>
+      
+      <v-card v-if="currentPage === 'selectTour'" class="mx-1 px-2">
+        <v-btn @click="currentPage = 'selectReport'" class="my-2 ml-2">Back (返回)</v-btn>
           <v-select
             v-model="selectedTourId"
             :items="tours"
@@ -35,14 +55,16 @@
               配套编号: {{ code }}<br />
               预订总数: {{ bookings.length }}<br />
               乘客总数: {{ bookings.reduce((total, booking) => total + booking.passengers.length, 0) }}<br />
-              总计: RM {{ bookings.reduce((total, booking) => total + booking.total, 0).toFixed(2) }}<br />
-              平均每位乘客: RM {{ (bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length).toFixed(2) }}
+              Total (总计): <b>{{ $formatCurrency(bookings.reduce((total, booking) => total + booking.total, 0)) }}</b><br />
+              Average (平均每位乘客): {{ $formatCurrency(bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length) }}
+              <!-- Total (总计): RM {{ bookings.reduce((total, booking) => total + booking.total, 0).toFixed(2) }}<br />
+              Average (平均每位乘客): RM {{ (bookings.reduce((total, booking) => total + booking.total, 0) / bookings.length).toFixed(2) }} -->
             </p>
             
-            <h2>航班票信息</h2>
-            <p>航空公司: {{ airline }}<br />
-              出发日期: {{ departure_date }}<br />
-              返回日期: {{ return_date }}
+            <h4>Flight Info (航班票信息)</h4>
+            <p>Airline (航空公司): {{ airline }}<br />
+              Departure Date (出发日期): {{ departure_date }}<br />
+              Return Date (返回日期): {{ return_date }}
             </p>
             <ul>
               <li v-for="ticket in flight_tickets" :key="ticket.id">
@@ -55,11 +77,11 @@
                 座位号: {{ ticket.seat }}
               </li>
             </ul>
-            <h2>预订信息</h2>
+            <h4>Booking Info (预订信息)</h4>
             <ol v-if="bookings.length > 0">
               <li v-for="booking in bookings" :key="booking.id" style="padding-top:20px">
-                预订: {{ booking.id }}, 日期: {{ booking.date }}, 总计: <b>RM {{ booking.total }}</b> ({{booking.passengers.length}} Pax)
-                <h5>乘客信息:</h5>
+                预订: {{ booking.id }}, 日期: {{ booking.date }}, 总计: <b> {{ $formatCurrency(booking.total) }}</b> ({{booking.passengers.length}} Pax)
+                <h6>Passenger(s) Info (乘客信息)</h6>
                 <ol type="a">
                   <li v-for="passenger in booking.passengers" :key="passenger.id">
                     <span class="pl-1">名字: <b>{{ passenger.name }}</b></span>
@@ -92,10 +114,10 @@
         <v-btn class="fixed-bottom" v-if="bookings.length > 0" color="primary" @click="generatePDF">导出PDF</v-btn>
       </v-card>
       <v-card v-if="currentPage === 'selectFlightTicket'">
-        <v-btn @click="currentPage = 'selectReport'">返回</v-btn>
+        <v-btn @click="currentPage = 'selectReport'" class="my-2 ml-2">Back (返回)</v-btn>
       </v-card>
       <v-card v-if="currentPage === 'selectTransport'">
-        <v-btn @click="currentPage = 'selectReport'">返回</v-btn>
+        <v-btn @click="currentPage = 'selectReport'" class="my-2 ml-2">Back (返回)</v-btn>
       </v-card>
     </v-container>
   </template>
@@ -339,5 +361,10 @@ import jsPDF from 'jspdf';
       bottom: 10px; /* Distance from the bottom of the viewport */
       left: 45%; /* Distance from the right of the viewport, adjust as necessary */
       z-index: 1000; /* Ensure it's above other content */
+    }
+    .hoverable-card:hover {
+      transition: 0.3s;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2); /* Apply elevation effect on hover */
+      background-color: #FFF00030;
     }
   </style>

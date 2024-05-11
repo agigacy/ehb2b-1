@@ -16,7 +16,7 @@
                   <span class="material-symbols-outlined">flightsmode</span>
                 </v-list-item-action>
                 <!-- <v-list-item-content>Flight Tickets</v-list-item-content> -->
-                <v-list-item-content :class="{ 'active': currentPage === 'flight_tickets2' }">Flight Tickets (ALL)</v-list-item-content>
+                <v-list-item-content :class="{ 'active': currentPage === 'flight_tickets2' }">Flight Tickets (all)</v-list-item-content>
               </v-list-item>
               <v-list-item @click="currentPage = 'tours'">
                 <v-list-item-action>
@@ -28,7 +28,7 @@
                 <v-list-item-action>
                   <span class="material-symbols-outlined">tour</span>
                 </v-list-item-action>
-                <v-list-item-content :class="{ 'active': currentPage === 'tours2' }">Tours Booking (ALL)</v-list-item-content>
+                <v-list-item-content :class="{ 'active': currentPage === 'tours2' }">Tours Booking (all)</v-list-item-content>
               </v-list-item>
             </v-list>
           </v-card>

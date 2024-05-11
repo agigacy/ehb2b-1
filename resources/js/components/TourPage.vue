@@ -86,6 +86,9 @@
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
               </template>
+              <template v-slot:item.img_url="{ item }">
+                <img :src="item.img_url" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #CCCCCC;" />
+              </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn v-if="canEditCountry" small color="blue darken-1" text @click="showEditCountryPage(item)">
                   <v-icon small>mdi-pencil</v-icon>
@@ -233,14 +236,23 @@
               <template v-slot:item.index="{ index }">
                 {{ index + 1 }}
               </template>
+              <template v-slot:item.package_name="{ item }">
+                  <span class="text-uppercase" style="color: #00657D; font-size: 0.9em; font-weight: bold;">{{ item.package_name }}</span>
+              </template>
               <template v-slot:item.departure_date="{ item }">
                 {{ $formatDate(item.departure_date) }}
               </template>
-              <template v-slot:item.remark="{ item }">
+              <!-- <template v-slot:item.remark="{ item }">
                 <div style="max-width: 360px;">
                   {{ item.remark }}
                 </div>
+              </template> -->
+              <template v-slot:item.remark="{ item }">
+                <div style="max-width: 360px;" v-html="item.remark">
+                  <!-- HTML content of item.remark will be rendered here -->
+                </div>
               </template>
+
               <template v-slot:item.group="{ item }">
                 {{ item.groups?.map(group => group.name).join(', ') }}
               </template>
@@ -480,7 +492,8 @@ export default {
       tours: [],
       countryHeaders: [
         { text: 'No', value: 'index' },
-        { text: 'Name', value: 'name' },
+        { text: 'Country', value: 'name' },
+        { text: 'Flat', value: 'img_url' },
         { text: 'Actions', value: 'actions' },
       ],
       flight_ticketHeaders: [
