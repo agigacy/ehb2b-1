@@ -87,7 +87,8 @@
                 {{ index + 1 }}
               </template>
               <template v-slot:item.img_url="{ item }">
-                <img :src="item.img_url" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #CCCCCC;" />
+                  <img :src="item.img_url" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #CCCCCC;"
+                    :title="item.name" />
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn v-if="canEditCountry" small color="blue darken-1" text @click="showEditCountryPage(item)">
@@ -492,8 +493,8 @@ export default {
       tours: [],
       countryHeaders: [
         { text: 'No', value: 'index' },
-        { text: 'Country', value: 'name' },
         { text: 'Flat', value: 'img_url' },
+        { text: 'Country', value: 'name' },
         { text: 'Actions', value: 'actions' },
       ],
       flight_ticketHeaders: [
