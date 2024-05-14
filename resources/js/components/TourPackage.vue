@@ -2,7 +2,7 @@
     <div class="ma-4">
       <v-card v-if="currentPage === 'countries'">
         <h5 class="p-2">Destination Country</h5>
-        <v-row>
+        <v-row class="mx-2">
           <v-col cols="12" sm="3" md="3" v-for="country in countries" :key="country.id">
             <v-card @click="selectCountry(country.id)" 
               :disabled="countTours.filter(ctour => ctour.country_id === country.id).length == 0">
@@ -15,7 +15,7 @@
               <v-img v-if="country.id === 6" src="https://www.worldometers.info/img/flags/ch-flag.gif" height="30vh" width="auto" style="margin-top: 10px; margin-bottom: 20px;"></v-img>
               <v-img v-if="country.id === 7" src="https://www.worldometers.info/img/flags/as-flag.gif" height="30vh" width="auto" style="margin-top: 10px; margin-bottom: 20px;"></v-img>
               <v-img v-if="country.id === 8" src="https://www.worldometers.info/img/flags/id-flag.gif" height="30vh" width="auto" style="margin-top: 10px; margin-bottom: 20px;"></v-img>
-              <v-card-title class="pt-0">{{ country.name }} ({{ countTours.filter(ctour => ctour.country_id === country.id).length }})</v-card-title>
+              <v-card-title class="pt-0" style="font-size: 1.2em">{{ country.name }} ({{ countTours.filter(ctour => ctour.country_id === country.id).length }})</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -24,8 +24,7 @@
       <!-- <v-card v-if="currentPage === 'tours'">
         <h5 class="p-2">Tour Package(s)</h5>
         <v-btn class="mb-2 ml-2" @click="currentPage = 'countries'">back</v-btn>
-        <v-row>
-          
+        <v-row class="m-2">          
           <v-col cols="12" sm="4" md="4" v-for="tour in tours" :key="tour.id">
             <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })">
               <v-img src="https://a.cdn-hotels.com/gdcs/production172/d1381/8efd3f69-63bb-4398-a595-095cea25fc37.jpg" height="200px"></v-img>
