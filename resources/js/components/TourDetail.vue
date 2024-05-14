@@ -13,12 +13,12 @@
         <v-col cols="8" class="mb-4">
           <v-card class="pl-4 pb-2">
             <v-btn class="m-2" @click="$router.back()">back</v-btn>
-            <v-card-title>{{ tour.package_name }}</v-card-title>
+            <v-card-title>{{ tour.tour_group.tour_group_name }}</v-card-title>
             <!-- Slider with tour dates and prices -->
             <!-- <v-slider v-model="selectedDate" :items="tour.dates" item-text="date" item-value="price"></v-slider> -->
             <!-- Things to know -->
             
-            <v-img src="https://a.cdn-hotels.com/gdcs/production172/d1381/8efd3f69-63bb-4398-a595-095cea25fc37.jpg" height="200px"></v-img>
+            <v-img :src="tour.tour_group.tour_img_url" height="200px"></v-img>
             <v-card-title>Things to Know</v-card-title>
             <!-- <v-row>
               <v-col cols="4" v-for="item in tour.thingsToKnow" :key="item.id">
@@ -101,7 +101,7 @@
         <v-col cols="4">
           <v-card class="pl-4 pb-5 fixed-summary" style="background-color: blanchedalmond;">
             <v-card-title>Summary</v-card-title>
-            <div class="mb-2 pl-3">Tour: <b>{{ tour.package_name }}</b></div>
+            <div class="mb-2 pl-3">Tour: <b>{{ tour.tour_group.tour_group_name }}</b></div>
             <div class="mb-2 pl-3">Code: <b>{{ tour.code }}</b></div>
             <div class="mb-2 pl-3">Departure Date: {{ tour.departure_date }}</div>
             <!-- Conditional rendering for specific fields -->

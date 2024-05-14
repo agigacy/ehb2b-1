@@ -17,7 +17,7 @@ class TourController extends Controller
     public function index()
     {
         // return Tour::all();
-        $tours = Tour::with('country','flight_tickets')->get();
+        $tours = Tour::with('tour_group','flight_tickets')->get();
         return response()->json($tours, 200);
     }
 
@@ -46,7 +46,7 @@ class TourController extends Controller
     public function show($id)
     {
         // return Tour::findOrFail($id);
-        return Tour::with('country')->findOrFail($id);
+        return Tour::with('tour_group')->findOrFail($id);
         // return Tour::with('country')->findOrFail($id)->append('country_name');
         // $tour = Tour::with('country')->findOrFail($id);
         // return $tour->append('country_name');
@@ -101,7 +101,7 @@ class TourController extends Controller
     {
         // 通过ID查找特定的Tour，并预加载它的Bookings以及Bookings的Passengers
         // $tour = Tour::findOrFail($id);
-        $tour = Tour::with(['bookings.passengers','country','flight_tickets'])->findOrFail($tourId);
+        $tour = Tour::with(['bookings.passengers','tour_group','flight_tickets'])->findOrFail($tourId);
     
         // 直接返回这个特定的Tour及其Bookings和Bookings的Passengers
         return response()->json($tour);

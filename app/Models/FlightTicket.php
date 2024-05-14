@@ -20,4 +20,9 @@ class FlightTicket extends Model
     {
         return $this->hasMany(Reminder::class, 'reminder_id');
     }
+
+    public function passengers()
+    {
+        return $this->belongsToMany(Passenger::class);
+    }
 }

@@ -18,7 +18,7 @@ class CountryController extends Controller
     public function index(Request $request)
     {
         // return Country::all();
-        $countries = Country::with('tours')->get();
+        $countries = Country::with('TourGroups')->get();
         return response()->json($countries);
         // $query = Country::query();
 

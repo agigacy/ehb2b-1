@@ -12,8 +12,8 @@ class Country extends Model
     protected $fillable = ['name', 'img_url'];
 
 
-    public function tours()
+    public function tourGroups()
     {
-        return $this->hasMany(Tour::class);
+        return $this->hasMany(TourGroup::class);
     }
 }
