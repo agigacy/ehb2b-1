@@ -31,7 +31,8 @@
                 <v-col>Role: {{ editingUser.roles.map(role => role.name).join(', ') }}</v-col>
               </v-col>
               <v-col cols="6">
-                <div>Company Information</div>
+                <!-- <div>Company Information</div> -->
+                <div class="pt-2"><b>Group Information</b></div>
                 <div>Company Name: {{ editingUser.groups.map(group => group.name).join(', ') }}</div>
                 <div>SSM Number: {{ editingUser.groups.map(group => group.ssm_number).join(', ') }}</div>
                 <div>Address: {{ editingUser.groups.map(group => group.address).join(', ') }}</div>
