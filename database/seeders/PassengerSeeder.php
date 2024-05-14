@@ -15,6 +15,7 @@ class PassengerSeeder extends Seeder
     public function run()
     {
         Passenger::insert([
+            [
             'id' => '1',
             'booking_id' => '1',
             'name' => 'John Doe',
@@ -38,7 +39,7 @@ class PassengerSeeder extends Seeder
         ],
         [
             'id' => '3',
-            'booking_id' => '2',
+            'booking_id' => '1',
             'name' => 'Hoang',
             'passport' => 'A9482712',
             'passport_upload' => '',
@@ -47,6 +48,6 @@ class PassengerSeeder extends Seeder
             'hp' => '0138282828',
             'remark' => 'got visa',
         ]
-    );
+    ]);
     }
 }

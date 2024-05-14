@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBookingFlightTicketTable extends Migration
+class CreateFlightTicketPassengerTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateBookingFlightTicketTable extends Migration
      */
     public function up()
     {
-        Schema::create('booking_flight_ticket', function (Blueprint $table) {
+        Schema::create('flight_ticket_passenger', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->foreignId('flight_ticket_id')->constrained()->onDelete('cascade');
+            $table->foreignId('passenger_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateBookingFlightTicketTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('booking_flight_ticket');
+        Schema::dropIfExists('flight_ticket_passenger');
     }
 }

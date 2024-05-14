@@ -42,5 +42,7 @@ Route::middleware('auth:sanctum')->delete('/kick-user/{tokenId}', 'App\Http\Cont
 Route::middleware('auth:sanctum')->apiResource('/global-settings', 'App\Http\Controllers\Api\SettingsController');
 Route::middleware('auth:sanctum')->get('/user-settings/{userId}', 'App\Http\Controllers\Api\SettingsController@getUserSettings');
 Route::middleware('auth:sanctum')->put('/user-settings/{userId}/{key}/{value}', 'App\Http\Controllers\Api\SettingsController@editUserSetting');
+Route::apiResource('/tour-groups', 'App\Http\Controllers\Api\TourGroupController');
+Route::get('/tour-groups/by-country/{countryId}', 'App\Http\Controllers\Api\TourGroupController@getByCountry');
 
 

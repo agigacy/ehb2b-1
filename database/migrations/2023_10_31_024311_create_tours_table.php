@@ -15,8 +15,12 @@ class CreateToursTable extends Migration
     {
         Schema::create('tours', function (Blueprint $table) {
             $table->id();
-            $table->string('package_name');
-            $table->string('package_name_chinese');
+            $table->unsignedBigInteger('tour_group_id');
+            $table->foreign('tour_group_id')->references('id')->on('tour_groups')->cascadeOnDelete();
+            // $table->string('tour_name');
+            // $table->string('tour_name_chinese');
+            // $table->string('package_name');
+            // $table->string('package_name_chinese');
             $table->string('airline');
             $table->string('code');
             $table->dateTime('departure_date');
@@ -29,8 +33,8 @@ class CreateToursTable extends Migration
             $table->integer('tier1_c')->nullable();
             $table->integer('tier2_c')->nullable();
             $table->integer('tier3_c');
-            $table->unsignedBigInteger('country_id')->index();
-            $table->foreign('country_id')->references('id')->on('countries')->cascadeOnDelete();
+            // $table->unsignedBigInteger('country_id')->index();
+            // $table->foreign('country_id')->references('id')->on('countries')->cascadeOnDelete();
             $table->integer('min_g');
             $table->string('remark')->nullable();
             $table->timestamps();

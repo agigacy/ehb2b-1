@@ -25,4 +25,9 @@ class Passenger extends Model
     {
         return $this->hasMany(PassengerAdditional::class);
     }
+
+    public function flight_tickets()
+    {
+        return $this->belongsToMany(FlightTicket::class);
+    }
 }
