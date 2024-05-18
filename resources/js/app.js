@@ -42,6 +42,14 @@ Vue.prototype.$formatDate = function(dateString) {
 // Vue.prototype.$formatCurrency = function(value) {
 //     return value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 // };
+axios.interceptors.request.use(function (config) {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
 Vue.prototype.$formatCurrency = function(value, currency = 'RM') {
     return `${currency} ${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
   };

@@ -74,8 +74,48 @@ class TourGroupController extends Controller
 
     //     return response()->json($tourGroups);
     // }
+    // public function getByCountry($countryId)
+    // {
+    //     $tourGroups = TourGroup::with(['tours' => function ($query) {
+    //         $query->with(['bookings.passengers']);
+    //     }])
+    //     ->whereHas('country', function ($query) use ($countryId) {
+    //         $query->where('id', $countryId);
+    //     })
+    //     ->get();
+
+    //     // 计算每个 tour 的 passengers_count
+    //     foreach ($tourGroups as $group) {
+    //         foreach ($group->tours as $tour) {
+    //             $passengerCount = 0;
+    //             foreach ($tour->bookings as $booking) {
+    //                 $passengerCount += $booking->passengers->count();
+    //             }
+    //             $tour->passengers_count = $passengerCount;
+    //         }
+    //     }
+
+    //     return response()->json($tourGroups);
+    // }
     public function getByCountry($countryId)
     {
+        $user = auth()->user();
+        \Log::info('User:', ['user' => $user]); // 查看日志文件确认用户信息
+    
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    
+        $groups = $user->groups;
+    
+        if ($groups->isEmpty()) {
+            return response()->json(['message' => 'User has no associated group'], 400);
+        }
+    
+        // 假设每个用户只属于一个组，或者您需要决定如何处理多个组
+        $group = $groups->first();
+        $accessibleTiers = $group->getAccessibleTiers();
+    
         $tourGroups = TourGroup::with(['tours' => function ($query) {
             $query->with(['bookings.passengers']);
         }])
@@ -83,8 +123,8 @@ class TourGroupController extends Controller
             $query->where('id', $countryId);
         })
         ->get();
-
-        // 计算每个 tour 的 passengers_count
+    
+        // 计算每个 tour 的 passengers_count 并添加 accessible_tiers
         foreach ($tourGroups as $group) {
             foreach ($group->tours as $tour) {
                 $passengerCount = 0;
@@ -92,9 +132,10 @@ class TourGroupController extends Controller
                     $passengerCount += $booking->passengers->count();
                 }
                 $tour->passengers_count = $passengerCount;
+                $tour->accessible_tiers = $accessibleTiers; // 添加层级信息
             }
         }
-
+    
         return response()->json($tourGroups);
     }
 }

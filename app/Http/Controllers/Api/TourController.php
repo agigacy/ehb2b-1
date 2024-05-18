@@ -45,13 +45,38 @@ class TourController extends Controller
      */
     public function show($id)
     {
-        // return Tour::findOrFail($id);
-        return Tour::with('tour_group')->findOrFail($id);
-        // return Tour::with('country')->findOrFail($id)->append('country_name');
-        // $tour = Tour::with('country')->findOrFail($id);
-        // return $tour->append('country_name');
-        
+        $user = auth()->user();
+        \Log::info('User:', ['user' => $user]); // 查看日志文件确认用户信息
+
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        $groups = $user->groups;
+
+        if ($groups->isEmpty()) {
+            return response()->json(['message' => 'User has no associated group'], 400);
+        }
+
+        // 选择第一个组或根据业务逻辑选择特定组
+        $group = $groups->first();
+
+        $tour = Tour::with('tour_group')->findOrFail($id);
+
+        $accessibleTiers = $group->getAccessibleTiers();
+        $tour->accessible_tiers = $accessibleTiers;
+
+        return response()->json($tour);
     }
+    // public function show($id)
+    // {
+    //     // return Tour::findOrFail($id);
+    //     return Tour::with('tour_group')->findOrFail($id);
+    //     // return Tour::with('country')->findOrFail($id)->append('country_name');
+    //     // $tour = Tour::with('country')->findOrFail($id);
+    //     // return $tour->append('country_name');
+        
+    // }
 
     /**
      * Update the specified resource in storage.

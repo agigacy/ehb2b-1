@@ -141,7 +141,8 @@
         tour: null,
         selectedDate: null,
         selectedPrice: null,
-        selectedQuantity: null, // 默认购买数量为1
+        selectedQuantity: null,
+        accessibleTiers: [],
         discountedTotal: null,
         total: null,
         passengerDetails: [],
@@ -167,22 +168,47 @@
         axios.get(`/api/tours/${id}`)
           .then(response => {
             this.tour = response.data;
+            this.accessibleTiers = response.data.accessible_tiers; // 正确设置 accessibleTiers
+            this.calculateTotal(); // 确保在数据加载后调用
           })
           .catch(error => {
-            console.log(error);
+            console.error('Error fetching tour data:', error);
           });
       },
       onQuantityChange() {
         this.updatePassengerDetails();
         this.calculateTotal();
       },
+      // calculateTotal() {
+      //   if (this.tour && this.selectedQuantity) {
+      //     const baseTotal = this.tour.tier1 * this.selectedQuantity;
+      //     const discount = this.tour.tier1_c * this.selectedQuantity;
+      //     this.discountedTotal = baseTotal - discount;
+      //     this.selectedPrice = this.tour.tier1; // 更新选中的价格为单个的价格
+      //     this.total = baseTotal; // 更新总价为未折扣前的总价
+      //   }
+      // },
       calculateTotal() {
-        if (this.tour && this.selectedQuantity) {
-          const baseTotal = this.tour.tier1 * this.selectedQuantity;
-          const discount = this.tour.tier1_c * this.selectedQuantity;
+        if (this.tour && this.selectedQuantity && this.accessibleTiers) {
+          let basePrice = 0;
+          let discount = 0;
+
+          // 按照 Tier 1, Tier 2, Tier 3 的顺序检查和应用价格
+          if (this.accessibleTiers.includes('Tier 1') && this.tour.tier1) {
+            basePrice = this.tour.tier1;
+            discount = this.tour.tier1_c * this.selectedQuantity;
+          } else if (this.accessibleTiers.includes('Tier 2') && this.tour.tier2) {
+            basePrice = this.tour.tier2;
+            discount = this.tour.tier2_c * this.selectedQuantity;
+          } else if (this.accessibleTiers.includes('Tier 3') && this.tour.tier3) {
+            basePrice = this.tour.tier3;
+            discount = this.tour.tier3_c * this.selectedQuantity;
+          }
+
+          const baseTotal = basePrice * this.selectedQuantity;
           this.discountedTotal = baseTotal - discount;
-          this.selectedPrice = this.tour.tier1; // 更新选中的价格为单个的价格
-          this.total = baseTotal; // 更新总价为未折扣前的总价
+          this.selectedPrice = basePrice;
+          this.total = baseTotal;
         }
       },
       updatePassengerDetails() {

@@ -18,4 +18,13 @@ class Group extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function getAccessibleTiers()
+    {
+        $tiers = [];
+        if ($this->tier1) $tiers[] = 'Tier 1';
+        if ($this->tier2) $tiers[] = 'Tier 2';
+        if ($this->tier3) $tiers[] = 'Tier 3';
+        return $tiers;
+    }
 }
