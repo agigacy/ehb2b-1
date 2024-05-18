@@ -651,7 +651,8 @@ export default {
         // return user? user.name : '';
         const tour = this.tours.find(tour => tour.id === booking.tour_id);
         // return tour? tour.package_name : '';
-        return tour ? tour.package_name.slice(0, 14) + '..' : 'unknown';
+        // return tour ? tour.package_name.slice(0, 14) + '..' : 'unknown';
+        return tour ? tour.code + ' (' + tour.airline + ') ' : 'unknown';
         // return tour ? tour.package_name.slice(0, tour.package_name.indexOf(',')) + '..' : ''; // Slice text after comma 
 
       }))];
