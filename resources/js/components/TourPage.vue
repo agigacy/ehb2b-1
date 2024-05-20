@@ -186,8 +186,26 @@
                 @update:modelValue="value => return_date = value"
                 :config="dateConfig"
               ></flat-pickr>
-              <v-text-field label="From" type="text" v-model="from" required></v-text-field>
-              <v-text-field label="To" type="text" v-model="to" required></v-text-field>
+              <v-autocomplete
+                label="From"
+                v-model="selectedFrom"
+                :items="airports"
+                :item-text="airportText"
+                :filter="customFilter"
+                item-value="IATA"
+                return-object
+                required
+              ></v-autocomplete>
+              <v-autocomplete
+                label="To"
+                v-model="selectedTo"
+                :items="airports"
+                :item-text="airportText"
+                :filter="customFilter"
+                item-value="IATA"
+                return-object
+                required
+              ></v-autocomplete>
               <v-text-field label="Seat" type="text" v-model="seat" required></v-text-field>
               <v-btn @click="currentPage = 'flight_tickets'">Back</v-btn>
               <v-btn type="submit">Add FlightTicket</v-btn>
@@ -212,8 +230,26 @@
                 @update:modelValue="value => editingFlightTicket.return_date = value"
                 :config="dateConfig"
               ></flat-pickr>
-              <v-text-field label="From" type="text" v-model="editingFlightTicket.from" required></v-text-field>
-              <v-text-field label="To" type="text" v-model="editingFlightTicket.to" required></v-text-field>
+              <v-autocomplete
+                label="From"
+                v-model="editingFlightTicket.from"
+                :items="airports"
+                :item-text="airportText"
+                :filter="customFilter"
+                item-value="IATA"
+                return-object
+                required
+              ></v-autocomplete>
+              <v-autocomplete
+                label="To"
+                v-model="editingFlightTicket.to"
+                :items="airports"
+                :item-text="airportText"
+                :filter="customFilter"
+                item-value="IATA"
+                return-object
+                required
+              ></v-autocomplete>
               <v-text-field label="Seat" type="text" v-model="editingFlightTicket.seat" required></v-text-field>
               <v-btn @click="currentPage = 'flight_tickets'">Cancel</v-btn>
               <v-btn type="submit">Save</v-btn>
@@ -276,9 +312,9 @@
           </v-card-text>
         </v-card>
         <v-card v-if="currentPage === 'viewTour'">
-          <v-card-title>{{ viewingTour.package_name }}</v-card-title>
+          <v-card-title>{{ viewingTour.tour_group.tour_group_name }}</v-card-title>
           <v-card-text>
-            <p><strong>Package Name (Chinese):</strong> {{ viewingTour.package_name_chinese }}</p>
+            <p><strong>Package Name (Chinese):</strong> {{ viewingTour.tour_group.tour_group_name_chinese }}</p>
             <p><strong>Airline:</strong> {{ viewingTour.airline }}</p>
             <p><strong>Tour Code:</strong> {{ viewingTour.code }}</p>
             <p><strong>Departure Date:</strong> {{ viewingTour.departure_date }}</p>
@@ -306,8 +342,14 @@
           <v-card-title>Add Tour</v-card-title>
           <v-card-text>
             <v-form @submit.prevent="addTour">
-              <v-text-field label="Package Name" type="text" v-model="package_name" required></v-text-field>
-              <v-text-field label="Package Name (Chinese)" type="text" v-model="package_name_chinese"></v-text-field>
+              <v-select
+                label="Tour Group"
+                :items="tour_groups"
+                item-text="tour_group_name"
+                item-value="id"
+                v-model="selectedTourGroup"
+                required
+              ></v-select>
               <v-text-field label="Airline" type="text" v-model="airline" required></v-text-field>
               <v-text-field label="Tour Code" type="text" v-model="code" required></v-text-field>
               <label class="my-label">Departure Date</label>
@@ -357,8 +399,14 @@
           <v-card-title>Edit Tour</v-card-title>
           <v-card-text>
             <v-form @submit.prevent="editTour">
-              <v-text-field label="Package Name" type="text" v-model="editingTour.package_name" required></v-text-field>
-              <v-text-field label="Package Name (Chinese)" type="text" v-model="editingTour.package_name_chinese"></v-text-field>
+              <v-select
+                label="Tour Group"
+                :items="tour_groups"
+                item-text="tour_group_name"
+                item-value="id"
+                v-model="editingTour.tour_group_id"
+                required
+              ></v-select>
               <v-text-field label="Airline" type="text" v-model="editingTour.airline" required></v-text-field>
               <v-text-field label="Tour Code" type="text" v-model="editingTour.code" required></v-text-field>
               <label class="my-label">Departure Date</label>
@@ -459,13 +507,16 @@ import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import moment from 'moment';
 import VueApexCharts from 'vue-apexcharts';
-
+import airportsData from '../../assets/airport.json';
 export default {
   components: {
     flatPickr, apexchart: VueApexCharts,
   },
   data() {
     return {
+      airports: airportsData,
+      selectedFrom: null,
+      selectedTo: null,
       name: '',
       email: '',
       password: '',
@@ -511,7 +562,7 @@ export default {
       ],
       tourHeaders: [
         { text: 'No', value: 'index' },
-        { text: 'Name', value: 'package_name' },
+        { text: 'Tour Name', value: 'tour_group.tour_group_name' },
         { text: 'Airline', value: 'airline' },
         { text: 'Code', value: 'code' },
         { text: 'Departure Date', value: 'departure_date' },
@@ -606,6 +657,7 @@ export default {
   },
   mounted() {
     this.getCountries();
+    this.getTourGroups();
     this.getFlightTickets();
     this.getTours();
     this.getUsers();
@@ -669,6 +721,12 @@ export default {
   //     }
   //   },
   //   // other computed properties...
+      // fromAirport() {
+      //   return this.airports.find(airport => airport.IATA === this.selectedFrom);
+      // },
+      // toAirport() {
+      //   return this.airports.find(airport => airport.IATA === this.selectedTo);
+      // },
       canViewTour() {
         const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
         const hasTourViewPermission = permissions.includes('tour_view');
@@ -769,6 +827,25 @@ export default {
     },
   },
   methods: {
+    airportText(item) {
+      return `${item.IATA} - ${item['Airport Name']} (${item.City}, ${item.Country})`;
+    },
+    customFilter(item, queryText, itemText) {
+      const textOne = item.IATA.toLowerCase();
+      const textTwo = item['Airport Name'].toLowerCase();
+      const searchText = queryText.toLowerCase();
+
+      return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1;
+    },
+    getTourGroups() {
+      axios.get('/api/tour-groups')
+      .then(response => {
+        this.tour_groups = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
     showCountriesPage() {
       this.currentPage = 'countries';
     },
@@ -849,8 +926,8 @@ export default {
         airline: this.airline,
         departure_date: this.departure_date,
         return_date: this.return_date,
-        from: this.from,
-        to: this.to,
+        from: this.selectedFrom ? this.selectedFrom.IATA : null,
+        to: this.selectedTo ? this.selectedTo.IATA : null,
         seat: this.seat,
       })
       .then(response => {
@@ -866,7 +943,12 @@ export default {
       });
     },
     editFlightTicket() {
-      axios.put(`/api/flight_tickets/${this.editingFlightTicket.id}`, this.editingFlightTicket)
+      const flightTicketData = {
+        ...this.editingFlightTicket,
+        from: this.editingFlightTicket.from ? this.editingFlightTicket.from.IATA : null,
+        to: this.editingFlightTicket.to ? this.editingFlightTicket.to.IATA : null,
+      };
+      axios.put(`/api/flight_tickets/${this.editingFlightTicket.id}`, flightTicketData)
         .then(response => {
           console.log(response.data);
           // Redirect to flight_tickets page after successful update
