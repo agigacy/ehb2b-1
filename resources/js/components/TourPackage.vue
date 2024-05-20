@@ -40,7 +40,7 @@
           <v-col cols="12" sm="3" md="3" v-for="group in tourGroups" :key="group.id">
             <v-card @click="selectTourGroup(group.id)">
               <v-img :src="group.tour_img_url" height="30vh" width="auto" style="margin-top: 10px; margin-bottom: 20px;"></v-img>
-              <v-card-title class="pt-0">{{ group.tour_group_name }}</v-card-title>
+              <v-card-title class="pt-0 text-center"><h5>{{ group.tour_group_name }}</h5></v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -50,8 +50,9 @@
         <v-btn class="mb-2 ml-2" @click="currentPage = 'tourGroups'">back</v-btn>
         <v-row>
           <v-col cols="12" sm="3" md="3" v-for="tour in selectedTours" :key="tour.id">
-            <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })">
-              <v-card-title class="pt-0">{{ tour.departure_date }}</v-card-title>
+            <v-card @click="$router.push({ name: 'TourDetail', params: { id: tour.id } })" class="pt-2">
+              <!-- <v-card-title class="pt-0">{{ tour.departure_date }}</v-card-title> -->
+              <v-card-title class="pt-0">{{ $formatDate(tour.departure_date) }} <sup class="pl-3 text--secondary">Travel Date</sup></v-card-title>
               <v-card-text>
                 <div v-if="tour">
                   Price: {{ displayedPrice(tour) }}
