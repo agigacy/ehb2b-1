@@ -50,6 +50,8 @@ export default {
         // 保存角色和权限信息
         localStorage.setItem('roles', JSON.stringify(response.data.roles));
         localStorage.setItem('permissions', JSON.stringify(response.data.permissions));
+        // 保存组信息
+        localStorage.setItem('groups', JSON.stringify(response.data.groups));
          // 检查并保存权限数据
         // if (response.data.permissions) {
         //   localStorage.setItem('permissions', JSON.stringify(response.data.permissions));

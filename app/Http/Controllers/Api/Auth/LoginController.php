@@ -34,7 +34,7 @@ class LoginController extends Controller
         });
 
         // 加载用户角色和权限
-        $user->load('roles', 'permissions');
+        $user->load('roles', 'permissions', 'groups');
 
         // 创建新的令牌
         // $token = $user->createToken('laravel_api_token')->plainTextToken;
@@ -46,6 +46,7 @@ class LoginController extends Controller
             'token' => $user->createToken('laravel_api_token')->plainTextToken,
             'roles' => $user->roles->pluck('name'), // 返回角色名称列表
             'permissions' => $user->getAllPermissions()->pluck('name'), // 返回权限名称列表
+            'groups' => $user->groups ? $user->groups->pluck('name') : null, // 添加组信息
         ]);
     }
 
