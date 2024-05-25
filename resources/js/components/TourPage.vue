@@ -1024,8 +1024,8 @@ export default {
     onCountryFileChange(event) {
       const file = event.target.files[0]; 
       if (file) {
-        // this.img_url = file;
-        this.editingCountry.img_url = file;
+        this.img_url = file;
+        // this.editingCountry.img_url = file;
       }
     },
     // onCountryFileChange(event) {
