@@ -30,7 +30,7 @@ class FlightTicketController extends Controller
         $flight_ticket = FlightTicket::create($request->all());
 
         // Create reminders - Antoney working
-        $this->createReminders($flight_ticket);
+        // $this->createReminders($flight_ticket);
 
         return response()->json($flight_ticket, 201);
     }

@@ -109,6 +109,7 @@
           <v-card-text>
             <v-form @submit.prevent="addCountry">
               <v-text-field label="Name" type="text" v-model="name" required></v-text-field>
+              <v-file-input label="Flag" v-model="img_url" required @change="onCountryFileChange" ></v-file-input>
               <v-btn @click="currentPage = 'countries'">Back</v-btn>
               <v-btn type="submit">Add Country</v-btn>
             </v-form>
@@ -119,6 +120,12 @@
           <v-card-text>
             <v-form @submit.prevent="editCountry">
               <v-text-field label="Name" type="text" v-model="editingCountry.name" required></v-text-field>
+              <v-file-input
+                label="Flag"
+                clearable
+                v-model="editingCountry.img_url"
+                @change="onCountryFileChange"
+              ></v-file-input>
               <v-btn @click="currentPage = 'countries'">Cancel</v-btn>
               <v-btn type="submit">Save</v-btn>
             </v-form>
@@ -163,18 +170,39 @@
                 </v-btn>
               </template>
             </v-data-table>
-            <v-btn @click="currentPage = 'addFlightTicket'">Add Flight Ticket</v-btn>
+            <v-btn @click="currentPage = 'addShowFlightTicket'">Add Flight Ticket</v-btn>
           </v-card-text>
         </v-card>
-        <v-card v-if="currentPage === 'addFlightTicket'">
+        <v-card v-if="currentPage === 'addShowFlightTicket'">
           <v-card-title>Add Flight Ticket</v-card-title>
           <v-card-text>
-            <v-form @submit.prevent="addFlightTicket">
-              <v-text-field label="PNR" type="text" v-model="pnr" required></v-text-field>
-              <v-text-field label="Airline" type="text" v-model="airline" required></v-text-field>
-              <v-text-field label="Departure Date" type="text" v-model="departure_date" required></v-text-field>
-              <v-text-field label="Return Date" type="text" v-model="return_date" required></v-text-field>
-              <label class="my-label">Departure Date</label>
+            <v-form @submit.prevent="submitFlightTicket">
+              <v-text-field label="PNR" type="text" v-model="addFlightTicket.pnr" required></v-text-field>
+              <v-select
+                label="Airline"
+                v-model="selectedAirline"
+                :items="airlines"
+                item-text="name"
+                item-value="code"
+                @change="checkIfOtherSelected"
+                required
+              ></v-select>
+              <v-text-field
+                v-if="selectedAirline && selectedAirline === '1'"
+                label="Enter Airline Name"
+                v-model="customAirline"
+                @input="checkIfOtherSelected"
+                required
+              ></v-text-field>
+              <v-row>
+                <v-col>
+                  <v-text-field label="Departure Date" type="datetime-local" v-model="addFlightTicket.departure_date" required></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field label="Return Date" type="datetime-local" v-model="addFlightTicket.return_date" required></v-text-field>
+                </v-col>
+              </v-row>
+              <!-- <label class="my-label">Departure Date</label>
               <flat-pickr
                 :modelValue="departure_date"
                 @update:modelValue="value => departure_date = value"
@@ -185,28 +213,34 @@
                 :modelValue="return_date"
                 @update:modelValue="value => return_date = value"
                 :config="dateConfig"
-              ></flat-pickr>
-              <v-autocomplete
-                label="From"
-                v-model="selectedFrom"
-                :items="airports"
-                :item-text="airportText"
-                :filter="customFilter"
-                item-value="IATA"
-                return-object
-                required
-              ></v-autocomplete>
-              <v-autocomplete
-                label="To"
-                v-model="selectedTo"
-                :items="airports"
-                :item-text="airportText"
-                :filter="customFilter"
-                item-value="IATA"
-                return-object
-                required
-              ></v-autocomplete>
-              <v-text-field label="Seat" type="text" v-model="seat" required></v-text-field>
+              ></flat-pickr> -->
+              <v-row>
+                <v-col>
+                  <v-autocomplete
+                    label="From"
+                    v-model="selectedFrom"
+                    :items="airports"
+                    :item-text="airportText"
+                    :filter="customFilter"
+                    item-value="IATA"
+                    return-object
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col>
+                  <v-autocomplete
+                    label="To"
+                    v-model="selectedTo"
+                    :items="airports"
+                    :item-text="airportText"
+                    :filter="customFilter"
+                    item-value="IATA"
+                    return-object
+                    required
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-text-field label="Seat" type="text" v-model="addFlightTicket.seat" required></v-text-field>
               <v-btn @click="currentPage = 'flight_tickets'">Back</v-btn>
               <v-btn type="submit">Add FlightTicket</v-btn>
             </v-form>
@@ -218,7 +252,15 @@
             <v-form @submit.prevent="editFlightTicket">
               <v-text-field label="PNR" type="text" v-model="editingFlightTicket.pnr" required></v-text-field>
               <v-text-field label="Airline" type="text" v-model="editingFlightTicket.airline" required></v-text-field>
-              <label class="my-label">Departure Date</label>
+              <v-row>
+                <v-col>
+                  <v-text-field label="Departure Date" type="datetime-local" v-model="editingFlightTicket.departure_date" required></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field label="Return Date" type="datetime-local" v-model="editingFlightTicket.return_date" required></v-text-field>
+                </v-col>
+              </v-row>
+              <!-- <label class="my-label">Departure Date</label>
               <flat-pickr
                 :modelValue="editingFlightTicket.departure_date"
                 @update:modelValue="value => editingFlightTicket.departure_date = value"
@@ -229,27 +271,33 @@
                 :modelValue="editingFlightTicket.return_date"
                 @update:modelValue="value => editingFlightTicket.return_date = value"
                 :config="dateConfig"
-              ></flat-pickr>
-              <v-autocomplete
-                label="From"
-                v-model="editingFlightTicket.from"
-                :items="airports"
-                :item-text="airportText"
-                :filter="customFilter"
-                item-value="IATA"
-                return-object
-                required
-              ></v-autocomplete>
-              <v-autocomplete
-                label="To"
-                v-model="editingFlightTicket.to"
-                :items="airports"
-                :item-text="airportText"
-                :filter="customFilter"
-                item-value="IATA"
-                return-object
-                required
-              ></v-autocomplete>
+              ></flat-pickr> -->
+              <v-row>
+                <v-col>
+                  <v-autocomplete
+                    label="From"
+                    v-model="editingFlightTicket.from"
+                    :items="airports"
+                    :item-text="airportText"
+                    :filter="customFilter"
+                    item-value="IATA"
+                    return-object
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col>
+                  <v-autocomplete
+                    label="To"
+                    v-model="editingFlightTicket.to"
+                    :items="airports"
+                    :item-text="airportText"
+                    :filter="customFilter"
+                    item-value="IATA"
+                    return-object
+                    required
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
               <v-text-field label="Seat" type="text" v-model="editingFlightTicket.seat" required></v-text-field>
               <v-btn @click="currentPage = 'flight_tickets'">Cancel</v-btn>
               <v-btn type="submit">Save</v-btn>
@@ -347,12 +395,20 @@
                 :items="tour_groups"
                 item-text="tour_group_name"
                 item-value="id"
-                v-model="selectedTourGroup"
+                v-model="tour_group_id"
                 required
               ></v-select>
               <v-text-field label="Airline" type="text" v-model="airline" required></v-text-field>
               <v-text-field label="Tour Code" type="text" v-model="code" required></v-text-field>
-              <label class="my-label">Departure Date</label>
+              <v-row>
+                <v-col>
+                  <v-text-field label="Departure Date" type="datetime-local" v-model="departure_date" required></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field label="Return Date" type="datetime-local" v-model="return_date" required></v-text-field>
+                </v-col>
+              </v-row>
+              <!-- <label class="my-label">Departure Date</label>
               <flat-pickr
                 :modelValue="departure_date"
                 @update:modelValue="value => departure_date = value"
@@ -363,7 +419,7 @@
                 :modelValue="return_date"
                 @update:modelValue="value => return_date = value"
                 :config="dateConfig"
-              ></flat-pickr>
+              ></flat-pickr> -->
               <v-text-field label="Special Price" type="text" v-model="sp"></v-text-field>
               <v-text-field label="Tier 1 Price" type="text" v-model="tier1"></v-text-field>
               <v-text-field label="Tier 2 Price" type="text" v-model="tier2"></v-text-field>
@@ -456,13 +512,26 @@
           <v-card-title>Duplicate Tour</v-card-title>
           <v-card-text>
             <v-form @submit.prevent="duplicateTour">
-              <v-text-field label="Package Name" type="text" v-model="duplicatingTour.package_name" required></v-text-field>
-              <v-text-field label="Package Name" type="text" v-model="duplicatingTour.package_name" required></v-text-field>
-              <v-text-field label="Package Name (Chinese)" type="text" v-model="duplicatingTour.package_name_chinese"></v-text-field>
+              <v-select
+                label="Tour Group"
+                :items="tour_groups"
+                item-text="tour_group_name"
+                item-value="id"
+                v-model="duplicatingTour.tour_group_id"
+                required
+              ></v-select>
               <v-text-field label="Airline" type="text" v-model="duplicatingTour.airline" required></v-text-field>
               <v-text-field label="Tour Code" type="text" v-model="duplicatingTour.code" required></v-text-field>
-              <v-text-field label="Departure Date" type="text" v-model="duplicatingTour.departure_date" required></v-text-field>
-              <v-text-field label="Return Date" type="text" v-model="duplicatingTour.return_date" required></v-text-field>
+              <v-row>
+                <v-col>
+                  <v-text-field label="Departure Date" type="datetime-local" v-model="duplicatingTour.departure_date" required></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field label="Return Date" type="datetime-local" v-model="duplicatingTour.return_date" required></v-text-field>
+                </v-col>
+              </v-row>
+              <!-- <v-text-field label="Departure Date" type="text" v-model="duplicatingTour.departure_date" required></v-text-field>
+              <v-text-field label="Return Date" type="text" v-model="duplicatingTour.return_date" required></v-text-field> -->
               <v-text-field label="Special Price" type="text" v-model="duplicatingTour.sp"></v-text-field>
               <v-text-field label="Tier 1 Price" type="text" v-model="duplicatingTour.tier1"></v-text-field>
               <v-text-field label="Tier 2 Price" type="text" v-model="duplicatingTour.tier2"></v-text-field>
@@ -521,8 +590,21 @@ export default {
       email: '',
       password: '',
       currentPage: 'dashboard', // 'countries', 'addCountry', 'editCountry', 'flight_tickets', 'addFlightTicket', 'editFlightTicket'
-      editingCountry: null,
+      editingCountry: {
+        name: '',
+        img_url: '',
+        file: null,
+      },
       editingFlightTicket: null,
+      addFlightTicket:{
+        pnr: '',
+        airline: '',
+        seat: '',
+        departure_date: '',
+        from: '',
+        to: '',
+        return_date: '',
+      },
       countryToDelete: null,
       confirmDelete: false,
       itemToDelete: null,
@@ -652,7 +734,15 @@ export default {
       groupDataLoaded: false,
       users: [],
       userTotals: [],
-      bookings: []
+      bookings: [],
+      airlines: [
+        { name: 'Airasia', code: 'Airasia' },
+        { name: 'Malaysia Airlines', code: 'Malaysia Airlines' },
+        { name: 'Batik Air', code: 'Batik Air' },
+        { name: 'Other', code: '1' }
+      ],
+      selectedAirline: null,
+      customAirline: '',
     }
   },
   mounted() {
@@ -827,6 +917,13 @@ export default {
     },
   },
   methods: {
+    checkIfOtherSelected() {
+      if (this.selectedAirline && this.selectedAirline === '1') {
+        this.addFlightTicket.airline = this.customAirline;  // 使用自定义航空公司名称
+      } else {
+        this.addFlightTicket.airline = this.selectedAirline;
+      }
+    },
     airportText(item) {
       return `${item.IATA} - ${item['Airport Name']} (${item.City}, ${item.Country})`;
     },
@@ -856,6 +953,7 @@ export default {
       this.editingCountry = Object.assign({}, country);
       this.editingCountryFlightTickets = country.flight_tickets && country.flight_tickets.length > 0 ? country.flight_tickets[0].id : null;
       this.editingCountryRoles = country.roles && country.roles.length > 0 ? country.roles[0].id : null;
+      this.editingCountry.img_url = null;
       this.currentPage = 'editCountry';
     },
     getCountries() {
@@ -868,9 +966,10 @@ export default {
       });
     },
     addCountry() {
-      axios.post('/api/countries', {
-        name: this.name,
-      })
+      const formData = new FormData();
+      formData.append('name', this.name);
+      formData.append('img_url', this.img_url);
+      axios.post('/api/countries', formData)
       .then(response => {
         console.log(response.data);
         // Redirect to countries page after successful addition
@@ -878,33 +977,70 @@ export default {
         this.getCountries();
         // Reset the form fields
         this.name = '';
+        this.img_url = '';
       })
-      .catch(error => {
-        console.log(error);
-      });
+      // axios.post('/api/countries', {
+      //   name: this.name,
+      //   img_url: this.img_url,
+      // })
+      // .then(response => {
+      //   console.log(response.data);
+      //   // Redirect to countries page after successful addition
+      //   this.currentPage = 'countries';
+      //   this.getCountries();
+      //   // Reset the form fields
+      //   this.name = '';
+      //   this.img_url = '';
+      // })
+      // .catch(error => {
+      //   console.log(error);
+      // });
     },
     editCountry() {
-      axios.put(`/api/countries/${this.editingCountry.id}`, this.editingCountry)
+      const formData = new FormData();
+      formData.append('name', this.editingCountry.name);
+      formData.append('img_url', this.editingCountry.img_url);
+      // if (this.editingCountry.file instanceof File) {
+      //   formData.append('img_url', this.editingCountry.file);
+      // }
+      axios.put(`/api/countries/${this.editingCountry.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then(response => {
         console.log(response.data);
         this.currentPage = 'countries';
         this.getCountries();
       })
       .catch(error => {
-        console.log(error);
+        console.error('Update error:', error);
       });
     },
     startDeletingCountry(country) {
     this.itemToDelete = country;
     this.confirmDelete = true;
     },
-    
+    onCountryFileChange(event) {
+      const file = event.target.files[0]; 
+      if (file) {
+        // this.img_url = file;
+        this.editingCountry.img_url = file;
+      }
+    },
+    // onCountryFileChange(event) {
+    //   const file = event.target.files[0]; 
+    //   if (file) {
+    //     this.editingCountry.img_url = file;
+    //     this.img_url = file;
+    //   }
+    // },
 
     showFlightTicketsPage() {
       this.currentPage = 'flight_tickets';
     },
     showAddFlightTicketPage() {
-      this.currentPage = 'addFlightTicket';
+      this.currentPage = 'addShowFlightTicket';
     },
     showEditFlightTicketPage(flight_ticket) {
       this.editingFlightTicket = Object.assign({}, flight_ticket);
@@ -920,23 +1056,25 @@ export default {
         console.log(error);
       });
     },
-    addFlightTicket() {
+    submitFlightTicket() {
+      this.checkIfOtherSelected();  // 确保在提交前更新 airline
       axios.post('/api/flight_tickets', {
-        pnr: this.pnr,
-        airline: this.airline,
-        departure_date: this.departure_date,
-        return_date: this.return_date,
+        pnr: this.addFlightTicket.pnr,
+        airline: this.addFlightTicket.airline,
+        departure_date: this.addFlightTicket.departure_date,
+        return_date: this.addFlightTicket.return_date,
         from: this.selectedFrom ? this.selectedFrom.IATA : null,
         to: this.selectedTo ? this.selectedTo.IATA : null,
-        seat: this.seat,
+        seat: this.addFlightTicket.seat,
       })
       .then(response => {
         console.log(response.data);
-        // Redirect to flight_tickets page after successful addition
         this.currentPage = 'flight_tickets';
         this.getFlightTickets();
-        // Reset the form fields
-        this.name = '';
+        this.addFlightTicket = {};  // 重置表单字段
+        this.selectedFrom = null;
+        this.selectedTo = null;
+        this.selectedAirline = null;
       })
       .catch(error => {
         console.log(error);
@@ -1010,8 +1148,7 @@ export default {
     },
     addTour() {
       axios.post('/api/tours', {
-        package_name: this.package_name,
-        package_name_chinese: this.package_name_chinese,
+        tour_group_id: this.tour_group_id,
         airline: this.airline,
         code: this.code,
         departure_date: this.departure_date,
